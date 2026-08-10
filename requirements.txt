@@ -1,0 +1,35 @@
+# ─────────────────────────────────────────────────────────────────
+# AI-Based Package Delivery Time Prediction System
+# Requirements
+# ─────────────────────────────────────────────────────────────────
+
+# Web Framework
+flask==3.0.3
+flask-cors==4.0.1
+
+# Database
+flask-sqlalchemy==3.1.1
+pymysql==1.1.1
+cryptography==42.0.8
+
+# Environment / Config
+python-dotenv==1.0.1
+
+# Machine Learning
+scikit-learn==1.5.1
+xgboost==2.1.1
+pandas==2.2.2
+numpy==1.26.4
+joblib==1.4.2
+
+# HTTP / API Calls
+requests==2.32.3
+
+# Kaggle dataset download
+kaggle==1.6.17
+
+# Data Generation (seeding)
+faker==26.0.0
+
+# Production server
+gunicorn==22.0.0

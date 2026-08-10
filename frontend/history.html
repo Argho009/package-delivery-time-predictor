@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics & History — DeliverAI</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Navigation Header (Crextio Pill Style) -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">
+      <div class="brand-icon">📦</div>
+      DeliverAI
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="index.html"   class="nav-link">Dashboard</a></li>
+      <li><a href="predict.html" class="nav-link">Predict</a></li>
+      <li><a href="history.html" class="nav-link active">Analytics</a></li>
+    </ul>
+    <div class="header-stats">
+      <div class="stat-pill-group">
+        <span class="stat-pill-title">140,832 Records</span>
+        <span class="stat-pill-sub">33h 50m Avg • 0.84 Accuracy</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">Analytics &amp; Shipment Logs</h1>
+      <p class="page-subtitle">Historical delivery logs, model accuracy metrics, and traffic distribution analysis</p>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header">🚦 Delivery Hours by Traffic Congestion</div>
+        <div class="card-body">
+          <div style="height:250px; position:relative;">
+            <canvas id="trafficBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">🌤️ Delivery Hours by Weather Conditions</div>
+        <div class="card-body">
+          <div style="height:250px; position:relative;">
+            <canvas id="weatherBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Benchmark Table -->
+    <div class="card mb-4">
+      <div class="card-header">🏆 Machine Learning Model Benchmark (140K+ Dataset)</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Model Name</th>
+              <th>R² Accuracy</th>
+              <th>RMSE (Hours)</th>
+              <th>MAE (Hours)</th>
+              <th>Training Samples</th>
+            </tr>
+          </thead>
+          <tbody id="model-benchmark-tbody">
+            <tr><td colspan="5" class="text-muted" style="text-align:center;">Loading model metrics…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Paginated Records Table -->
+    <div class="card">
+      <div class="card-header">
+        <span>📦 Historical Delivery Records</span>
+        <span class="text-muted" style="font-size:0.82rem;" id="records-count-label">Loading…</span>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Tracking ID</th>
+              <th>Route</th>
+              <th>Distance</th>
+              <th>Traffic</th>
+              <th>Weight</th>
+              <th>Mode</th>
+              <th>Actual Time</th>
+              <th>Predicted Time</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <tr><td colspan="8" class="text-muted" style="text-align:center; padding:2rem;">Loading delivery records…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination Controls -->
+      <div class="card-body flex justify-between items-center" style="border-top:1px solid rgba(255,255,255,0.4); padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center;">
+        <button class="btn btn-secondary" id="prev-btn" disabled>← Previous</button>
+        <span class="text-mono" style="font-size:0.88rem; font-weight:600; color:var(--clr-primary-dark);" id="page-indicator">Page 1</span>
+        <button class="btn btn-secondary" id="next-btn">Next →</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/history.js"></script>
+</body>
+</html>

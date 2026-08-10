@@ -1,0 +1,42 @@
+{
+  "trained_at": "2026-08-10T15:08:46.454389",
+  "training_samples": 112665,
+  "test_samples": 28167,
+  "data_source": "unified_csv",
+  "best_model": "random_forest",
+  "feature_columns": [
+    "distance_km",
+    "traffic_duration_min",
+    "traffic_level_enc",
+    "package_weight_kg",
+    "package_type_enc",
+    "priority_enc",
+    "shipping_mode_enc"
+  ],
+  "metrics": {
+    "xgboost": {
+      "rmse": 23.16696151324499,
+      "mae": 8.82259455102688,
+      "r2": 0.8388622793896497
+    },
+    "random_forest": {
+      "rmse": 23.06907015791864,
+      "mae": 8.823920788449007,
+      "r2": 0.8402211683036516
+    },
+    "linear_regression": {
+      "rmse": 28.459061662379085,
+      "mae": 19.363894710963375,
+      "r2": 0.7568354758740211
+    }
+  },
+  "feature_importances": {
+    "distance_km": 0.5581982135772705,
+    "traffic_duration_min": 0.15811176598072052,
+    "traffic_level_enc": 0.017926400527358055,
+    "package_weight_kg": 0.09016329795122147,
+    "package_type_enc": 0.05271768197417259,
+    "priority_enc": 0.010210756212472916,
+    "shipping_mode_enc": 0.11267194896936417
+  }
+}

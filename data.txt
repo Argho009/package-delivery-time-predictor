@@ -1,0 +1,73 @@
+================================================================================
+   PROJECT #21: DeliverAI — AI-BASED PACKAGE DELIVERY TIME PREDICTION SYSTEM
+               DATASET SELECTION & GEOSPATIAL ROUTING DOCUMENTATION
+================================================================================
+
+1. DATASETS USED AND WHY
+--------------------------------------------------------------------------------
+This project utilizes a merged & normalized dataset of 140,832 real-world
+package delivery records sourced from 5 Tier-1 Kaggle datasets:
+
+A. Amazon Delivery Dataset (~43,739 rows)
+   • Source: Kaggle (sujalsuthar/amazon-delivery-dataset)
+   • Why Used: Provides actual urban & suburban package delivery times, agent
+     ratings, vehicle types, and store-to-dropoff latitude/longitude coordinates.
+   • Signal Contribution: Short-range and mid-range courier delivery times.
+
+B. Logistics & Supply Chain Dataset (~32,065 rows)
+   • Source: Kaggle (datasetengineer/logistics-and-supply-chain-dataset)
+   • Why Used: Contains detailed traffic congestion levels (0-10 scale), lead
+     times, shipping costs, and supplier reliability scores.
+   • Signal Contribution: Traffic delay impact and lead-time variability.
+
+C. Global Superstore Sales & Logistics Dataset (~51,290 rows)
+   • Source: Kaggle (abbas829/global-superstore-sales-dataset)
+   • Why Used: Large-scale international shipping records with order date, ship
+     date, shipping mode (Road/Air/Rail/Sea), and regional variations.
+   • Signal Contribution: Multi-modal shipping speeds and long-haul distances.
+
+D. E-Commerce Shipping Prediction Dataset (~10,999 rows)
+   • Source: Kaggle (prachi13/customer-analytics)
+   • Why Used: Focuses on package weight, product importance (priority), mode of
+     shipment, and on-time vs delayed status.
+   • Signal Contribution: Weight and priority impact on fulfillment speed.
+
+E. Enhanced Superstore Sales Dataset (~2,739 rows)
+   • Source: Kaggle (jacopoferretti/superstore-dataset)
+   • Why Used: Clean retail order logs providing ship mode vs delivery duration.
+   • Signal Contribution: Priority handling and order processing lag.
+
+--------------------------------------------------------------------------------
+WHY THESE DATASETS WERE MERGED:
+- Pure Logistics Focus: No weather bias in model training — weather is fetched
+  separately via OpenWeather API for UI display.
+- Large Sample Size: 140,832 rows ensure strong machine learning generalization.
+- High Model Accuracy: Achieves R² = 0.8402 using Random Forest & XGBoost.
+
+
+2. ALTERNATIVE TO GOOGLE MAPS: OSRM + OPENSTREETMAP (NOMINATIM)
+--------------------------------------------------------------------------------
+The project implements a hybrid routing architecture that uses OSRM (Open Source
+Routing Machine) + OpenStreetMap Nominatim as a zero-cost, open-source fallback to
+Google Maps Distance Matrix API.
+
+A. Technical Workflow:
+   1. Nominatim Geocoding (OpenStreetMap):
+      Converts city names or addresses (e.g. "Mumbai", "Delhi") into exact
+      latitude and longitude coordinates.
+   2. OSRM Driving Engine (Open Source Routing Machine):
+      Calculates the real driving route along actual road networks, returning
+      exact driving distance (in km) and base duration (in minutes).
+   3. Traffic Engine Simulation:
+      Applies peak traffic multipliers based on congestion levels (LOW = 1.05x,
+      MODERATE = 1.25x, HIGH = 1.65x, SEVERE = 2.10x).
+
+B. Why OSRM / OpenStreetMap was Chosen over Google Maps for a Minor Project:
+   • 100% Free & Unlimited: No API key, no billing accounts, and no monthly cap.
+   • Zero Demo Risk: Live project demonstrations will never fail due to Google
+     Cloud MFA locks, credit card verification errors, or quota exhaustion.
+   • Self-Contained Deployment: Works on any computer out-of-the-box without
+     requiring external evaluators to set up Google Cloud credentials.
+   • Academic Value: Demonstrates understanding of open-source GIS routing
+     engines alongside machine learning pipelines.
+================================================================================
