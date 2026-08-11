@@ -499,3 +499,50 @@ tr:hover td {
 .text-primary { color: var(--clr-primary-dark); }
 .fw-600 { font-weight: 600; }
 .divider { height: 1px; background: rgba(255, 255, 255, 0.4); margin: 1.5rem 0; }
+
+/* Grid 3 */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+@media (max-width: 640px) {
+  .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* Weather Checkpoint Cards */
+.checkpoint-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-md);
+  padding: 0.65rem;
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(13, 71, 161, 0.04);
+}
+.checkpoint-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--txt-muted);
+  margin-bottom: 0.2rem;
+}
+.checkpoint-city {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--clr-primary-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.checkpoint-temp {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--txt-main);
+  margin-top: 0.15rem;
+}
+.checkpoint-cond {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--txt-secondary);
+}
+

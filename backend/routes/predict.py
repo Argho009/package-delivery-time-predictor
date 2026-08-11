@@ -13,7 +13,7 @@ from flask import Blueprint, request, jsonify
 from database.db import db
 from database.models import PredictionLog
 from services.maps_service import get_route_info
-from services.weather_service import get_weather
+from services.weather_service import get_route_weather, get_weather_by_coords
 from models.predict import predict_all
 
 logger = logging.getLogger(__name__)
@@ -108,16 +108,14 @@ def predict():
         logger.error("Maps API error: %s", e)
         return jsonify({"error": "Maps API error", "details": str(e)}), 502
 
-    # ── Step 2: OpenWeather (for destination city) ─────────────
-    # Extract city name from destination (first part before comma)
-    dest_city = destination.split(",")[0].strip()
+    # ── Step 2: OpenWeather (Multi-point route weather) ───────
     try:
-        weather = get_weather(dest_city)
+        weather = get_route_weather(route["waypoints"])
     except ValueError as e:
         logger.error("Weather API error: %s", e)
         return jsonify({"error": "Weather API error", "details": str(e)}), 502
 
-    # ── Step 3: ML Prediction (logistics features only — no weather) ──
+    # ── Step 3: Overall ML Prediction ──
     try:
         predictions = predict_all(
             distance_km          = route["distance_km"],
@@ -130,6 +128,82 @@ def predict():
         )
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 503
+
+    # ── Step 3b: 10 km Segmented Per-Leg Transit & Weather ──
+    sampled_wps = route.get("sampled_waypoints", [])
+    segments = []
+    total_segmented_hours = 0.0
+
+    if len(sampled_wps) > 1:
+        total_d = route["distance_km"] or 1.0
+        total_rec_hours = predictions["recommended_hours"] or 1.0
+
+        weather_multipliers = {
+            "STORM": 1.25,
+            "HEAVY_RAIN": 1.15,
+            "SNOW": 1.15,
+            "RAIN": 1.08,
+            "FOG": 1.08,
+            "CLOUDY": 1.0,
+            "CLEAR": 1.0,
+        }
+
+        # Pre-fetch weather only for major ~50km checkpoints in parallel for sub-second API speed
+        major_wps = [wp for wp in sampled_wps if wp.get("is_major_marker")]
+        if not major_wps:
+            major_wps = [sampled_wps[0], sampled_wps[-1]]
+
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            major_weathers = list(executor.map(
+                lambda wp: get_weather_by_coords(wp["lat"], wp["lon"], wp["name"]),
+                major_wps
+            ))
+
+        # Helper to get nearest major checkpoint weather for any 10 km waypoint
+        def get_nearest_leg_weather(wp):
+            best_w = major_weathers[0]
+            min_d = float("inf")
+            for m_wp, m_w in zip(major_wps, major_weathers):
+                d = abs(wp["km_offset"] - m_wp["km_offset"])
+                if d < min_d:
+                    min_d = d
+                    best_w = m_w
+            return best_w
+
+        for i in range(1, len(sampled_wps)):
+            wp_prev = sampled_wps[i - 1]
+            wp_curr = sampled_wps[i]
+            leg_dist = round(wp_curr["km_offset"] - wp_prev["km_offset"], 1)
+            if leg_dist <= 0:
+                leg_dist = round(total_d / (len(sampled_wps) - 1), 1)
+
+            leg_weather = get_nearest_leg_weather(wp_curr)
+            cond = leg_weather.get("weather_condition", "CLEAR")
+            w_mult = weather_multipliers.get(cond, 1.0)
+
+            # Proportional leg transit time based on ML line-haul estimate + leg weather factor
+            base_leg_h = total_rec_hours * (leg_dist / total_d)
+            leg_hours = round(base_leg_h * w_mult, 3)
+            total_segmented_hours += leg_hours
+
+            segments.append({
+                "leg": i,
+                "start_name": wp_prev["name"],
+                "end_name": wp_curr["name"],
+                "start_coords": [wp_prev["lat"], wp_prev["lon"]],
+                "end_coords": [wp_curr["lat"], wp_curr["lon"]],
+                "distance_km": leg_dist,
+                "predicted_hours": leg_hours,
+                "weather": leg_weather,
+            })
+
+        total_segmented_hours = round(total_segmented_hours, 2)
+        # Update recommended predictions with sum of 10 km segments
+        predictions["recommended_hours"] = total_segmented_hours
+        predictions["confidence_low"] = round(total_segmented_hours * 0.9, 2)
+        predictions["confidence_high"] = round(total_segmented_hours * 1.1, 2)
+        predictions["segmented_sum_hours"] = total_segmented_hours
 
     response_ms = int((time.time() - t_start) * 1000)
 
@@ -177,6 +251,8 @@ def predict():
             "base_duration_min":    route["base_duration_min"],
             "traffic_duration_min": route["traffic_duration_min"],
             "traffic_level":        route["traffic_level"],
+            "geometry":             route.get("geometry", []),
+            "sampled_waypoints":    route.get("sampled_waypoints", []),
         },
         "weather": {
             "condition":           weather["weather_condition"],
@@ -184,7 +260,10 @@ def predict():
             "wind_speed_kmh":      weather["wind_speed_kmh"],
             "precipitation_mm":    weather["precipitation_mm"],
             "description":         weather.get("description", ""),
+            "checkpoints":         weather.get("checkpoints", {}),
         },
+        "segments": segments,
+        "total_segmented_hours": total_segmented_hours,
         "package": {
             "weight_kg":     weight,
             "type":          pkg_type,

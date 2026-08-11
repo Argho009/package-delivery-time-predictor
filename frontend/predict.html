@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Predict Delivery Time — DeliverAI</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -95,15 +96,15 @@
 
       <!-- Result View -->
       <div id="result-container" class="card">
-        <div class="card-header">📊 AI Prediction Results</div>
+        <div class="card-header">📊 AI Prediction Results & Route Map</div>
         <div class="card-body flex flex-col justify-center items-center text-center" style="min-height:350px;">
           <div id="placeholder-view">
             <div style="font-size:3rem; margin-bottom:1rem;">🗺️</div>
-            <div class="text-muted" style="font-size:1rem; font-weight:500;">Fill in the shipment details and click predict to generate live estimates</div>
+            <div class="text-muted" style="font-size:1rem; font-weight:500;">Fill in the shipment details and click predict to generate live estimates & route map</div>
           </div>
 
           <div id="output-view" class="d-none w-full" style="width:100%;">
-            <div class="result-card mb-4 text-center">
+            <div class="result-card mb-3 text-center">
               <div class="result-time" id="res-time">—</div>
               <div class="result-label" id="res-model">Recommended Estimate</div>
               <div class="result-confidence" id="res-conf"></div>
@@ -111,20 +112,38 @@
 
             <!-- Route & Weather Details -->
             <div class="grid-2 mb-3">
-              <div style="background:rgba(255,255,255,0.6); padding:1rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4); text-align:left;">
+              <div style="background:rgba(255,255,255,0.6); padding:0.85rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4); text-align:left;">
                 <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">Route Metrics</div>
                 <div style="font-weight:700; font-size:1.1rem; color:var(--clr-primary-dark);" id="res-dist">— km</div>
                 <div style="font-size:0.82rem; color:var(--txt-secondary);" id="res-traffic">Traffic: —</div>
               </div>
-              <div style="background:rgba(255,255,255,0.6); padding:1rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4); text-align:left;">
-                <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">Destination Weather</div>
-                <div style="font-weight:700; font-size:1.1rem; color:var(--clr-primary-dark);" id="res-weather">—</div>
-                <div style="font-size:0.82rem; color:var(--txt-secondary);" id="res-temp">— °C</div>
+              <div style="background:rgba(255,255,255,0.6); padding:0.85rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4); text-align:left;">
+                <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">Overall Route Weather</div>
+                <div style="font-weight:700; font-size:1.0rem; color:var(--clr-primary-dark);" id="res-weather">—</div>
+                <div style="font-size:0.78rem; color:var(--txt-secondary); margin-top:0.25rem;" id="res-temp">—</div>
               </div>
             </div>
 
+            <!-- Side-by-side Weather Checkpoints -->
+            <div id="weather-checkpoints" class="mb-3"></div>
+
+            <!-- Interactive Route Map -->
+            <div style="text-align:left; margin-bottom:1rem;">
+              <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.35rem;">🗺️ Driving Route & Weather Map</div>
+              <div id="route-map" style="height:280px; width:100%; border-radius:1rem; border:1px solid rgba(0,0,0,0.15); box-shadow:0 4px 12px rgba(0,0,0,0.08); z-index:1;"></div>
+            </div>
+
+            <!-- 50-75 km Segmented Route Breakdown & Sum -->
+            <div id="segment-container" class="mb-3" style="text-align:left; background:rgba(255,255,255,0.6); padding:1rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4);">
+              <div class="flex justify-between items-center mb-2">
+                <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">🛣️ Route Breakdown (Processed Every 10 km)</div>
+                <div style="font-size:0.85rem; font-weight:700; color:var(--clr-primary-dark);" id="seg-total-sum">Total Sum: —</div>
+              </div>
+              <div id="segment-table" style="max-height:220px; overflow-y:auto;"></div>
+            </div>
+
             <!-- All Model Estimates -->
-            <div style="background:rgba(255,255,255,0.4); padding:1rem; border-radius:1rem; text-align:left;">
+            <div style="background:rgba(255,255,255,0.4); padding:0.85rem; border-radius:1rem; text-align:left;">
               <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem;">All Model Predictions</div>
               <div class="form-row" style="font-size:0.85rem;">
                 <div>🌲 Random Forest: <strong id="m-rf">—</strong></div>
@@ -138,6 +157,7 @@
     </div>
   </main>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/main.js"></script>
   <script src="js/predict.js"></script>
 </body>
