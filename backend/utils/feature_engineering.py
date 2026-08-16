@@ -10,7 +10,16 @@ import numpy as np
 # ── Encoding maps (must match training-time encoding) ────────────
 TRAFFIC_LEVEL_MAP = {"LOW": 0, "MODERATE": 1, "HIGH": 2, "SEVERE": 3}
 
-PACKAGE_TYPE_MAP = {"SMALL": 0, "MEDIUM": 1, "LARGE": 2, "FRAGILE": 3, "PERISHABLE": 4}
+PACKAGE_TYPE_MAP = {
+    "SMALL":     0,
+    "MEDIUM":    1,
+    "LARGE":     2,
+    "HEAVY":     2,  # maps to LARGE encoding
+    "FRAGILE":   3,
+    "PERISHABLE": 4,
+    "OVERSIZED": 2,  # maps to LARGE encoding
+    "HAZARDOUS": 3,  # maps to FRAGILE encoding (special handling)
+}
 PRIORITY_MAP     = {"STANDARD": 0, "EXPRESS": 1, "OVERNIGHT": 2}
 SHIPPING_MODE_MAP = {"ROAD": 0, "AIR": 1, "RAIL": 2, "SEA": 3}
 

@@ -57,12 +57,22 @@ backend/models/saved/*.pkl
 # IDEs, Editors & OS Files
 .vscode/
 .idea/
+.agents/
+.gemini/
 *.swp
 *.swo
 .DS_Store
 Thumbs.db
 ehthumbs.db
 desktop.ini
+
+# Test Output Dumps, Temporary Screenshots & Scratch Files
+test.txt
+range_performance_25km.csv
+image.png
+*.png
+!frontend/assets/*
+scratch/
 
 # Logs & Temporary Files
 *.log

@@ -31,9 +31,9 @@ def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return R * c
 
 
-def sample_route_waypoints(coords_latlon: list, total_distance_km: float, origin_name: str, dest_name: str, target_step_km: float = 10.0) -> list:
+def sample_route_waypoints(coords_latlon: list, total_distance_km: float, origin_name: str, dest_name: str, target_step_km: float = 25.0) -> list:
     """
-    Sample waypoints every ~10 km along the polyline coordinates.
+    Sample waypoints every ~25 km along the polyline coordinates.
     Returns list of checkpoint dicts with index, lat, lon, name, km_offset.
     """
     orig_clean = origin_name.split(",")[0].strip()
@@ -47,7 +47,6 @@ def sample_route_waypoints(coords_latlon: list, total_distance_km: float, origin
 
     num_segments = max(2, int(round(total_distance_km / target_step_km)))
     actual_step = total_distance_km / num_segments
-
     # Cumulative distance along polyline points
     cum_dists = [0.0]
     curr = 0.0
@@ -159,8 +158,8 @@ def get_route_info(origin: str, destination: str) -> dict:
     traffic_min = round(traffic_duration_s / 60.0, 1)
     traffic_lvl = _classify_traffic(base_duration_s, traffic_duration_s)
 
-    # Sample waypoints every ~10 km along polyline
-    sampled_waypoints = sample_route_waypoints(polyline_coords, distance_km, origin_name, dest_name, target_step_km=10.0)
+    # Sample waypoints every ~25 km along polyline
+    sampled_waypoints = sample_route_waypoints(polyline_coords, distance_km, origin_name, dest_name, target_step_km=25.0)
 
     # Extract midpoint for fallback
     if coords:

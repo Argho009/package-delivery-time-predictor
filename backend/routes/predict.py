@@ -14,7 +14,7 @@ from database.db import db
 from database.models import PredictionLog
 from services.maps_service import get_route_info
 from services.weather_service import get_route_weather, get_weather_by_coords
-from models.predict import predict_all
+from models.predict import predict_all, predict_ensemble
 
 logger = logging.getLogger(__name__)
 predict_bp = Blueprint("predict", __name__, url_prefix="/api")
@@ -37,7 +37,7 @@ def _validate_payload(data: dict) -> list:
         except (ValueError, TypeError):
             errors.append("'package_weight_kg' must be a number.")
 
-    valid_types = {"SMALL", "MEDIUM", "LARGE", "FRAGILE", "PERISHABLE"}
+    valid_types = {"SMALL", "MEDIUM", "LARGE", "HEAVY", "FRAGILE", "PERISHABLE", "OVERSIZED", "HAZARDOUS"}
     if data.get("package_type") and data["package_type"].upper() not in valid_types:
         errors.append(f"'package_type' must be one of: {', '.join(valid_types)}")
 
@@ -115,7 +115,7 @@ def predict():
         logger.error("Weather API error: %s", e)
         return jsonify({"error": "Weather API error", "details": str(e)}), 502
 
-    # ── Step 3: Overall ML Prediction ──
+    # ── Step 3: Overall ML Ensemble Prediction ──
     try:
         predictions = predict_all(
             distance_km          = route["distance_km"],
@@ -126,10 +126,25 @@ def predict():
             priority             = priority,
             shipping_mode        = shipping_mode,
         )
+        # Overall ensemble for the full route
+        full_ensemble = predict_ensemble(
+            distance_km          = route["distance_km"],
+            traffic_duration_min = route["traffic_duration_min"],
+            traffic_level        = route["traffic_level"],
+            package_weight_kg    = weight,
+            package_type         = pkg_type,
+            priority             = priority,
+            shipping_mode        = shipping_mode,
+        )
+        predictions["ensemble_hours"]   = full_ensemble["ensemble_hours"]
+        predictions["dominant_model"]   = full_ensemble["dominant_model"]
+        predictions["model_weights"]    = full_ensemble["model_weights"]
+        # Keep the range-specific recommended model prediction instead of the ensemble average
+        predictions["recommended_hours"] = predictions["recommended_hours"]
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 503
 
-    # ── Step 3b: 10 km Segmented Per-Leg Transit & Weather ──
+    # ── Step 3b: 25 km Segmented Per-Leg Transit & Weather ──
     sampled_wps = route.get("sampled_waypoints", [])
     segments = []
     total_segmented_hours = 0.0
@@ -160,7 +175,7 @@ def predict():
                 major_wps
             ))
 
-        # Helper to get nearest major checkpoint weather for any 10 km waypoint
+        # Helper to get nearest major checkpoint weather for any 25 km waypoint
         def get_nearest_leg_weather(wp):
             best_w = major_weathers[0]
             min_d = float("inf")
@@ -182,9 +197,20 @@ def predict():
             cond = leg_weather.get("weather_condition", "CLEAR")
             w_mult = weather_multipliers.get(cond, 1.0)
 
-            # Proportional leg transit time based on ML line-haul estimate + leg weather factor
-            base_leg_h = total_rec_hours * (leg_dist / total_d)
-            leg_hours = round(base_leg_h * w_mult, 3)
+            # Per-leg ensemble: all 3 models weighted by inverse training RMSE
+            leg_ens = predict_ensemble(
+                distance_km          = leg_dist,
+                traffic_duration_min = round(route["traffic_duration_min"] * (leg_dist / total_d), 1),
+                traffic_level        = route["traffic_level"],
+                package_weight_kg    = weight,
+                package_type         = pkg_type,
+                priority             = priority,
+                shipping_mode        = shipping_mode,
+            )
+            # Apply leg-local weather multiplier on top of the dominant model's prediction for this range
+            dom_model = leg_ens["dominant_model"]
+            dom_pred = leg_ens["model_hours"].get(dom_model, leg_ens["ensemble_hours"])
+            leg_hours = round(dom_pred * w_mult, 3)
             total_segmented_hours += leg_hours
 
             segments.append({
@@ -195,11 +221,14 @@ def predict():
                 "end_coords": [wp_curr["lat"], wp_curr["lon"]],
                 "distance_km": leg_dist,
                 "predicted_hours": leg_hours,
+                "dominant_model": leg_ens["dominant_model"],
+                "model_hours": leg_ens["model_hours"],
+                "model_weights": leg_ens["model_weights"],
                 "weather": leg_weather,
             })
 
         total_segmented_hours = round(total_segmented_hours, 2)
-        # Update recommended predictions with sum of 10 km segments
+        # Update recommended predictions with sum of 25 km segments
         predictions["recommended_hours"] = total_segmented_hours
         predictions["confidence_low"] = round(total_segmented_hours * 0.9, 2)
         predictions["confidence_high"] = round(total_segmented_hours * 1.1, 2)

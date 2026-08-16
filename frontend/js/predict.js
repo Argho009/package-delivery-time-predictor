@@ -73,6 +73,37 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resWeather) resWeather.textContent = `${weather.condition}`;
     if (resTemp) resTemp.textContent = `Avg Temp: ${weather.avg_temperature_celsius || weather.temperature_celsius}°C • Max Wind: ${weather.wind_speed_kmh} km/h`;
 
+    // Calculate checkpoint travel speeds (km/h) in place of wind speed
+    const totalDist = route.distance_km || 1.0;
+    const totalHours = predictions.recommended_hours || 1.0;
+    const overallSpeed = totalDist / totalHours;
+
+    let speedOrigin = overallSpeed;
+    let speedMidpoint = overallSpeed;
+    let speedDest = overallSpeed;
+
+    if (data.segments && data.segments.length > 0) {
+      const segs = data.segments;
+      const midIdx = Math.floor(segs.length / 2);
+      
+      let dist1 = 0, hours1 = 0;
+      let dist2 = 0, hours2 = 0;
+      
+      for (let i = 0; i < segs.length; i++) {
+        if (i < midIdx) {
+          dist1 += segs[i].distance_km || 0;
+          hours1 += segs[i].predicted_hours || 0;
+        } else {
+          dist2 += segs[i].distance_km || 0;
+          hours2 += segs[i].predicted_hours || 0;
+        }
+      }
+      
+      speedOrigin = overallSpeed;
+      if (hours1 > 0) speedMidpoint = dist1 / hours1;
+      if (hours2 > 0) speedDest = dist2 / hours2;
+    }
+
     // Render Side-by-Side Weather Checkpoint Cards
     const cpContainer = document.getElementById("weather-checkpoints");
     if (cpContainer && weather.checkpoints) {
@@ -83,25 +114,25 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="checkpoint-tag">📍 Origin</div>
             <div class="checkpoint-city">${cp.origin.location_name}</div>
             <div class="checkpoint-temp">${cp.origin.temperature_celsius}°C</div>
-            <div class="checkpoint-cond">${cp.origin.weather_condition} • ${cp.origin.wind_speed_kmh} km/h</div>
+            <div class="checkpoint-cond">${cp.origin.weather_condition} • ${speedOrigin.toFixed(1)} km/h</div>
           </div>
           <div class="checkpoint-card">
             <div class="checkpoint-tag">🛣️ Midpoint</div>
             <div class="checkpoint-city">${cp.midpoint.location_name}</div>
             <div class="checkpoint-temp">${cp.midpoint.temperature_celsius}°C</div>
-            <div class="checkpoint-cond">${cp.midpoint.weather_condition} • ${cp.midpoint.wind_speed_kmh} km/h</div>
+            <div class="checkpoint-cond">${cp.midpoint.weather_condition} • ${speedMidpoint.toFixed(1)} km/h</div>
           </div>
           <div class="checkpoint-card">
             <div class="checkpoint-tag">🏁 Destination</div>
             <div class="checkpoint-city">${cp.destination.location_name}</div>
             <div class="checkpoint-temp">${cp.destination.temperature_celsius}°C</div>
-            <div class="checkpoint-cond">${cp.destination.weather_condition} • ${cp.destination.wind_speed_kmh} km/h</div>
+            <div class="checkpoint-cond">${cp.destination.weather_condition} • ${speedDest.toFixed(1)} km/h</div>
           </div>
         </div>
       `;
     }
 
-    // Model breakdown
+    // Model breakdown — show per-model hours and ensemble weights
     const mRf  = document.getElementById("m-rf");
     const mXgb = document.getElementById("m-xgb");
     const mLr  = document.getElementById("m-lr");
@@ -110,7 +141,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (mXgb) mXgb.textContent = fmtHours(predictions.xgboost);
     if (mLr)  mLr.textContent  = fmtHours(predictions.linear_regression);
 
-    // Render 50-75 km Segment Breakdown Table & Sum
+    // Show ensemble dominant model and weights if available
+    const ensembleBadge = document.getElementById("ensemble-badge");
+    if (ensembleBadge && predictions.dominant_model) {
+      const weights = predictions.model_weights || {};
+      const wXgb = weights.xgboost ? (weights.xgboost * 100).toFixed(1) : '';
+      const wRf  = weights.random_forest ? (weights.random_forest * 100).toFixed(1) : '';
+      const wLr  = weights.linear_regression ? (weights.linear_regression * 100).toFixed(1) : '';
+      ensembleBadge.innerHTML = `
+        <div style="font-size:0.72rem; color:var(--clr-text-muted); margin-top:0.35rem; text-align:center;">
+          Ensemble: XGB ${wXgb}% &bull; RF ${wRf}% &bull; LR ${wLr}%<br>
+          <span style="color:var(--clr-primary-dark); font-weight:700;">Dominant: ${predictions.dominant_model.replace('_',' ').toUpperCase()}</span>
+        </div>`;
+    }
+
+    // Render 25 km Segment Breakdown Table & Sum
     const segTable = document.getElementById("segment-table");
     const segSum   = document.getElementById("seg-total-sum");
     const totalSumHours = data.total_segmented_hours || predictions.recommended_hours;
@@ -118,13 +163,30 @@ document.addEventListener("DOMContentLoaded", () => {
     if (segSum) segSum.textContent = `Total Sum: ${fmtHours(totalSumHours)}`;
 
     if (segTable && data.segments && data.segments.length > 0) {
+      const modelBadgeColor = {
+        xgboost: '#6366f1',
+        random_forest: '#10b981',
+        linear_regression: '#f59e0b',
+      };
+      const modelShort = {
+        xgboost: 'XGB',
+        random_forest: 'RF',
+        linear_regression: 'LR',
+      };
+
       let rows = data.segments.map(s => {
         const w = s.weather || {};
+        const dm = s.dominant_model || '';
+        const mh = s.model_hours || {};
+        const color = modelBadgeColor[dm] || '#888';
+        const short = modelShort[dm] || dm;
+        const tooltip = Object.entries(mh).map(([m, v]) => `${modelShort[m]||m}: ${v}h`).join(' | ');
         return `
-          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.4rem 0.2rem; border-bottom:1px solid rgba(0,0,0,0.06); font-size:0.82rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.4rem 0.2rem; border-bottom:1px solid rgba(0,0,0,0.06); font-size:0.82rem;" title="All models: ${tooltip}">
             <div>
-              <strong>Leg ${s.leg}:</strong> ${s.start_name} → ${s.end_name}
+              <strong>Leg ${s.leg}:</strong> ${s.start_name} &rarr; ${s.end_name}
               <span class="text-muted">(${s.distance_km} km)</span>
+              ${dm ? `<span style="background:${color}22; color:${color}; border:1px solid ${color}44; border-radius:4px; font-size:0.68rem; font-weight:700; padding:1px 5px; margin-left:4px;">${short}</span>` : ''}
             </div>
             <div style="text-align:right;">
               <span style="font-weight:600; color:var(--clr-primary-dark);">${fmtHours(s.predicted_hours)}</span>

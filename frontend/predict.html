@@ -133,23 +133,24 @@
               <div id="route-map" style="height:280px; width:100%; border-radius:1rem; border:1px solid rgba(0,0,0,0.15); box-shadow:0 4px 12px rgba(0,0,0,0.08); z-index:1;"></div>
             </div>
 
-            <!-- 50-75 km Segmented Route Breakdown & Sum -->
+            <!-- 25 km Segmented Route Breakdown & Sum -->
             <div id="segment-container" class="mb-3" style="text-align:left; background:rgba(255,255,255,0.6); padding:1rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4);">
               <div class="flex justify-between items-center mb-2">
-                <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">🛣️ Route Breakdown (Processed Every 10 km)</div>
+                <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">🛣️ Route Breakdown (Processed Every 25 km)</div>
                 <div style="font-size:0.85rem; font-weight:700; color:var(--clr-primary-dark);" id="seg-total-sum">Total Sum: —</div>
               </div>
               <div id="segment-table" style="max-height:220px; overflow-y:auto;"></div>
             </div>
 
-            <!-- All Model Estimates -->
+            <!-- All Model Estimates + Ensemble -->
             <div style="background:rgba(255,255,255,0.4); padding:0.85rem; border-radius:1rem; text-align:left;">
-              <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem;">All Model Predictions</div>
+              <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem;">Model Predictions &amp; Ensemble</div>
               <div class="form-row" style="font-size:0.85rem;">
                 <div>🌲 Random Forest: <strong id="m-rf">—</strong></div>
                 <div>⚡ XGBoost: <strong id="m-xgb">—</strong></div>
                 <div>📈 Linear Reg: <strong id="m-lr">—</strong></div>
               </div>
+              <div id="ensemble-badge"></div>
             </div>
           </div>
         </div>
