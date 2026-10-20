@@ -1,0 +1,17 @@
+venv/
+.venv/
+.git/
+.agents/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+crash_dump.log
+extra/
+backend/data/raw/amazon_india/
+backend/data/raw/delhivery/
+backend/data/raw/food_delivery/
+backend/data/raw/road_accidents/
+backend/data/raw/bangalore_traffic/
+backend/data/raw/india_weather/

@@ -46,13 +46,18 @@ backend/delivery.db
 # Heavy Raw Datasets & Large Processed Datasets
 backend/data/raw/*
 !backend/data/raw/.gitkeep
+!backend/data/raw/railway_network/
+!backend/data/raw/railway_network/**
 backend/data/processed/*
 !backend/data/processed/.gitkeep
 past_predictions_and_history.csv
 
-# Large Trained Machine Learning Models
-backend/models/saved/*.pkl
+
+# Machine Learning Models & Metrics (whitelisted for Docker / HF deployment)
+!backend/models/saved/*.pkl
+!backend/models/saved/*.json
 !backend/models/saved/.gitkeep
+
 
 # IDEs, Editors & OS Files
 .vscode/
@@ -80,3 +85,7 @@ scratch/
 temp/
 tmp/
 .tempmediaStorage/
+catboost_info/
+**/catboost_info/
+report_template.html
+a.txt

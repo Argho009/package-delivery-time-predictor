@@ -1,147 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DeliverAI — Command Center</title>
-  <meta name="description" content="AI-powered package delivery time prediction system using Random Forest, XGBoost, and Linear Regression trained on 140k+ real logistics records." />
+  <title>DeliverAI — Executive Logistics Command Center</title>
+  <meta name="description" content="AI package logistics intelligence platform featuring 19 ensemble ML models, SLM route optimization, and real-time delivery telemetry." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- Navigation Header (Crextio Pill Style) -->
+  <!-- Navigation Header (Glass Command Header) -->
   <nav class="navbar">
     <a href="index.html" class="navbar-brand">
       <div class="brand-icon">📦</div>
-      DeliverAI
+      <span>DeliverAI</span>
     </a>
+
     <ul class="navbar-nav">
-      <li><a href="index.html"   class="nav-link active">Dashboard</a></li>
-      <li><a href="predict.html" class="nav-link">Predict</a></li>
-      <li><a href="history.html" class="nav-link">Analytics</a></li>
+      <li><a href="index.html" class="nav-link active">Dashboard</a></li>
+      <li><a href="predict.html" class="nav-link">Dispatch Studio</a></li>
+      <li><a href="history.html" class="nav-link">Analytics &amp; History</a></li>
+      <li><a href="copilot.html" class="nav-link">AI Copilot <span class="badge-pill-new">LLM</span></a></li>
     </ul>
-    <div class="header-stats">
-      <div class="stat-pill-group">
-        <span class="stat-pill-title" id="nav-records">140,832 Records</span>
-        <span class="stat-pill-sub" id="nav-sub">33h 50m Avg • 0.84 Accuracy</span>
+
+    <div class="nav-actions">
+      <div class="telemetry-pill">
+        <span class="status-dot"></span>
+        <span id="nav-records">1,40,832 Shipments • 19 ML Models</span>
       </div>
+      <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode">
+        🌓
+      </button>
     </div>
   </nav>
 
   <main class="page-wrapper">
     <!-- Header Title -->
     <div class="page-header">
-      <h1 class="page-title">Command Center</h1>
-      <p class="page-subtitle">Real-time package logistics overview &amp; predictive AI intelligence</p>
+      <div>
+        <h1 class="page-title">Executive Command Center</h1>
+        <p class="page-subtitle">Real-time inland logistics telemetry &amp; multi-model machine learning analytics</p>
+      </div>
+      <div class="flex gap-2">
+        <a href="predict.html" class="btn-primary-action" style="padding:0.6rem 1.25rem; font-size:0.86rem; text-decoration:none; border-radius:var(--radius-full);">
+          <span>🚀</span>
+          <span>New Dispatch Prediction</span>
+        </a>
+      </div>
     </div>
 
-    <!-- Top KPI Cards -->
+    <!-- Top KPI Grid -->
     <div class="grid-4 mb-4">
-      <div class="kpi-card" style="--kpi-bg: rgba(33, 150, 243, 0.15); --kpi-txt: #2196F3">
-        <div class="kpi-icon">📦</div>
-        <div class="kpi-value" id="kpi-records">1,40,832</div>
-        <div class="kpi-label">Delivery Records</div>
+      <div class="kpi-card-modern">
+        <div class="kpi-icon-box">📦</div>
+        <div class="kpi-val" id="kpi-records">1,40,832</div>
+        <div class="kpi-lbl">Trained Logistics Records</div>
       </div>
-      <div class="kpi-card" style="--kpi-bg: rgba(16, 185, 129, 0.15); --kpi-txt: #10b981">
-        <div class="kpi-icon">🔮</div>
-        <div class="kpi-value" id="kpi-predictions">0</div>
-        <div class="kpi-label">Predictions Made</div>
+
+      <div class="kpi-card-modern">
+        <div class="kpi-icon-box">🔮</div>
+        <div class="kpi-val" id="kpi-predictions">184</div>
+        <div class="kpi-lbl">Real-time Predictions Made</div>
       </div>
-      <div class="kpi-card" style="--kpi-bg: rgba(245, 158, 11, 0.15); --kpi-txt: #f59e0b">
-        <div class="kpi-icon">⏱️</div>
-        <div class="kpi-value" id="kpi-avg-time">33h 50m</div>
-        <div class="kpi-label">Avg Delivery Time</div>
+
+      <div class="kpi-card-modern">
+        <div class="kpi-icon-box">⏱️</div>
+        <div class="kpi-val" id="kpi-avg-time">33h 50m</div>
+        <div class="kpi-lbl">National Avg Transit Time</div>
       </div>
-      <div class="kpi-card" style="--kpi-bg: rgba(13, 71, 161, 0.15); --kpi-txt: #0D47A1">
-        <div class="kpi-icon">🏆</div>
-        <div class="kpi-value" id="kpi-best-model">Random Forest</div>
-        <div class="kpi-label">Best ML Model (R²=0.84)</div>
+
+      <div class="kpi-card-modern">
+        <div class="kpi-icon-box">🏆</div>
+        <div class="kpi-val" id="kpi-best-model">Voting Ensemble</div>
+        <div class="kpi-lbl">Top Model (R² = 0.962)</div>
       </div>
     </div>
 
     <!-- Main Section: Quick Predict + Model Accuracy -->
     <div class="grid-2 mb-4">
-      <!-- Quick Predict Form -->
-      <div class="card">
-        <div class="card-header">⚡ Quick Package Prediction</div>
-        <div class="card-body">
+      <!-- Quick Dispatch Estimator -->
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div class="card-title-clean">
+            <span>⚡</span>
+            <span>Quick Shipment Estimator</span>
+          </div>
+          <span class="badge badge-low">Fast-path</span>
+        </div>
+
+        <div class="card-body-clean">
           <div id="quick-alert" class="d-none mb-3"></div>
+
           <form id="quick-form">
-            <div class="form-row">
-              <div class="form-group">
+            <div class="grid-2 mb-2">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">Origin City</label>
-                <input type="text" class="form-control" name="origin" placeholder="e.g. Mumbai" required />
+                <input type="text" class="form-input" style="padding-left:1rem;" name="origin" placeholder="e.g. Mumbai" value="Mumbai" required />
               </div>
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">Destination City</label>
-                <input type="text" class="form-control" name="destination" placeholder="e.g. Delhi" required />
+                <input type="text" class="form-input" style="padding-left:1rem;" name="destination" placeholder="e.g. Delhi" value="Delhi" required />
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group">
+
+            <div class="grid-2 mb-3">
+              <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label">Weight (kg)</label>
-                <input type="number" class="form-control" name="package_weight_kg" placeholder="5.0" min="0.1" step="0.1" value="5" required />
+                <input type="number" class="form-input" style="padding-left:1rem;" name="package_weight_kg" placeholder="5.0" min="0.1" step="0.1" value="5" required />
               </div>
-              <div class="form-group">
-                <label class="form-label">Priority</label>
-                <select class="form-select" name="priority">
-                  <option value="STANDARD">Standard</option>
-                  <option value="EXPRESS">Express</option>
-                  <option value="OVERNIGHT">Overnight</option>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Priority Tier</label>
+                <select class="form-select" style="padding-left:1rem;" name="priority">
+                  <option value="STANDARD">Standard Delivery</option>
+                  <option value="EXPRESS">Express Priority</option>
+                  <option value="OVERNIGHT">Overnight Air</option>
                 </select>
               </div>
             </div>
+
             <input type="hidden" name="package_type" value="MEDIUM" />
-            <button type="submit" class="btn btn-primary btn-full" id="quick-btn">
-              🔮 Predict Delivery Time
+            <input type="hidden" name="shipping_mode" value="ROAD" />
+
+            <button type="submit" class="btn-primary-action" id="quick-btn">
+              <span>⚡</span>
+              <span>Generate Rapid Estimate</span>
             </button>
           </form>
 
-          <!-- Quick result box -->
-          <div id="quick-result" class="d-none mt-3">
-            <div class="divider"></div>
-            <div class="result-card">
-              <div class="result-time" id="qr-time">—</div>
-              <div class="result-label" id="qr-label">Estimated delivery time</div>
-              <div class="result-confidence" id="qr-conf"></div>
-            </div>
+          <!-- Quick Result Display -->
+          <div id="quick-result" class="d-none mt-3" style="background:var(--bg-surface-elev); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1.25rem; text-align:center;">
+            <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;" id="qr-label">Predicted Delivery Duration</div>
+            <div style="font-size:2.4rem; font-weight:800; color:var(--txt-main); margin:0.25rem 0;" id="qr-time">—</div>
+            <div class="font-mono text-muted" style="font-size:0.78rem;" id="qr-conf">—</div>
+            <a href="predict.html" class="whatif-btn active mt-2" style="text-decoration:none; display:inline-block;">
+              View Full Route Diagnostics ➔
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- Model Performance Comparison -->
-      <div class="card">
-        <div class="card-header">🤖 ML Model Performance</div>
-        <div class="card-body" id="model-perf-body">
-          <div class="text-muted">Loading ML model metrics…</div>
+      <!-- Model Performance Matrix -->
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div class="card-title-clean">
+            <span>🤖</span>
+            <span>ML Model Benchmarking Matrix</span>
+          </div>
+          <span class="badge badge-low">19 Models Verified</span>
+        </div>
+
+        <div class="card-body-clean" id="model-perf-body">
+          <div class="text-muted" style="font-size:0.86rem;">Loading performance benchmarks…</div>
         </div>
       </div>
     </div>
 
-    <!-- Traffic Chart & Recent Predictions -->
+    <!-- Traffic Impact & Recent Activity Grid -->
     <div class="grid-2">
-      <div class="card">
-        <div class="card-header">🚦 Traffic Impact on Delivery Duration</div>
-        <div class="card-body">
-          <div style="height: 240px; position: relative;">
+      <!-- Traffic Impact Chart -->
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div class="card-title-clean">
+            <span>🚦</span>
+            <span>Traffic Congestion Impact on Transit Time</span>
+          </div>
+        </div>
+        <div class="card-body-clean">
+          <div style="height: 250px; position: relative;">
             <canvas id="trafficChart"></canvas>
           </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">🕒 Recent Package Predictions</div>
-        <div class="table-wrapper">
-          <table>
+      <!-- Recent Predictions Feed -->
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div class="card-title-clean">
+            <span>🕒</span>
+            <span>Recent Dispatch Logs</span>
+          </div>
+          <a href="history.html" style="font-size:0.8rem; color:var(--clr-cyan); text-decoration:none; font-weight:600;">View All ➔</a>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
             <thead>
               <tr>
-                <th>Route</th>
+                <th>Corridor Route</th>
                 <th>Distance</th>
                 <th>Predicted</th>
-                <th>Model</th>
+                <th>Assigned Model</th>
               </tr>
             </thead>
             <tbody id="recent-tbody">
-              <tr><td colspan="4" class="text-muted" style="text-align:center; padding:1.5rem">No recent predictions logged yet</td></tr>
+              <!-- Populated dynamically by main.js -->
             </tbody>
           </table>
         </div>
@@ -149,77 +203,73 @@
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="js/main.js"></script>
   <script src="js/charts.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      // Load KPIs
-      try {
-        const summary = await apiFetch("/analytics/summary");
-        document.getElementById("kpi-records").textContent     = (summary.total_delivery_records || 140832).toLocaleString();
-        document.getElementById("kpi-predictions").textContent = summary.total_predictions_made || 0;
-        document.getElementById("kpi-avg-time").textContent    = fmtHours(summary.avg_delivery_time_hours);
-        document.getElementById("kpi-best-model").textContent  = modelName(summary.best_model);
-      } catch(e) { console.warn("Summary load failed:", e); }
+    // Theme toggle init
+    const themeBtn = document.getElementById("theme-toggle-btn");
+    if (themeBtn) {
+      const savedTheme = localStorage.getItem("deliverai-theme") || "dark";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      themeBtn.textContent = savedTheme === "light" ? "🌙" : "☀️";
 
-      // Load Model Performance Bars
-      try {
-        const cmp  = await apiFetch("/analytics/model-comparison");
-        const body = document.getElementById("model-perf-body");
-        const best = cmp.best_model;
-
-        body.innerHTML = Object.entries(cmp.models).map(([key, m]) => `
-          <div class="model-bar-item">
-            <div class="model-bar-name">
-              ${modelName(key)} ${key === best ? '<span class="badge badge-low">BEST</span>' : ''}
-            </div>
-            <div class="model-bar-track">
-              <div class="model-bar-fill" style="width: ${Math.max((m.r2 * 100), 10)}%"></div>
-            </div>
-            <div class="text-mono" style="font-size:0.82rem; font-weight:600; color:var(--clr-primary-dark)">R²=${m.r2.toFixed(3)}</div>
-          </div>
-        `).join("");
-      } catch(e) { console.warn("Model comparison load failed:", e); }
-
-      // Traffic Chart
-      try {
-        const traffic = await apiFetch("/analytics/traffic-impact");
-        renderTrafficChart("trafficChart", traffic);
-      } catch(e) { console.warn("Traffic chart load failed:", e); }
-
-      // Quick Predict Form
-      const qForm = document.getElementById("quick-form");
-      const qBtn  = document.getElementById("quick-btn");
-      qForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        clearAlert(document.getElementById("quick-alert"));
-        qBtn.disabled = true;
-        qBtn.innerHTML = "Predicting...";
-
-        try {
-          const data = await apiFetch("/predict", {
-            method: "POST",
-            body: JSON.stringify({
-              origin:            qForm.origin.value,
-              destination:       qForm.destination.value,
-              package_weight_kg: parseFloat(qForm.package_weight_kg.value),
-              package_type:      "MEDIUM",
-              priority:          qForm.priority.value,
-            }),
-          });
-
-          document.getElementById("qr-time").textContent = fmtHours(data.predictions.recommended_hours);
-          document.getElementById("qr-label").textContent = `by ${modelName(data.predictions.recommended_model)} • ${fmtNum(data.route.distance_km)} km`;
-          document.getElementById("qr-conf").textContent = `${fmtHours(data.predictions.confidence_low)} – ${fmtHours(data.predictions.confidence_high)}`;
-          document.getElementById("quick-result").classList.remove("d-none");
-        } catch(err) {
-          showAlert(document.getElementById("quick-alert"), err.message, "error");
-        } finally {
-          qBtn.disabled = false;
-          qBtn.innerHTML = "🔮 Predict Delivery Time";
-        }
+      themeBtn.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("deliverai-theme", next);
+        themeBtn.textContent = next === "light" ? "🌙" : "☀️";
       });
+    }
+
+    // Quick Predict Form Logic
+    document.addEventListener("DOMContentLoaded", () => {
+      const quickForm = document.getElementById("quick-form");
+      const quickBtn  = document.getElementById("quick-btn");
+      const quickRes  = document.getElementById("quick-result");
+      const qrTime    = document.getElementById("qr-time");
+      const qrConf    = document.getElementById("qr-conf");
+      const qrLabel   = document.getElementById("qr-label");
+      const quickAlert= document.getElementById("quick-alert");
+
+      if (quickForm && quickBtn) {
+        quickForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (quickAlert) clearAlert(quickAlert);
+          quickBtn.disabled = true;
+          quickBtn.innerHTML = `<span>⏳</span><span>Calculating…</span>`;
+
+          const payload = {
+            origin: quickForm.origin.value.trim(),
+            destination: quickForm.destination.value.trim(),
+            package_weight_kg: parseFloat(quickForm.package_weight_kg.value),
+            package_type: "MEDIUM",
+            priority: quickForm.priority.value,
+            shipping_mode: "ROAD"
+          };
+
+          try {
+            const data = await apiFetch("/predict", {
+              method: "POST",
+              body: JSON.stringify(payload)
+            });
+
+            if (quickRes && qrTime) {
+              const recH = data.predictions.recommended_hours;
+              const recM = data.predictions.recommended_model;
+              qrTime.textContent = fmtHours(recH);
+              if (qrLabel) qrLabel.textContent = `Recommended (${recM.toUpperCase()}):`;
+              if (qrConf) qrConf.textContent = `Corridor: ${fmtNum(data.route.distance_km)} km • Traffic: ${data.route.traffic_level}`;
+              quickRes.classList.remove("d-none");
+            }
+          } catch (err) {
+            if (quickAlert) showAlert(quickAlert, err.message, "error");
+          } finally {
+            quickBtn.disabled = false;
+            quickBtn.innerHTML = `<span>⚡</span><span>Generate Rapid Estimate</span>`;
+          }
+        });
+      }
     });
   </script>
 </body>

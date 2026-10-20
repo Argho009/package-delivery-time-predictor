@@ -14,10 +14,13 @@ from database.db import db
 from database.models import PredictionLog
 from services.maps_service import get_route_info
 from services.weather_service import get_route_weather, get_weather_by_coords
-from models.predict import predict_all, predict_ensemble
+from services.multimodal_service import check_multimodal_options
+from models.predict import predict_all, predict_ensemble, explain_prediction
+from utils.sustainability import calculate_carbon_footprint
 
 logger = logging.getLogger(__name__)
 predict_bp = Blueprint("predict", __name__, url_prefix="/api")
+
 
 
 def _validate_payload(data: dict) -> list:
@@ -117,10 +120,21 @@ def predict():
 
     # ── Step 3: Overall ML Ensemble Prediction ──
     try:
+        eff_dist = route["distance_km"]
+        eff_traffic_min = route["traffic_duration_min"]
+        eff_traffic_level = route["traffic_level"]
+        if shipping_mode == "AIR":
+            eff_dist = route["distance_km"] * 0.85
+            eff_traffic_min = (eff_dist / 600.0) * 60.0 + 180.0
+            eff_traffic_level = "LOW"
+        elif shipping_mode == "RAIL":
+            eff_dist = route["distance_km"] * 0.95
+            eff_traffic_min = (eff_dist / 46.0) * 60.0 + 360.0
+
         predictions = predict_all(
-            distance_km          = route["distance_km"],
-            traffic_duration_min = route["traffic_duration_min"],
-            traffic_level        = route["traffic_level"],
+            distance_km          = eff_dist,
+            traffic_duration_min = eff_traffic_min,
+            traffic_level        = eff_traffic_level,
             package_weight_kg    = weight,
             package_type         = pkg_type,
             priority             = priority,
@@ -128,9 +142,9 @@ def predict():
         )
         # Overall ensemble for the full route
         full_ensemble = predict_ensemble(
-            distance_km          = route["distance_km"],
-            traffic_duration_min = route["traffic_duration_min"],
-            traffic_level        = route["traffic_level"],
+            distance_km          = eff_dist,
+            traffic_duration_min = eff_traffic_min,
+            traffic_level        = eff_traffic_level,
             package_weight_kg    = weight,
             package_type         = pkg_type,
             priority             = priority,
@@ -139,8 +153,14 @@ def predict():
         predictions["ensemble_hours"]   = full_ensemble["ensemble_hours"]
         predictions["dominant_model"]   = full_ensemble["dominant_model"]
         predictions["model_weights"]    = full_ensemble["model_weights"]
-        # Keep the range-specific recommended model prediction instead of the ensemble average
-        predictions["recommended_hours"] = predictions["recommended_hours"]
+        # Ensure min and max bounds for delivery window
+        model_preds = [v for v in [predictions.get("xgboost"), predictions.get("random_forest"), predictions.get("linear_regression")] if v is not None]
+        min_hours = min(model_preds) if model_preds else predictions["recommended_hours"]
+        max_hours = max(model_preds) if model_preds else predictions["recommended_hours"]
+        predictions["min_hours"] = round(min_hours, 3)
+        predictions["max_hours"] = round(max_hours, 3)
+        predictions["confidence_low"] = round(min_hours, 3)
+        predictions["confidence_high"] = round(max_hours, 3)
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 503
 
@@ -197,42 +217,101 @@ def predict():
             cond = leg_weather.get("weather_condition", "CLEAR")
             w_mult = weather_multipliers.get(cond, 1.0)
 
-            # Per-leg ensemble: all 3 models weighted by inverse training RMSE
-            leg_ens = predict_ensemble(
-                distance_km          = leg_dist,
-                traffic_duration_min = round(route["traffic_duration_min"] * (leg_dist / total_d), 1),
-                traffic_level        = route["traffic_level"],
-                package_weight_kg    = weight,
-                package_type         = pkg_type,
-                priority             = priority,
-                shipping_mode        = shipping_mode,
-            )
-            # Apply leg-local weather multiplier on top of the dominant model's prediction for this range
-            dom_model = leg_ens["dominant_model"]
-            dom_pred = leg_ens["model_hours"].get(dom_model, leg_ens["ensemble_hours"])
-            leg_hours = round(dom_pred * w_mult, 3)
+            # Proportional share of the trip represented by this leg
+            leg_share = leg_dist / total_d
+
+            # Allocate trip delivery duration proportionally and apply local weather impact
+            leg_hours = round(total_rec_hours * leg_share * w_mult, 3)
             total_segmented_hours += leg_hours
+
+            # Per-model hours on this leg
+            leg_model_hours = {}
+            for m_name in ["xgboost", "random_forest", "linear_regression"]:
+                m_val = predictions.get(m_name)
+                if m_val is not None:
+                    leg_model_hours[m_name] = round(m_val * leg_share * w_mult, 3)
 
             segments.append({
                 "leg": i,
+                "heading": f"{wp_prev['name']} -> {wp_curr['name']}",
+                "corridor_leg": f"{wp_prev['name']} -> {wp_curr['name']}",
                 "start_name": wp_prev["name"],
                 "end_name": wp_curr["name"],
                 "start_coords": [wp_prev["lat"], wp_prev["lon"]],
                 "end_coords": [wp_curr["lat"], wp_curr["lon"]],
                 "distance_km": leg_dist,
                 "predicted_hours": leg_hours,
-                "dominant_model": leg_ens["dominant_model"],
-                "model_hours": leg_ens["model_hours"],
-                "model_weights": leg_ens["model_weights"],
+                "dominant_model": predictions.get("dominant_model", "xgboost"),
+                "model_hours": leg_model_hours,
+                "model_weights": predictions.get("model_weights", {}),
                 "weather": leg_weather,
             })
 
         total_segmented_hours = round(total_segmented_hours, 2)
-        # Update recommended predictions with sum of 25 km segments
-        predictions["recommended_hours"] = total_segmented_hours
-        predictions["confidence_low"] = round(total_segmented_hours * 0.9, 2)
-        predictions["confidence_high"] = round(total_segmented_hours * 1.1, 2)
         predictions["segmented_sum_hours"] = total_segmented_hours
+
+    # ── Step 3c: SLM Model Routing (Route, Weather & Leg Distances) ──
+    try:
+        from models.slm_router import decide_model_with_slm
+        slm_decision = decide_model_with_slm(
+            origin            = origin,
+            destination       = destination,
+            distance_km       = route["distance_km"],
+            traffic_level     = route["traffic_level"],
+            weather_condition = weather["weather_condition"],
+            weather_data      = weather,
+            legs              = segments,
+            available_models  = list(predictions.get("all_models", {}).keys()),
+        )
+        # Apply SLM chosen model if available
+        chosen_slm_model = slm_decision.get("chosen_model")
+        if chosen_slm_model and chosen_slm_model in predictions.get("all_models", {}):
+            predictions["recommended_model"] = chosen_slm_model
+            predictions["recommended_hours"] = predictions["all_models"][chosen_slm_model]
+    except Exception as e:
+        logger.warning("SLM router failed: %s", e)
+        slm_decision = {
+            "chosen_model": predictions.get("recommended_model", "voting"),
+            "reason": "Standard distance-tier model assignment.",
+            "source": "DeliverAI Baseline",
+            "leg_assignments": [],
+        }
+
+    # ── Explainable AI (XAI) & Carbon Footprint ──────────────
+    try:
+        explanation = explain_prediction(
+            distance_km          = route["distance_km"],
+            traffic_duration_min = route["traffic_duration_min"],
+            traffic_level        = route["traffic_level"],
+            package_weight_kg    = weight,
+            package_type         = pkg_type,
+            priority             = priority,
+            shipping_mode        = shipping_mode,
+        )
+    except Exception as e:
+        logger.warning("Explain prediction failed: %s", e)
+        explanation = {"base_hours": 10.0, "factors": [], "summary": "Attribution model unavailable."}
+
+    sustainability = calculate_carbon_footprint(
+        distance_km       = route["distance_km"],
+        package_weight_kg = weight,
+        shipping_mode     = shipping_mode,
+    )
+
+    # ── Multi-Modal Rail & Airways Direct Scan ────────────────
+    try:
+        multimodal_options = check_multimodal_options(
+            origin           = origin,
+            destination      = destination,
+            origin_coords    = route.get("origin_coords"),
+            dest_coords      = route.get("destination_coords") or route.get("dest_coords"),
+            road_distance_km = route.get("distance_km"),
+            road_hours       = predictions.get("recommended_hours"),
+            weight_kg        = weight,
+        )
+    except Exception as e:
+        logger.warning("Multimodal options scan failed: %s", e)
+        multimodal_options = None
 
     response_ms = int((time.time() - t_start) * 1000)
 
@@ -300,5 +379,122 @@ def predict():
             "shipping_mode": shipping_mode,
         },
         "predictions": predictions,
+        "slm_router": slm_decision,
+        "explanation": explanation,
+        "sustainability": sustainability,
+        "multimodal_options": multimodal_options,
         "response_time_ms": response_ms,
     }), 200
+
+
+@predict_bp.route("/routes/modal-availability", methods=["GET"])
+def modal_availability():
+    """
+    GET /api/routes/modal-availability?origin=Mumbai&destination=Pune&weight=5.0
+    Quick endpoint that scans Indian Railway network & commercial aviation hubs
+    to detect direct Rail and Air options between any origin and destination.
+    """
+    origin = request.args.get("origin", "").strip()
+    destination = request.args.get("destination", "").strip()
+    if not origin or not destination:
+        return jsonify({"error": "origin and destination are required"}), 400
+
+    try:
+        weight = float(request.args.get("weight", 5.0))
+    except (ValueError, TypeError):
+        weight = 5.0
+
+    try:
+        route = get_route_info(origin, destination)
+        options = check_multimodal_options(
+            origin           = origin,
+            destination      = destination,
+            origin_coords    = route.get("origin_coords"),
+            dest_coords      = route.get("destination_coords") or route.get("dest_coords"),
+            road_distance_km = route.get("distance_km"),
+            weight_kg        = weight,
+        )
+        return jsonify(options)
+    except Exception as e:
+        logger.debug("Fast route fallback in modal_availability: %s", e)
+        options = check_multimodal_options(
+            origin      = origin,
+            destination = destination,
+            weight_kg   = weight,
+        )
+        return jsonify(options)
+
+
+@predict_bp.route("/predict/what-if", methods=["POST"])
+def what_if():
+    """Fast sub-second simulation endpoint to test hypothetical traffic, priority, or shipping mode."""
+
+    data = request.get_json(force=True, silent=True) or {}
+    try:
+        dist = float(data.get("distance_km", 100.0))
+        traffic_min = float(data.get("traffic_duration_min", 90.0))
+        traffic_lvl = str(data.get("traffic_level", "MODERATE")).upper()
+        weight = float(data.get("package_weight_kg", 5.0))
+        pkg_type = str(data.get("package_type", "MEDIUM")).upper()
+        priority = str(data.get("priority", "STANDARD")).upper()
+        shipping_mode = str(data.get("shipping_mode", "ROAD")).upper()
+
+        if data.get("recalc_traffic"):
+            traffic_factors = {"LOW": 1.0, "MODERATE": 1.2, "HIGH": 1.5, "SEVERE": 2.0}
+            base_min = dist * 1.0
+            traffic_min = base_min * traffic_factors.get(traffic_lvl, 1.2)
+
+        preds = predict_all(
+            distance_km          = dist,
+            traffic_duration_min = traffic_min,
+            traffic_level        = traffic_lvl,
+            package_weight_kg    = weight,
+            package_type         = pkg_type,
+            priority             = priority,
+            shipping_mode        = shipping_mode,
+        )
+        full_ensemble = predict_ensemble(
+            distance_km          = dist,
+            traffic_duration_min = traffic_min,
+            traffic_level        = traffic_lvl,
+            package_weight_kg    = weight,
+            package_type         = pkg_type,
+            priority             = priority,
+            shipping_mode        = shipping_mode,
+        )
+        preds["ensemble_hours"] = full_ensemble["ensemble_hours"]
+        preds["dominant_model"] = full_ensemble["dominant_model"]
+        preds["model_weights"]  = full_ensemble["model_weights"]
+
+        model_preds = [v for v in [preds.get("xgboost"), preds.get("random_forest"), preds.get("linear_regression")] if v is not None]
+        preds["min_hours"] = round(min(model_preds) if model_preds else preds["recommended_hours"], 3)
+        preds["max_hours"] = round(max(model_preds) if model_preds else preds["recommended_hours"], 3)
+        preds["confidence_low"] = preds["min_hours"]
+        preds["confidence_high"] = preds["max_hours"]
+
+        explanation = explain_prediction(
+            distance_km          = dist,
+            traffic_duration_min = traffic_min,
+            traffic_level        = traffic_lvl,
+            package_weight_kg    = weight,
+            package_type         = pkg_type,
+            priority             = priority,
+            shipping_mode        = shipping_mode,
+        )
+        sustainability = calculate_carbon_footprint(
+            distance_km       = dist,
+            package_weight_kg = weight,
+            shipping_mode     = shipping_mode,
+        )
+
+        return jsonify({
+            "predictions": preds,
+            "explanation": explanation,
+            "sustainability": sustainability,
+            "traffic_duration_min": round(traffic_min, 1),
+            "traffic_level": traffic_lvl,
+        }), 200
+    except Exception as e:
+        logger.error("What-if simulation error: %s", e)
+        return jsonify({"error": str(e)}), 400
+

@@ -1,116 +1,213 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analytics & History — DeliverAI</title>
+  <title>Fleet Analytics &amp; Shipment Records — DeliverAI</title>
+  <meta name="description" content="Historical inland delivery logs, multi-model accuracy benchmarks, and empirical congestion metrics." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- Navigation Header (Crextio Pill Style) -->
+  <!-- Navigation Header (Glass Command Header) -->
   <nav class="navbar">
     <a href="index.html" class="navbar-brand">
       <div class="brand-icon">📦</div>
-      DeliverAI
+      <span>DeliverAI</span>
     </a>
+
     <ul class="navbar-nav">
-      <li><a href="index.html"   class="nav-link">Dashboard</a></li>
-      <li><a href="predict.html" class="nav-link">Predict</a></li>
-      <li><a href="history.html" class="nav-link active">Analytics</a></li>
+      <li><a href="index.html" class="nav-link">Dashboard</a></li>
+      <li><a href="predict.html" class="nav-link">Dispatch Studio</a></li>
+      <li><a href="history.html" class="nav-link active">Analytics &amp; History</a></li>
+      <li><a href="copilot.html" class="nav-link">AI Copilot <span class="badge-pill-new">LLM</span></a></li>
     </ul>
-    <div class="header-stats">
-      <div class="stat-pill-group">
-        <span class="stat-pill-title">140,832 Records</span>
-        <span class="stat-pill-sub">33h 50m Avg • 0.84 Accuracy</span>
+
+    <div class="nav-actions">
+      <div class="telemetry-pill">
+        <span class="status-dot"></span>
+        <span id="nav-records">1,40,832 Shipments • 19 ML Models</span>
       </div>
+      <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode">
+        🌓
+      </button>
     </div>
   </nav>
 
   <main class="page-wrapper">
+    <!-- Header Title & Quick Actions -->
     <div class="page-header">
-      <h1 class="page-title">Analytics &amp; Shipment Logs</h1>
-      <p class="page-subtitle">Historical delivery logs, model accuracy metrics, and traffic distribution analysis</p>
+      <div>
+        <h1 class="page-title">Fleet Analytics &amp; Shipment Records</h1>
+        <p class="page-subtitle">Historical inland logistics telemetry, 19-model benchmark matrices, and real-time congestion analysis</p>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" class="btn-secondary-action" id="export-csv-btn">
+          <span>📥</span>
+          <span>Export CSV</span>
+        </button>
+        <a href="predict.html" class="btn-primary-action" style="padding:0.6rem 1.25rem; font-size:0.86rem; text-decoration:none; border-radius:var(--radius-full);">
+          <span>🚀</span>
+          <span>New Dispatch</span>
+        </a>
+      </div>
     </div>
 
-    <!-- Charts Row -->
+    <!-- Analytics Charts Row -->
     <div class="grid-2 mb-4">
-      <div class="card">
-        <div class="card-header">🚦 Delivery Hours by Traffic Congestion</div>
-        <div class="card-body">
-          <div style="height:250px; position:relative;">
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div class="card-title-clean">
+            <span>🚦</span>
+            <span>Delivery Hours by Traffic Congestion Level</span>
+          </div>
+        </div>
+        <div class="card-body-clean">
+          <div style="height:260px; position:relative;">
             <canvas id="trafficBarChart"></canvas>
           </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">🌤️ Delivery Hours by Weather Conditions</div>
-        <div class="card-body">
-          <div style="height:250px; position:relative;">
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div class="card-title-clean">
+            <span>🌤️</span>
+            <span>Delivery Hours by Weather Condition</span>
+          </div>
+        </div>
+        <div class="card-body-clean">
+          <div style="height:260px; position:relative;">
             <canvas id="weatherBarChart"></canvas>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Model Benchmark Table -->
-    <div class="card mb-4">
-      <div class="card-header">🏆 Machine Learning Model Benchmark (140K+ Dataset)</div>
-      <div class="table-wrapper">
-        <table>
+    <!-- Machine Learning Model Benchmark Matrix -->
+    <div class="glass-card mb-4">
+      <div class="card-header-clean">
+        <div class="card-title-clean">
+          <span>🏆</span>
+          <span>Machine Learning Model Benchmark Matrix (Trained &amp; Validated on 1,40,832 Logs)</span>
+        </div>
+        <span class="badge badge-low">19 Models Benchmarked</span>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
           <thead>
             <tr>
               <th>Model Name</th>
-              <th>R² Accuracy</th>
+              <th>Tolerance Accuracy</th>
+              <th>R² Score</th>
+              <th>MAPE Error</th>
               <th>RMSE (Hours)</th>
               <th>MAE (Hours)</th>
               <th>Training Samples</th>
             </tr>
           </thead>
           <tbody id="model-benchmark-tbody">
-            <tr><td colspan="5" class="text-muted" style="text-align:center;">Loading model metrics…</td></tr>
+            <tr><td colspan="7" class="text-muted" style="text-align:center; padding:1.5rem;">Loading model benchmark telemetry…</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Paginated Records Table -->
-    <div class="card">
-      <div class="card-header">
-        <span>📦 Historical Delivery Records</span>
-        <span class="text-muted" style="font-size:0.82rem;" id="records-count-label">Loading…</span>
+    <!-- Historical Delivery Records Table with Filter Toolbar -->
+    <div class="glass-card">
+      <div class="card-header-clean">
+        <div class="card-title-clean">
+          <span>📦</span>
+          <span>Historical Delivery Records &amp; Dispatch Archive</span>
+        </div>
+        <span class="text-muted font-mono" style="font-size:0.82rem;" id="records-count-label">Loading records…</span>
       </div>
-      <div class="table-wrapper">
-        <table>
+
+      <!-- Interactive Filter Toolbar -->
+      <div class="filter-toolbar">
+        <div class="search-input-box">
+          <span class="search-icon-pos">🔍</span>
+          <input type="text" class="form-input" id="history-search-input" placeholder="Search by city (e.g. Mumbai, Delhi)..." />
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="filter-chip-group" id="priority-filter-group">
+            <span class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">Priority:</span>
+            <button type="button" class="filter-chip active" data-priority="">All</button>
+            <button type="button" class="filter-chip" data-priority="STANDARD">Standard</button>
+            <button type="button" class="filter-chip" data-priority="EXPRESS">Express</button>
+            <button type="button" class="filter-chip" data-priority="OVERNIGHT">Overnight</button>
+          </div>
+
+          <div class="filter-chip-group" id="traffic-filter-group">
+            <span class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">Traffic:</span>
+            <button type="button" class="filter-chip active" data-traffic="">All</button>
+            <button type="button" class="filter-chip" data-traffic="LOW">Low</button>
+            <button type="button" class="filter-chip" data-traffic="MODERATE">Moderate</button>
+            <button type="button" class="filter-chip" data-traffic="HIGH">High</button>
+            <button type="button" class="filter-chip" data-traffic="SEVERE">Severe</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginated Table -->
+      <div class="table-responsive">
+        <table class="data-table">
           <thead>
             <tr>
               <th>Tracking ID</th>
-              <th>Route</th>
+              <th>Corridor Route</th>
               <th>Distance</th>
-              <th>Traffic</th>
+              <th>Traffic Level</th>
               <th>Weight</th>
-              <th>Mode</th>
-              <th>Actual Time</th>
-              <th>Predicted Time</th>
+              <th>Shipping Mode</th>
+              <th>Actual Duration</th>
+              <th>Predicted Duration</th>
             </tr>
           </thead>
           <tbody id="history-tbody">
-            <tr><td colspan="8" class="text-muted" style="text-align:center; padding:2rem;">Loading delivery records…</td></tr>
+            <tr><td colspan="8" class="text-muted" style="text-align:center; padding:2.5rem;">Loading delivery telemetry records…</td></tr>
           </tbody>
         </table>
       </div>
-      <!-- Pagination Controls -->
-      <div class="card-body flex justify-between items-center" style="border-top:1px solid rgba(255,255,255,0.4); padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center;">
-        <button class="btn btn-secondary" id="prev-btn" disabled>← Previous</button>
-        <span class="text-mono" style="font-size:0.88rem; font-weight:600; color:var(--clr-primary-dark);" id="page-indicator">Page 1</span>
-        <button class="btn btn-secondary" id="next-btn">Next →</button>
+
+      <!-- Modern Pagination Controls -->
+      <div class="pagination-footer">
+        <button type="button" class="btn-secondary-action" id="prev-btn" disabled>
+          <span>←</span>
+          <span>Previous</span>
+        </button>
+        <span class="font-mono text-muted" style="font-size:0.86rem; font-weight:600;" id="page-indicator">Page 1 of 1</span>
+        <button type="button" class="btn-secondary-action" id="next-btn">
+          <span>Next</span>
+          <span>→</span>
+        </button>
       </div>
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/charts.js"></script>
-  <script src="js/history.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/charts.js" defer></script>
+  <script src="js/history.js" defer></script>
+  <script>
+    // Theme toggle init
+    const themeBtn = document.getElementById("theme-toggle-btn");
+    if (themeBtn) {
+      const savedTheme = localStorage.getItem("deliverai-theme") || "dark";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      themeBtn.textContent = savedTheme === "light" ? "🌙" : "☀️";
+
+      themeBtn.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("deliverai-theme", next);
+        themeBtn.textContent = next === "light" ? "🌙" : "☀️";
+      });
+    }
+  </script>
 </body>
 </html>

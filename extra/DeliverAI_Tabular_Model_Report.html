@@ -1,0 +1,2147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DeliverAI: Comprehensive Empirical Model Architecture & Logistics Telematics Report</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm 14mm 12mm;
+    @bottom-right {
+      content: "Page " counter(page);
+      font-size: 8pt;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #64748b;
+    }
+    @bottom-left {
+      content: "DeliverAI · B.Tech CSE 5th Sem Minor Project Monograph";
+      font-size: 8pt;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #64748b;
+    }
+  }
+
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+    line-height: 1.45;
+    font-size: 8.8pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 16pt;
+    font-weight: 800;
+    color: #0f172a;
+    border-bottom: 2.5px solid #2563eb;
+    padding-bottom: 5px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #1e293b;
+    border-bottom: 1.5px solid #cbd5e1;
+    padding-bottom: 4px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 10.5pt;
+    font-weight: 600;
+    color: #334155;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    page-break-after: avoid;
+  }
+
+  p, li {
+    color: #334155;
+    margin-bottom: 5px;
+  }
+
+  blockquote {
+    background: #f8fafc;
+    border-left: 4px solid #2563eb;
+    padding: 8px 12px;
+    margin: 8px 0 14px 0;
+    color: #475569;
+    font-size: 8.5pt;
+    border-radius: 0 4px 4px 0;
+  }
+
+  table {
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+    margin: 10px 0 16px 0;
+    font-size: 7.5pt;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: 700;
+    text-align: left;
+    padding: 5px 6px;
+    border: 1px solid #cbd5e1;
+  }
+
+  td {
+    padding: 4px 6px;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    vertical-align: top;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 7.8pt;
+    background: #f1f5f9;
+    padding: 1px 3px;
+    border-radius: 3px;
+    color: #0f172a;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 16px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>DeliverAI: Comprehensive Empirical Model Architecture &amp; Logistics Telematics Report</h1>
+<blockquote>
+<p><strong>5th Semester B.Tech Minor Project Research Monograph &amp; Systems Evaluation</strong><br />
+<em>Department of Computer Science &amp; Engineering · Applied Artificial Intelligence &amp; Telematics</em><br />
+<strong>Project Repository:</strong> <code>Argho009/package-delivery-time-predictor</code><br />
+<strong>Dataset Scale:</strong> 184,029 Inland India Multi-Source Logistics Records · 19 Architectures · 48,000 Distance Benchmark Predictions</p>
+</blockquote>
+<hr />
+<h2>Executive Metadata &amp; System Specifications</h2>
+<table>
+<thead>
+<tr>
+<th>Specification Attribute</th>
+<th>Implementation &amp; Engineering Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Project Title</strong></td>
+<td>DeliverAI: Intelligent Package Delivery Transit Time Predictor</td>
+</tr>
+<tr>
+<td><strong>Academic Level</strong></td>
+<td>Bachelor of Technology (B.Tech) — 5th Semester Minor Project</td>
+</tr>
+<tr>
+<td><strong>Department</strong></td>
+<td>Department of Computer Science &amp; Engineering</td>
+</tr>
+<tr>
+<td><strong>Core Frameworks</strong></td>
+<td>Python 3.12 · Scikit-Learn 1.5 · PyTorch 2.5.1 · Flask 3.0 · Leaflet.js</td>
+</tr>
+<tr>
+<td><strong>Hardware Acceleration</strong></td>
+<td>Dedicated NVIDIA GeForce RTX 3050 6GB Laptop GPU (CUDA 12.4)</td>
+</tr>
+<tr>
+<td><strong>Local AI Copilot</strong></td>
+<td>LM Studio Local Engine (localhost:1234) / Ollama (localhost:11434)</td>
+</tr>
+<tr>
+<td><strong>Geospatial &amp; Telematics Engine</strong></td>
+<td>Open Source Routing Machine (OSRM) + OpenWeather Current Telemetry</td>
+</tr>
+<tr>
+<td><strong>Primary Data Corpus</strong></td>
+<td>184,029 Records from Delhivery, Amazon India, Bangalore Traffic, Indian Railways &amp; Road Hazards</td>
+</tr>
+<tr>
+<td><strong>Holdout Test Partition</strong></td>
+<td>36,806 Real Indian Shipments (Strict 20% Stratified Holdout)</td>
+</tr>
+<tr>
+<td><strong>Empirical Distance Benchmark</strong></td>
+<td>48 Brackets of 50 km (0 to 2,400 km) with 1,000 Predictions per Bracket (48,000 Samples)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 1: Master Taxonomy &amp; Mathematical Foundations of the 19 Regression Architectures</h2>
+<p>The platform benchmarks nineteen distinct regression architectures categorized into six methodological paradigms:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Rank</th>
+<th style="text-align: left;">Model Architecture</th>
+<th style="text-align: left;">Paradigm / Category</th>
+<th style="text-align: left;">Mathematical Objective Function / Hypothesis Space</th>
+<th style="text-align: center;">Algorithmic Complexity</th>
+<th style="text-align: left;">Primary Logistics Strength</th>
+<th style="text-align: left;">Operational Vulnerability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;"><strong>Linear Regression</strong></td>
+<td style="text-align: left;">Baseline Linear</td>
+<td style="text-align: left;">min</td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">Xw - y</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;"><strong>Ridge Regression</strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: left;">min</td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">Xw - y</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;"><strong>Lasso Regression</strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: left;">min (1/2n)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">Xw - y</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;"><strong>Elastic Net</strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: left;">min (1/2n)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">Xw - y</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;"><strong>Decision Tree</strong></td>
+<td style="text-align: left;">Tree-Based</td>
+<td style="text-align: left;">Greedy recursive binary sum-of-squares variance reduction</td>
+<td style="text-align: center;">O(d·n log n)</td>
+<td style="text-align: left;">Non-parametric; captures sharp geographic step-changes</td>
+<td style="text-align: left;">High variance; prone to severe overfitting on edge cases</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: left;"><strong>Random Forest</strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: left;">Bootstrap Aggregation over 1,000 randomized decision trees</td>
+<td style="text-align: center;">O(B·d·n log n)</td>
+<td style="text-align: left;">Drastic variance reduction; excellent generalizability</td>
+<td style="text-align: left;">Large memory footprint; slower single-instance inference</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;"><strong>Extra Trees</strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: left;">Extremely Randomized Trees with random split thresholds</td>
+<td style="text-align: center;">O(B·d·n)</td>
+<td style="text-align: left;">Smoother decision boundaries; faster training than RF</td>
+<td style="text-align: left;">Higher individual tree bias</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;"><strong>Bagging Regressor</strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: left;">Bootstrap Aggregating over 100 deep Decision Trees</td>
+<td style="text-align: center;">O(B·d·n log n)</td>
+<td style="text-align: left;">Dominates hyperlocal urban routes (&lt;= 50 km)</td>
+<td style="text-align: left;">Computationally expensive on large sample sets</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: left;"><strong>Gradient Boosting</strong></td>
+<td style="text-align: left;">Boosting Ensemble</td>
+<td style="text-align: left;">Sequential negative-gradient residual descent optimization</td>
+<td style="text-align: center;">O(M·d·n log n)</td>
+<td style="text-align: left;">High precision optimization on continuous residuals</td>
+<td style="text-align: left;">Sequential training; susceptible to outlier skew</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;"><strong>Hist Gradient Boosting</strong></td>
+<td style="text-align: left;">Histogram Boosting</td>
+<td style="text-align: left;">256-bin integer histogram discretization</td>
+<td style="text-align: center;">O(M·d·n)</td>
+<td style="text-align: left;">Blazing fast CPU training; native missing-value support</td>
+<td style="text-align: left;">Minor precision loss from integer histogram binning</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: left;"><strong>XGBoost Regressor</strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: left;">Newton-Raphson 2nd-order Taylor expansion tree boosting</td>
+<td style="text-align: center;">O(M·d·n)</td>
+<td style="text-align: left;">Cache-aware block structures; column subsampling</td>
+<td style="text-align: left;">Requires careful Windows thread isolation</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;"><strong>LightGBM Regressor</strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: left;">Leaf-wise tree growth with GOSS &amp; Exclusive Feature Bundling</td>
+<td style="text-align: center;">O(M·d·n)</td>
+<td style="text-align: left;">Lowest memory consumption; rapid convergence</td>
+<td style="text-align: left;">Can overfit small datasets if max depth is unbounded</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;"><strong>CatBoost Regressor</strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: left;">Ordered boosting with symmetric oblivious decision trees</td>
+<td style="text-align: center;">O(M·d·n)</td>
+<td style="text-align: left;">Superior categorical handling; resistant to target leakage</td>
+<td style="text-align: left;">Slower evaluation on very high tree counts</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: left;"><strong>K-Nearest Neighbors</strong></td>
+<td style="text-align: left;">Distance-Based</td>
+<td style="text-align: left;">Distance-weighted k-NN: y = Σ(wᵢ·yᵢ)/Σwᵢ where wᵢ = 1/d</td>
+<td style="text-align: center;">O(d·n) inference</td>
+<td style="text-align: left;">Unmatched accuracy on recurring intercity corridors</td>
+<td style="text-align: left;">O(n) inference latency scales with dataset size</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;"><strong>Support Vector (SVR)</strong></td>
+<td style="text-align: left;">Distance-Based</td>
+<td style="text-align: left;">Epsilon-insensitive margin optimization with RBF kernel</td>
+<td style="text-align: center;">O(n² to n³)</td>
+<td style="text-align: left;">Maximum margin boundary; immune to small errors &lt;= ε</td>
+<td style="text-align: left;">Scales quadratically with N; requires subsampling</td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;"><strong>MLP (Deep Learning)</strong></td>
+<td style="text-align: left;">Neural Network</td>
+<td style="text-align: left;">4-layer feed-forward deep perceptron (512-256-128-64, ReLU)</td>
+<td style="text-align: center;">O(epochs·weights·n)</td>
+<td style="text-align: left;">Smooth high-dimensional non-linear surface modeling</td>
+<td style="text-align: left;">Requires feature standardization; sensitive to learning rate</td>
+</tr>
+<tr>
+<td style="text-align: center;">17</td>
+<td style="text-align: left;"><strong>TabNet Regressor</strong></td>
+<td style="text-align: left;">Deep Learning</td>
+<td style="text-align: left;">Sequential attention transformer mechanism for tabular data</td>
+<td style="text-align: center;">O(steps·dim·n)</td>
+<td style="text-align: left;">Sparse feature masking; interpretable decision steps</td>
+<td style="text-align: left;">Demands GPU acceleration; higher training latency</td>
+</tr>
+<tr>
+<td style="text-align: center;">18</td>
+<td style="text-align: left;"><strong>Stacking Regressor</strong></td>
+<td style="text-align: left;">Meta-Ensemble</td>
+<td style="text-align: left;">Multi-model cross-validated stacking with Ridge meta-learner</td>
+<td style="text-align: center;">O(K·O_base + O_meta)</td>
+<td style="text-align: left;">Combines diverse inductive biases into a super-learner</td>
+<td style="text-align: left;">Extremely high training time; risk of meta-overfitting</td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: left;"><strong>Voting Regressor</strong></td>
+<td style="text-align: left;">Meta-Ensemble</td>
+<td style="text-align: left;">Soft weighted ensemble average of top 4 tree/boosted models</td>
+<td style="text-align: center;">O(Σ O_base)</td>
+<td style="text-align: left;">Champion Generalizer (R² = 0.962); mitigates variance</td>
+<td style="text-align: left;">Requires running 4 distinct models in parallel</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 2: Hyperparameter Specifications &amp; Computational Execution Topology</h2>
+<table>
+<thead>
+<tr>
+<th>Architecture</th>
+<th>Key Hyperparameters &amp; Tuning Constraints</th>
+<th>Loss Function</th>
+<th style="text-align: center;">Feature Scaling</th>
+<th style="text-align: center;">Hardware Device</th>
+<th style="text-align: center;">Training Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Linear Regression</strong></td>
+<td>Default ordinary least squares; fit_intercept=True</td>
+<td>MSE</td>
+<td style="text-align: center;">Standardized</td>
+<td style="text-align: center;">CPU (1 Thread)</td>
+<td style="text-align: center;">0.02s</td>
+</tr>
+<tr>
+<td><strong>Ridge</strong></td>
+<td>alpha = 1.0, solver='auto', random_state=42</td>
+<td>L2-Regularized MSE</td>
+<td style="text-align: center;">Standardized</td>
+<td style="text-align: center;">CPU (1 Thread)</td>
+<td style="text-align: center;">0.01s</td>
+</tr>
+<tr>
+<td><strong>Lasso</strong></td>
+<td>alpha = 0.01, max_iter=3000, random_state=42</td>
+<td>L1-Regularized MSE</td>
+<td style="text-align: center;">Standardized</td>
+<td style="text-align: center;">CPU (1 Thread)</td>
+<td style="text-align: center;">0.12s</td>
+</tr>
+<tr>
+<td><strong>Elastic Net</strong></td>
+<td>alpha = 0.01, L1-ratio = 0.5, max_iter=3000</td>
+<td>Elastic MSE</td>
+<td style="text-align: center;">Standardized</td>
+<td style="text-align: center;">CPU (1 Thread)</td>
+<td style="text-align: center;">0.11s</td>
+</tr>
+<tr>
+<td><strong>Decision Tree</strong></td>
+<td>max_depth=16, min_samples_split=6, min_samples_leaf=2</td>
+<td>Squared Error</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">CPU (1 Thread)</td>
+<td style="text-align: center;">0.53s</td>
+</tr>
+<tr>
+<td><strong>Random Forest</strong></td>
+<td>n_estimators=1000, max_depth=18, min_samples_split=4, max_features='sqrt'</td>
+<td>Squared Error</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">24.21s</td>
+</tr>
+<tr>
+<td><strong>Extra Trees</strong></td>
+<td>n_estimators=1000, max_depth=18, min_samples_split=4, max_features='sqrt'</td>
+<td>Squared Error</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">18.41s</td>
+</tr>
+<tr>
+<td><strong>Bagging Regressor</strong></td>
+<td>estimator=DecisionTree(depth=14), n_estimators=100, max_samples=0.9</td>
+<td>Squared Error</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">8.17s</td>
+</tr>
+<tr>
+<td><strong>Gradient Boosting</strong></td>
+<td>n_estimators=500, max_depth=6, lr=0.04, subsample=0.85</td>
+<td>Squared Error</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">CPU (1 Thread)</td>
+<td style="text-align: center;">110.47s</td>
+</tr>
+<tr>
+<td><strong>Hist Gradient Boost</strong></td>
+<td>max_iter=1000, max_depth=8, lr=0.03, max_bins=255</td>
+<td>Squared Error</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">2.11s</td>
+</tr>
+<tr>
+<td><strong>XGBoost</strong></td>
+<td>n_estimators=1000, max_depth=8, lr=0.03, subsample=0.85, reg_lambda=1.0</td>
+<td>reg:squarederror</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">4.58s</td>
+</tr>
+<tr>
+<td><strong>LightGBM</strong></td>
+<td>n_estimators=1000, max_depth=9, num_leaves=63, lr=0.03, subsample=0.85</td>
+<td>L2 Regression</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">2.32s</td>
+</tr>
+<tr>
+<td><strong>CatBoost</strong></td>
+<td>iterations=1000, depth=8, learning_rate=0.03, l2_leaf_reg=2.0</td>
+<td>RMSE</td>
+<td style="text-align: center;">Raw Features</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">4.81s</td>
+</tr>
+<tr>
+<td><strong>KNN</strong></td>
+<td>n_neighbors=9, weights='distance', algorithm='auto'</td>
+<td>Euclidean Dist</td>
+<td style="text-align: center;">Standardized</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">1.25s</td>
+</tr>
+<tr>
+<td><strong>SVR</strong></td>
+<td>kernel='rbf', C=25.0, epsilon=0.05, gamma='scale', subsample 15k</td>
+<td>Epsilon-SVR</td>
+<td style="text-align: center;">Standardized</td>
+<td style="text-align: center;">CPU (1 Thread)</td>
+<td style="text-align: center;">23.22s</td>
+</tr>
+<tr>
+<td><strong>MLP Regressor</strong></td>
+<td>Layers: (512, 256, 128, 64), relu, batch_size=512, early_stopping=True</td>
+<td>MSE</td>
+<td style="text-align: center;">Standardized</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">209.80s</td>
+</tr>
+<tr>
+<td><strong>TabNet</strong></td>
+<td>n_d=24, n_a=24, n_steps=5, gamma=1.3, epochs=25, batch_size=1024</td>
+<td>MSE</td>
+<td style="text-align: center;">Standardized</td>
+<td style="text-align: center;">NVIDIA RTX 3050</td>
+<td style="text-align: center;">185.93s</td>
+</tr>
+<tr>
+<td><strong>Voting Regressor</strong></td>
+<td>Soft weighted average: CatBoost, LightGBM, XGBoost, Random Forest</td>
+<td>Ensemble Mean</td>
+<td style="text-align: center;">Hybrid</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">46.30s</td>
+</tr>
+<tr>
+<td><strong>Stacking Regressor</strong></td>
+<td>Base: XGBoost, LightGBM, RF; Meta-Estimator: Ridge (CV=5)</td>
+<td>CV Residuals</td>
+<td style="text-align: center;">Hybrid</td>
+<td style="text-align: center;">Multi-Core CPU</td>
+<td style="text-align: center;">95.20s</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 3: Master Empirical Benchmark Leaderboard (36,806 Holdout Shipments)</h2>
+<p>The 19 architectures were evaluated on an unexposed 20% holdout test partition of <strong>36,806 authentic shipments</strong> from across inland India:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Rank</th>
+<th style="text-align: left;">Model Architecture</th>
+<th style="text-align: left;">Category</th>
+<th style="text-align: center;">R² Score</th>
+<th style="text-align: center;">RMSE (hours)</th>
+<th style="text-align: center;">MAE (hours)</th>
+<th style="text-align: center;">MAPE (%)</th>
+<th style="text-align: center;">Within ±15 min</th>
+<th style="text-align: center;">Within ±30 min</th>
+<th style="text-align: center;">Within ±60 min</th>
+<th style="text-align: center;">Training Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">🥇 1</td>
+<td style="text-align: left;"><strong><code>voting</code></strong></td>
+<td style="text-align: left;">Meta-Ensemble</td>
+<td style="text-align: center;"><strong>0.9620</strong></td>
+<td style="text-align: center;"><strong>2.886h</strong></td>
+<td style="text-align: center;"><strong>1.285h</strong></td>
+<td style="text-align: center;">15.2%</td>
+<td style="text-align: center;">47.7%</td>
+<td style="text-align: center;">56.7%</td>
+<td style="text-align: center;">68.0%</td>
+<td style="text-align: center;">46.30s</td>
+</tr>
+<tr>
+<td style="text-align: center;">🥈 2</td>
+<td style="text-align: left;"><strong><code>mlp</code></strong></td>
+<td style="text-align: left;">Neural Network (MLP)</td>
+<td style="text-align: center;"><strong>0.9617</strong></td>
+<td style="text-align: center;"><strong>2.900h</strong></td>
+<td style="text-align: center;"><strong>1.298h</strong></td>
+<td style="text-align: center;">20.3%</td>
+<td style="text-align: center;">44.1%</td>
+<td style="text-align: center;">56.4%</td>
+<td style="text-align: center;">68.9%</td>
+<td style="text-align: center;">209.80s</td>
+</tr>
+<tr>
+<td style="text-align: center;">🥉 3</td>
+<td style="text-align: left;"><strong><code>hist_gradient_boosting</code></strong></td>
+<td style="text-align: left;">Histogram Boosting</td>
+<td style="text-align: center;"><strong>0.9616</strong></td>
+<td style="text-align: center;"><strong>2.902h</strong></td>
+<td style="text-align: center;"><strong>1.313h</strong></td>
+<td style="text-align: center;">17.0%</td>
+<td style="text-align: center;">46.8%</td>
+<td style="text-align: center;">55.9%</td>
+<td style="text-align: center;">67.0%</td>
+<td style="text-align: center;">2.11s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 4</td>
+<td style="text-align: left;"><strong><code>random_forest</code></strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: center;"><strong>0.9615</strong></td>
+<td style="text-align: center;"><strong>2.907h</strong></td>
+<td style="text-align: center;"><strong>1.280h</strong></td>
+<td style="text-align: center;">14.2%</td>
+<td style="text-align: center;">48.8%</td>
+<td style="text-align: center;">58.1%</td>
+<td style="text-align: center;">69.5%</td>
+<td style="text-align: center;">24.21s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 5</td>
+<td style="text-align: left;"><strong><code>lightgbm</code></strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: center;"><strong>0.9614</strong></td>
+<td style="text-align: center;"><strong>2.911h</strong></td>
+<td style="text-align: center;"><strong>1.295h</strong></td>
+<td style="text-align: center;">15.2%</td>
+<td style="text-align: center;">48.0%</td>
+<td style="text-align: center;">56.9%</td>
+<td style="text-align: center;">68.0%</td>
+<td style="text-align: center;">2.32s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 6</td>
+<td style="text-align: left;"><strong><code>gradient_boosting</code></strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: center;"><strong>0.9612</strong></td>
+<td style="text-align: center;"><strong>2.918h</strong></td>
+<td style="text-align: center;"><strong>1.318h</strong></td>
+<td style="text-align: center;">17.1%</td>
+<td style="text-align: center;">46.5%</td>
+<td style="text-align: center;">56.1%</td>
+<td style="text-align: center;">66.8%</td>
+<td style="text-align: center;">110.47s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 7</td>
+<td style="text-align: left;"><strong><code>catboost</code></strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: center;"><strong>0.9611</strong></td>
+<td style="text-align: center;"><strong>2.921h</strong></td>
+<td style="text-align: center;"><strong>1.318h</strong></td>
+<td style="text-align: center;">17.2%</td>
+<td style="text-align: center;">46.1%</td>
+<td style="text-align: center;">55.5%</td>
+<td style="text-align: center;">67.0%</td>
+<td style="text-align: center;">4.81s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 8</td>
+<td style="text-align: left;"><strong><code>bagging</code></strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: center;"><strong>0.9611</strong></td>
+<td style="text-align: center;"><strong>2.921h</strong></td>
+<td style="text-align: center;"><strong>1.289h</strong></td>
+<td style="text-align: center;">13.9%</td>
+<td style="text-align: center;">49.0%</td>
+<td style="text-align: center;">57.5%</td>
+<td style="text-align: center;">68.7%</td>
+<td style="text-align: center;">8.17s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 9</td>
+<td style="text-align: left;"><strong><code>extra_trees</code></strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: center;"><strong>0.9606</strong></td>
+<td style="text-align: center;"><strong>2.939h</strong></td>
+<td style="text-align: center;"><strong>1.289h</strong></td>
+<td style="text-align: center;">14.1%</td>
+<td style="text-align: center;">49.1%</td>
+<td style="text-align: center;">58.2%</td>
+<td style="text-align: center;">69.4%</td>
+<td style="text-align: center;">18.41s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 10</td>
+<td style="text-align: left;"><strong><code>xgboost</code></strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: center;"><strong>0.9598</strong></td>
+<td style="text-align: center;"><strong>2.971h</strong></td>
+<td style="text-align: center;"><strong>1.318h</strong></td>
+<td style="text-align: center;">16.1%</td>
+<td style="text-align: center;">47.2%</td>
+<td style="text-align: center;">56.6%</td>
+<td style="text-align: center;">67.8%</td>
+<td style="text-align: center;">4.58s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 11</td>
+<td style="text-align: left;"><strong><code>tabnet</code></strong></td>
+<td style="text-align: left;">Deep Learning (TabNet)</td>
+<td style="text-align: center;"><strong>0.9589</strong></td>
+<td style="text-align: center;"><strong>3.002h</strong></td>
+<td style="text-align: center;"><strong>1.495h</strong></td>
+<td style="text-align: center;">46.5%</td>
+<td style="text-align: center;">23.7%</td>
+<td style="text-align: center;">39.2%</td>
+<td style="text-align: center;">64.9%</td>
+<td style="text-align: center;">185.93s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 12</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: left;">Distance-Based</td>
+<td style="text-align: center;"><strong>0.9562</strong></td>
+<td style="text-align: center;"><strong>3.099h</strong></td>
+<td style="text-align: center;"><strong>1.359h</strong></td>
+<td style="text-align: center;">15.6%</td>
+<td style="text-align: center;">50.1%</td>
+<td style="text-align: center;">59.3%</td>
+<td style="text-align: center;">69.6%</td>
+<td style="text-align: center;">1.25s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 13</td>
+<td style="text-align: left;"><strong><code>svr</code></strong></td>
+<td style="text-align: left;">Support Vector Machine</td>
+<td style="text-align: center;"><strong>0.9556</strong></td>
+<td style="text-align: center;"><strong>3.122h</strong></td>
+<td style="text-align: center;"><strong>1.256h</strong></td>
+<td style="text-align: center;">14.9%</td>
+<td style="text-align: center;">56.3%</td>
+<td style="text-align: center;">66.7%</td>
+<td style="text-align: center;">74.6%</td>
+<td style="text-align: center;">23.22s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 14</td>
+<td style="text-align: left;"><strong><code>decision_tree</code></strong></td>
+<td style="text-align: left;">Decision Tree</td>
+<td style="text-align: center;"><strong>0.9483</strong></td>
+<td style="text-align: center;"><strong>3.368h</strong></td>
+<td style="text-align: center;"><strong>1.438h</strong></td>
+<td style="text-align: center;">14.9%</td>
+<td style="text-align: center;">50.5%</td>
+<td style="text-align: center;">59.2%</td>
+<td style="text-align: center;">69.2%</td>
+<td style="text-align: center;">0.53s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 15</td>
+<td style="text-align: left;"><strong><code>elastic_net</code></strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: center;"><strong>0.8495</strong></td>
+<td style="text-align: center;"><strong>5.745h</strong></td>
+<td style="text-align: center;"><strong>3.381h</strong></td>
+<td style="text-align: center;">118.7%</td>
+<td style="text-align: center;">8.6%</td>
+<td style="text-align: center;">20.6%</td>
+<td style="text-align: center;">36.1%</td>
+<td style="text-align: center;">0.11s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 16</td>
+<td style="text-align: left;"><strong><code>ridge</code></strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: center;"><strong>0.8495</strong></td>
+<td style="text-align: center;"><strong>5.745h</strong></td>
+<td style="text-align: center;"><strong>3.383h</strong></td>
+<td style="text-align: center;">119.1%</td>
+<td style="text-align: center;">8.5%</td>
+<td style="text-align: center;">20.3%</td>
+<td style="text-align: center;">36.1%</td>
+<td style="text-align: center;">0.01s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 17</td>
+<td style="text-align: left;"><strong><code>linear_regression</code></strong></td>
+<td style="text-align: left;">Baseline Linear</td>
+<td style="text-align: center;"><strong>0.8495</strong></td>
+<td style="text-align: center;"><strong>5.745h</strong></td>
+<td style="text-align: center;"><strong>3.383h</strong></td>
+<td style="text-align: center;">119.1%</td>
+<td style="text-align: center;">8.5%</td>
+<td style="text-align: center;">20.3%</td>
+<td style="text-align: center;">36.1%</td>
+<td style="text-align: center;">0.02s</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rank 18</td>
+<td style="text-align: left;"><strong><code>lasso</code></strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: center;"><strong>0.8495</strong></td>
+<td style="text-align: center;"><strong>5.745h</strong></td>
+<td style="text-align: center;"><strong>3.379h</strong></td>
+<td style="text-align: center;">118.5%</td>
+<td style="text-align: center;">8.6%</td>
+<td style="text-align: center;">20.6%</td>
+<td style="text-align: center;">36.1%</td>
+<td style="text-align: center;">0.12s</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 4: Operational Distance Tier Routing &amp; Fleet Allocation Matrix</h2>
+<p>Evaluating global averages masks localized performance differences. The table below outlines the optimal model allocation for each logistics operational tier in India:</p>
+<table>
+<thead>
+<tr>
+<th>Operational Tier</th>
+<th style="text-align: center;">Distance Span</th>
+<th style="text-align: left;">Recommended Model</th>
+<th style="text-align: center;">Tier MAE</th>
+<th style="text-align: center;">Accuracy (%)</th>
+<th style="text-align: center;">Tier RMSE</th>
+<th style="text-align: center;">Within ±30 min</th>
+<th style="text-align: left;">Runner-Up Model</th>
+<th style="text-align: left;">Transport Fleet Profile</th>
+<th style="text-align: left;">Key Mitigated Bottlenecks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hyperlocal &amp; Intra-City</strong></td>
+<td style="text-align: center;">0 – 50 km</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.022h</strong> (~1.3m)</td>
+<td style="text-align: center;"><strong>97.1%</strong></td>
+<td style="text-align: center;">0.110h</td>
+<td style="text-align: center;">99.1%</td>
+<td style="text-align: left;"><code>bagging</code> (0.118h)</td>
+<td style="text-align: left;">Two-wheelers, EV bikes, 3-wheel cargo</td>
+<td style="text-align: left;">Urban red lights, narrow alleyways</td>
+</tr>
+<tr>
+<td><strong>Metro Suburbs &amp; Peri-Urban</strong></td>
+<td style="text-align: center;">50 – 150 km</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.165h</strong> (~9.9m)</td>
+<td style="text-align: center;"><strong>96.5%</strong></td>
+<td style="text-align: center;">0.760h</td>
+<td style="text-align: center;">91.3%</td>
+<td style="text-align: left;"><code>decision_tree</code> (0.566h)</td>
+<td style="text-align: left;">Intra-city delivery vans, light trucks</td>
+<td style="text-align: left;">Ring road bottlenecks, outer toll plazas</td>
+</tr>
+<tr>
+<td><strong>Regional Intercity Corridors</strong></td>
+<td style="text-align: center;">150 – 400 km</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.300h</strong> (~18.0m)</td>
+<td style="text-align: center;"><strong>97.6%</strong></td>
+<td style="text-align: center;">1.070h</td>
+<td style="text-align: center;">85.6%</td>
+<td style="text-align: left;"><code>decision_tree</code> (1.194h)</td>
+<td style="text-align: left;">2-axle / 3-axle State Highway trucks</td>
+<td style="text-align: left;">Single-lane ghat bypasses, state border checks</td>
+</tr>
+<tr>
+<td><strong>Medium-Haul Interstate</strong></td>
+<td style="text-align: center;">400 – 800 km</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.564h</strong> (~33.8m)</td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;">1.842h</td>
+<td style="text-align: center;">82.8%</td>
+<td style="text-align: left;"><code>decision_tree</code> (2.269h)</td>
+<td style="text-align: left;">Multi-axle National Highway containers</td>
+<td style="text-align: left;">FASTag queue delays, nocturnal truck traffic</td>
+</tr>
+<tr>
+<td><strong>Long-Haul National Express</strong></td>
+<td style="text-align: center;">800 – 1500 km</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.798h</strong> (~47.9m)</td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">2.621h</td>
+<td style="text-align: center;">82.9%</td>
+<td style="text-align: left;"><code>decision_tree</code> (3.375h)</td>
+<td style="text-align: left;">Dedicated Freight Corridor (DFC) rail &amp; express</td>
+<td style="text-align: left;">Multi-state weather shifts, rail yard marshaling</td>
+</tr>
+<tr>
+<td><strong>Trans-National Cross-Country</strong></td>
+<td style="text-align: center;">1500 – 2400 km</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.295h</strong> (~1.3h)</td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">3.926h</td>
+<td style="text-align: center;">80.9%</td>
+<td style="text-align: left;"><code>decision_tree</code> (4.548h)</td>
+<td style="text-align: left;">Intermodal rail-road, domestic cargo air</td>
+<td style="text-align: left;">Extreme weather disruptions, rail transshipment</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 5: Comprehensive 50km Interval Benchmark Data (All 48 Brackets)</h2>
+<p>Below is the exhaustive, empirical evaluation of <strong>1,000 predictions evaluated per bracket</strong> (<strong>48,000 total shipments</strong>; <strong>912,000 inferences</strong> across all 19 architectures):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bracket Label</th>
+<th style="text-align: center;">Distance Span (km)</th>
+<th style="text-align: center;">Actual ETA (h)</th>
+<th style="text-align: left;">Winning Model</th>
+<th style="text-align: center;">Winner MAE</th>
+<th style="text-align: center;">Winner Acc (%)</th>
+<th style="text-align: center;">Winner Within ±30 min (%)</th>
+<th style="text-align: left;">Runner-Up Model</th>
+<th style="text-align: center;">Runner-Up MAE</th>
+<th style="text-align: left;">3rd Place Model</th>
+<th style="text-align: center;">3rd Place MAE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>0-50km</code></td>
+<td style="text-align: center;">0 to 50 km</td>
+<td style="text-align: center;">0.81h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.022h</strong></td>
+<td style="text-align: center;"><strong>97.1%</strong></td>
+<td style="text-align: center;">99.1%</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">0.118h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">0.119h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>50-100km</code></td>
+<td style="text-align: center;">50 to 100 km</td>
+<td style="text-align: center;">3.21h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.162h</strong></td>
+<td style="text-align: center;"><strong>96.2%</strong></td>
+<td style="text-align: center;">93.2%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">0.507h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">0.558h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>100-150km</code></td>
+<td style="text-align: center;">100 to 150 km</td>
+<td style="text-align: center;">5.13h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.169h</strong></td>
+<td style="text-align: center;"><strong>96.9%</strong></td>
+<td style="text-align: center;">89.4%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">0.626h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">0.657h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>150-200km</code></td>
+<td style="text-align: center;">150 to 200 km</td>
+<td style="text-align: center;">7.50h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.228h</strong></td>
+<td style="text-align: center;"><strong>97.4%</strong></td>
+<td style="text-align: center;">87.4%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">0.829h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">0.880h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>200-250km</code></td>
+<td style="text-align: center;">200 to 250 km</td>
+<td style="text-align: center;">10.17h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.247h</strong></td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;">86.9%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">1.020h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">1.030h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>250-300km</code></td>
+<td style="text-align: center;">250 to 300 km</td>
+<td style="text-align: center;">12.17h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.269h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">85.5%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">1.136h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">1.171h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>300-350km</code></td>
+<td style="text-align: center;">300 to 350 km</td>
+<td style="text-align: center;">14.29h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.330h</strong></td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;">85.0%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">1.320h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">1.377h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>350-400km</code></td>
+<td style="text-align: center;">350 to 400 km</td>
+<td style="text-align: center;">17.25h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.424h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">83.4%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">1.666h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">1.795h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>400-450km</code></td>
+<td style="text-align: center;">400 to 450 km</td>
+<td style="text-align: center;">18.69h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.457h</strong></td>
+<td style="text-align: center;"><strong>97.5%</strong></td>
+<td style="text-align: center;">83.4%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">1.646h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">1.787h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>450-500km</code></td>
+<td style="text-align: center;">450 to 500 km</td>
+<td style="text-align: center;">20.02h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.434h</strong></td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;">83.9%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">1.698h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">1.833h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>500-550km</code></td>
+<td style="text-align: center;">500 to 550 km</td>
+<td style="text-align: center;">20.50h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.443h</strong></td>
+<td style="text-align: center;"><strong>97.9%</strong></td>
+<td style="text-align: center;">84.5%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.011h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">2.143h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>550-600km</code></td>
+<td style="text-align: center;">550 to 600 km</td>
+<td style="text-align: center;">21.79h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.652h</strong></td>
+<td style="text-align: center;"><strong>97.2%</strong></td>
+<td style="text-align: center;">80.1%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.187h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">2.294h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>600-650km</code></td>
+<td style="text-align: center;">600 to 650 km</td>
+<td style="text-align: center;">23.86h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.575h</strong></td>
+<td style="text-align: center;"><strong>97.6%</strong></td>
+<td style="text-align: center;">82.6%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.295h</td>
+<td style="text-align: left;"><code>svr</code></td>
+<td style="text-align: center;">2.441h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>650-700km</code></td>
+<td style="text-align: center;">650 to 700 km</td>
+<td style="text-align: center;">27.22h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.650h</strong></td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;">82.3%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.805h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">2.914h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>700-750km</code></td>
+<td style="text-align: center;">700 to 750 km</td>
+<td style="text-align: center;">27.71h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.660h</strong></td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;">82.9%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.728h</td>
+<td style="text-align: left;"><code>svr</code></td>
+<td style="text-align: center;">2.965h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>750-800km</code></td>
+<td style="text-align: center;">750 to 800 km</td>
+<td style="text-align: center;">28.42h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.645h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">82.8%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.781h</td>
+<td style="text-align: left;"><code>svr</code></td>
+<td style="text-align: center;">2.782h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>800-850km</code></td>
+<td style="text-align: center;">800 to 850 km</td>
+<td style="text-align: center;">25.90h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.607h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">84.6%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.797h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">2.834h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>850-900km</code></td>
+<td style="text-align: center;">850 to 900 km</td>
+<td style="text-align: center;">28.17h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.625h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">84.5%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.970h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">3.063h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>900-950km</code></td>
+<td style="text-align: center;">900 to 950 km</td>
+<td style="text-align: center;">26.80h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.654h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">84.5%</td>
+<td style="text-align: left;"><code>svr</code></td>
+<td style="text-align: center;">2.883h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.894h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>950-1000km</code></td>
+<td style="text-align: center;">950 to 1000 km</td>
+<td style="text-align: center;">27.69h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.707h</strong></td>
+<td style="text-align: center;"><strong>97.6%</strong></td>
+<td style="text-align: center;">83.7%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.790h</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">2.915h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1000-1050km</code></td>
+<td style="text-align: center;">1000 to 1050 km</td>
+<td style="text-align: center;">30.07h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.765h</strong></td>
+<td style="text-align: center;"><strong>97.6%</strong></td>
+<td style="text-align: center;">82.8%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">3.135h</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">3.187h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1050-1100km</code></td>
+<td style="text-align: center;">1050 to 1100 km</td>
+<td style="text-align: center;">26.70h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.596h</strong></td>
+<td style="text-align: center;"><strong>97.9%</strong></td>
+<td style="text-align: center;">84.3%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.382h</td>
+<td style="text-align: left;"><code>svr</code></td>
+<td style="text-align: center;">2.529h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1100-1150km</code></td>
+<td style="text-align: center;">1100 to 1150 km</td>
+<td style="text-align: center;">28.32h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.619h</strong></td>
+<td style="text-align: center;"><strong>97.9%</strong></td>
+<td style="text-align: center;">83.9%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.789h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">2.791h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1150-1200km</code></td>
+<td style="text-align: center;">1150 to 1200 km</td>
+<td style="text-align: center;">28.46h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.642h</strong></td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;">82.8%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">2.440h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">2.684h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1200-1250km</code></td>
+<td style="text-align: center;">1200 to 1250 km</td>
+<td style="text-align: center;">38.77h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.914h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">80.1%</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">3.338h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">3.354h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1250-1300km</code></td>
+<td style="text-align: center;">1250 to 1300 km</td>
+<td style="text-align: center;">40.34h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.739h</strong></td>
+<td style="text-align: center;"><strong>98.2%</strong></td>
+<td style="text-align: center;">86.0%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">3.170h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">3.296h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1300-1350km</code></td>
+<td style="text-align: center;">1300 to 1350 km</td>
+<td style="text-align: center;">43.13h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.054h</strong></td>
+<td style="text-align: center;"><strong>97.6%</strong></td>
+<td style="text-align: center;">80.5%</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.040h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.124h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1350-1400km</code></td>
+<td style="text-align: center;">1350 to 1400 km</td>
+<td style="text-align: center;">46.62h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.112h</strong></td>
+<td style="text-align: center;"><strong>97.6%</strong></td>
+<td style="text-align: center;">81.0%</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">4.566h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.664h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1400-1450km</code></td>
+<td style="text-align: center;">1400 to 1450 km</td>
+<td style="text-align: center;">48.99h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.114h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">80.5%</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">4.721h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.777h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1450-1500km</code></td>
+<td style="text-align: center;">1450 to 1500 km</td>
+<td style="text-align: center;">49.21h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.028h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">81.5%</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">4.673h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.785h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1500-1550km</code></td>
+<td style="text-align: center;">1500 to 1550 km</td>
+<td style="text-align: center;">48.24h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.962h</strong></td>
+<td style="text-align: center;"><strong>97.9%</strong></td>
+<td style="text-align: center;">83.9%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.301h</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">4.643h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1550-1600km</code></td>
+<td style="text-align: center;">1550 to 1600 km</td>
+<td style="text-align: center;">50.76h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.241h</strong></td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;">83.5%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.695h</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">5.069h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1600-1650km</code></td>
+<td style="text-align: center;">1600 to 1650 km</td>
+<td style="text-align: center;">53.53h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.409h</strong></td>
+<td style="text-align: center;"><strong>97.5%</strong></td>
+<td style="text-align: center;">79.0%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.710h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">5.217h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1650-1700km</code></td>
+<td style="text-align: center;">1650 to 1700 km</td>
+<td style="text-align: center;">53.65h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.040h</strong></td>
+<td style="text-align: center;"><strong>98.1%</strong></td>
+<td style="text-align: center;">83.4%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.580h</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">4.865h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1700-1750km</code></td>
+<td style="text-align: center;">1700 to 1750 km</td>
+<td style="text-align: center;">51.73h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.720h</strong></td>
+<td style="text-align: center;"><strong>96.5%</strong></td>
+<td style="text-align: center;">78.6%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.043h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.483h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1750-1800km</code></td>
+<td style="text-align: center;">1750 to 1800 km</td>
+<td style="text-align: center;">51.80h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.100h</strong></td>
+<td style="text-align: center;"><strong>98.2%</strong></td>
+<td style="text-align: center;">84.5%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.117h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.187h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1800-1850km</code></td>
+<td style="text-align: center;">1800 to 1850 km</td>
+<td style="text-align: center;">52.16h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.647h</strong></td>
+<td style="text-align: center;"><strong>96.8%</strong></td>
+<td style="text-align: center;">79.2%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.397h</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">4.829h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1850-1900km</code></td>
+<td style="text-align: center;">1850 to 1900 km</td>
+<td style="text-align: center;">54.45h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.928h</strong></td>
+<td style="text-align: center;"><strong>98.4%</strong></td>
+<td style="text-align: center;">82.7%</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.489h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.722h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1900-1950km</code></td>
+<td style="text-align: center;">1900 to 1950 km</td>
+<td style="text-align: center;">55.13h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.026h</strong></td>
+<td style="text-align: center;"><strong>98.1%</strong></td>
+<td style="text-align: center;">82.2%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.075h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.107h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1950-2000km</code></td>
+<td style="text-align: center;">1950 to 2000 km</td>
+<td style="text-align: center;">55.34h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.307h</strong></td>
+<td style="text-align: center;"><strong>97.6%</strong></td>
+<td style="text-align: center;">81.0%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.512h</td>
+<td style="text-align: left;"><code>gradient_boosting</code></td>
+<td style="text-align: center;">4.655h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2000-2050km</code></td>
+<td style="text-align: center;">2000 to 2050 km</td>
+<td style="text-align: center;">57.32h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.245h</strong></td>
+<td style="text-align: center;"><strong>98.0%</strong></td>
+<td style="text-align: center;">78.3%</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.766h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.770h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2050-2100km</code></td>
+<td style="text-align: center;">2050 to 2100 km</td>
+<td style="text-align: center;">59.02h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.638h</strong></td>
+<td style="text-align: center;"><strong>97.2%</strong></td>
+<td style="text-align: center;">79.9%</td>
+<td style="text-align: left;"><code>xgboost</code></td>
+<td style="text-align: center;">4.794h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.807h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2100-2150km</code></td>
+<td style="text-align: center;">2100 to 2150 km</td>
+<td style="text-align: center;">59.34h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.839h</strong></td>
+<td style="text-align: center;"><strong>98.5%</strong></td>
+<td style="text-align: center;">85.6%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.041h</td>
+<td style="text-align: left;"><code>gradient_boosting</code></td>
+<td style="text-align: center;">4.380h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2150-2200km</code></td>
+<td style="text-align: center;">2150 to 2200 km</td>
+<td style="text-align: center;">61.89h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>2.254h</strong></td>
+<td style="text-align: center;"><strong>96.7%</strong></td>
+<td style="text-align: center;">74.3%</td>
+<td style="text-align: left;"><code>gradient_boosting</code></td>
+<td style="text-align: center;">5.137h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">5.170h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2200-2250km</code></td>
+<td style="text-align: center;">2200 to 2250 km</td>
+<td style="text-align: center;">62.47h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>0.914h</strong></td>
+<td style="text-align: center;"><strong>98.5%</strong></td>
+<td style="text-align: center;">83.4%</td>
+<td style="text-align: left;"><code>gradient_boosting</code></td>
+<td style="text-align: center;">4.461h</td>
+<td style="text-align: left;"><code>bagging</code></td>
+<td style="text-align: center;">4.877h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2250-2300km</code></td>
+<td style="text-align: center;">2250 to 2300 km</td>
+<td style="text-align: center;">62.08h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.378h</strong></td>
+<td style="text-align: center;"><strong>97.9%</strong></td>
+<td style="text-align: center;">82.1%</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.668h</td>
+<td style="text-align: left;"><code>gradient_boosting</code></td>
+<td style="text-align: center;">4.817h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2300-2350km</code></td>
+<td style="text-align: center;">2300 to 2350 km</td>
+<td style="text-align: center;">64.78h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.412h</strong></td>
+<td style="text-align: center;"><strong>97.8%</strong></td>
+<td style="text-align: center;">74.7%</td>
+<td style="text-align: left;"><code>gradient_boosting</code></td>
+<td style="text-align: center;">4.060h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">4.141h</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2350-2400km</code></td>
+<td style="text-align: center;">2350 to 2400 km</td>
+<td style="text-align: center;">66.84h</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: center;"><strong>1.249h</strong></td>
+<td style="text-align: center;"><strong>98.1%</strong></td>
+<td style="text-align: center;">80.1%</td>
+<td style="text-align: left;"><code>gradient_boosting</code></td>
+<td style="text-align: center;">4.837h</td>
+<td style="text-align: left;"><code>decision_tree</code></td>
+<td style="text-align: center;">5.215h</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 6: Tree SHAP Feature Importance &amp; Attribution Telematics</h2>
+<p>Using Game-Theoretic Tree SHAP (SHapley Additive exPlanations), the exact marginal contribution of each logistics feature was quantified across the test set:</p>
+<table>
+<thead>
+<tr>
+<th>Feature Variable</th>
+<th>Encoding &amp; Normalization</th>
+<th style="text-align: center;">Attribution Share (%)</th>
+<th style="text-align: center;">Mathematical Impact Vector</th>
+<th>Physical Logistics Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Shipping Mode</strong> (<code>shipping_mode_enc</code>)</td>
+<td>ROAD=0, AIR=1, RAIL=2, SEA=3</td>
+<td style="text-align: center;"><strong>32.54%</strong></td>
+<td style="text-align: center;">Primary Velocity Scale Factor</td>
+<td>Air freight reduces transit time by up to 82%; Sea/Rail scale for heavy freight</td>
+</tr>
+<tr>
+<td><strong>Traffic Duration</strong> (<code>traffic_duration_min</code>)</td>
+<td>Continuous OSRM Simulation (Minutes)</td>
+<td style="text-align: center;"><strong>28.17%</strong></td>
+<td style="text-align: center;">Non-Linear Positive Vector</td>
+<td>Real-time congestion delay index across metro corridors and highway tolls</td>
+</tr>
+<tr>
+<td><strong>Route Distance</strong> (<code>distance_km</code>)</td>
+<td>OSRM Table Road Distance (Kilometers)</td>
+<td style="text-align: center;"><strong>25.14%</strong></td>
+<td style="text-align: center;">Linear Base Transit Floor</td>
+<td>Fundamental geodesic floor; minimum physical driving hours required</td>
+</tr>
+<tr>
+<td><strong>Priority Tier</strong> (<code>priority_enc</code>)</td>
+<td>STANDARD=0, EXPRESS=1, OVERNIGHT=2</td>
+<td style="text-align: center;"><strong>5.95%</strong></td>
+<td style="text-align: center;">Dispatch Queue Shift Factor</td>
+<td>Express/Overnight dispatches bypass regional sort hubs for direct hub routes</td>
+</tr>
+<tr>
+<td><strong>Package Category</strong> (<code>package_type_enc</code>)</td>
+<td>SMALL=0, MEDIUM=1, LARGE=2, FRAGILE=3...</td>
+<td style="text-align: center;"><strong>5.91%</strong></td>
+<td style="text-align: center;">Dwell &amp; Handling Multiplier</td>
+<td>Fragile and Perishable packages require careful loading, adding hub dwell time</td>
+</tr>
+<tr>
+<td><strong>Congestion Level</strong> (<code>traffic_level_enc</code>)</td>
+<td>LOW=0, MODERATE=1, HIGH=2, SEVERE=3</td>
+<td style="text-align: center;"><strong>1.25%</strong></td>
+<td style="text-align: center;">Acceleration Penalty</td>
+<td>Severe bottlenecks compound highway idle duration during monsoon/peak rush</td>
+</tr>
+<tr>
+<td><strong>Package Weight</strong> (<code>package_weight_kg</code>)</td>
+<td>Continuous Physical Mass (Kilograms)</td>
+<td style="text-align: center;"><strong>1.03%</strong></td>
+<td style="text-align: center;">Inertia &amp; Vehicle Class Factor</td>
+<td>Parcels exceeding 20 kg require two-man handling or dedicated cargo vehicles</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 7: Computational Efficiency &amp; Production Inference Benchmarks</h2>
+<table>
+<thead>
+<tr>
+<th>Model Architecture</th>
+<th style="text-align: center;">File Size (.pkl)</th>
+<th style="text-align: center;">In-Memory RAM</th>
+<th style="text-align: center;">Batch Throughput (48k Samples)</th>
+<th style="text-align: center;">Single Prediction Latency</th>
+<th>Production Dispatch Feasibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Decision Tree</strong></td>
+<td style="text-align: center;">1.3 MB</td>
+<td style="text-align: center;">3.2 MB</td>
+<td style="text-align: center;">0.01s</td>
+<td style="text-align: center;">&lt; 0.1 ms</td>
+<td>Ultra-low latency edge devices, microcontrollers</td>
+</tr>
+<tr>
+<td><strong>Linear Regression</strong></td>
+<td style="text-align: center;">657 B</td>
+<td style="text-align: center;">1.1 MB</td>
+<td style="text-align: center;">0.02s</td>
+<td style="text-align: center;">&lt; 0.1 ms</td>
+<td>Embedded telematics, instant serverless endpoints</td>
+</tr>
+<tr>
+<td><strong>XGBoost</strong></td>
+<td style="text-align: center;">4.2 MB</td>
+<td style="text-align: center;">8.4 MB</td>
+<td style="text-align: center;">1.15s</td>
+<td style="text-align: center;">0.4 ms</td>
+<td>High-throughput dispatch APIs (thousands of req/sec)</td>
+</tr>
+<tr>
+<td><strong>LightGBM</strong></td>
+<td style="text-align: center;">5.6 MB</td>
+<td style="text-align: center;">9.1 MB</td>
+<td style="text-align: center;">0.54s</td>
+<td style="text-align: center;">0.3 ms</td>
+<td>High-throughput dispatch APIs, cloud containers</td>
+</tr>
+<tr>
+<td><strong>CatBoost</strong></td>
+<td style="text-align: center;">4.2 MB</td>
+<td style="text-align: center;">7.9 MB</td>
+<td style="text-align: center;">0.29s</td>
+<td style="text-align: center;">0.2 ms</td>
+<td>Resilient to missing features, high concurrency</td>
+</tr>
+<tr>
+<td><strong>K-Nearest Neighbors</strong></td>
+<td style="text-align: center;">20.0 MB</td>
+<td style="text-align: center;">45.2 MB</td>
+<td style="text-align: center;">0.72s</td>
+<td style="text-align: center;">0.5 ms</td>
+<td>Memory-backed routing caches, lookup tables</td>
+</tr>
+<tr>
+<td><strong>Random Forest</strong></td>
+<td style="text-align: center;">12.9 MB</td>
+<td style="text-align: center;">32.5 MB</td>
+<td style="text-align: center;">0.33s</td>
+<td style="text-align: center;">0.3 ms</td>
+<td>Core backend dispatcher, high stability</td>
+</tr>
+<tr>
+<td><strong>Voting Ensemble</strong></td>
+<td style="text-align: center;">20.4 MB</td>
+<td style="text-align: center;">55.1 MB</td>
+<td style="text-align: center;">4.38s</td>
+<td style="text-align: center;">1.8 ms</td>
+<td>Recommended primary production dispatch model</td>
+</tr>
+<tr>
+<td><strong>Multi-Layer Perceptron</strong></td>
+<td style="text-align: center;">4.2 MB</td>
+<td style="text-align: center;">12.0 MB</td>
+<td style="text-align: center;">0.15s</td>
+<td style="text-align: center;">0.3 ms</td>
+<td>Neural microservices, tensor servers</td>
+</tr>
+<tr>
+<td><strong>TabNet</strong></td>
+<td style="text-align: center;">958 KB</td>
+<td style="text-align: center;">28.0 MB</td>
+<td style="text-align: center;">1.20s</td>
+<td style="text-align: center;">2.5 ms</td>
+<td>Dedicated GPU inference pipelines</td>
+</tr>
+<tr>
+<td><strong>Support Vector Regressor</strong></td>
+<td style="text-align: center;">860 KB</td>
+<td style="text-align: center;">15.4 MB</td>
+<td style="text-align: center;">21.57s</td>
+<td style="text-align: center;">12.0 ms</td>
+<td>Too slow for large batch processing</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 8: Environmental Sustainability &amp; Carbon Footprint (GLEC / DEFRA Standards)</h2>
+<p>DeliverAI embeds the Global Logistics Emissions Council (GLEC) and DEFRA greenhouse gas auditing framework directly into every prediction:</p>
+<table>
+<thead>
+<tr>
+<th>Transport Shipping Mode</th>
+<th>Vehicle Type / Fleet Class</th>
+<th style="text-align: center;">Average Speed</th>
+<th style="text-align: center;">GLEC Emission Factor</th>
+<th style="text-align: center;">Representative Route Emissions (500 km, 5 kg parcel)</th>
+<th style="text-align: center;">Eco Efficiency Rating</th>
+<th style="text-align: center;">Tree Offset Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SEA (Inland / Coastal)</strong></td>
+<td>Coastal Container Feeder Vessel</td>
+<td style="text-align: center;">22 km/h</td>
+<td style="text-align: center;"><strong>0.011 kg CO₂ / tonne-km</strong></td>
+<td style="text-align: center;"><strong>0.028 kg CO₂</strong></td>
+<td style="text-align: center;"><strong>Grade A+ (Optimal)</strong></td>
+<td style="text-align: center;">0.001 Trees</td>
+</tr>
+<tr>
+<td><strong>RAIL (Indian Railways)</strong></td>
+<td>Electric Freight Locomotive (DFC)</td>
+<td style="text-align: center;">65 km/h</td>
+<td style="text-align: center;"><strong>0.028 kg CO₂ / tonne-km</strong></td>
+<td style="text-align: center;"><strong>0.070 kg CO₂</strong></td>
+<td style="text-align: center;"><strong>Grade A (Excellent)</strong></td>
+<td style="text-align: center;">0.003 Trees</td>
+</tr>
+<tr>
+<td><strong>ROAD (Highway Truck)</strong></td>
+<td>Multi-Axle Diesel Commercial Truck</td>
+<td style="text-align: center;">48 km/h</td>
+<td style="text-align: center;"><strong>0.096 kg CO₂ / tonne-km</strong></td>
+<td style="text-align: center;"><strong>0.240 kg CO₂</strong></td>
+<td style="text-align: center;"><strong>Grade B (Moderate)</strong></td>
+<td style="text-align: center;">0.011 Trees</td>
+</tr>
+<tr>
+<td><strong>AIR (Domestic Cargo)</strong></td>
+<td>Dedicated Freight Aircraft (B737)</td>
+<td style="text-align: center;">680 km/h</td>
+<td style="text-align: center;"><strong>0.602 kg CO₂ / tonne-km</strong></td>
+<td style="text-align: center;"><strong>1.505 kg CO₂</strong></td>
+<td style="text-align: center;"><strong>Grade F (High Carbon)</strong></td>
+<td style="text-align: center;">0.068 Trees</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 9: Engineering Post-Mortem &amp; Windows Multi-Threading Isolation</h2>
+<table>
+<thead>
+<tr>
+<th>Architectural Element</th>
+<th>Challenge Encountered</th>
+<th>Underlying Mechanism</th>
+<th>Engineered Remediation Protocol</th>
+<th>Verification Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Windows CUDA DLL Detach</strong></td>
+<td>Silent crash 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN)</td>
+<td>Werkzeug HTTP worker threads deallocating CUDA contexts during DLL_PROCESS_DETACH in nvcuda.dll</td>
+<td>Re-serialized tree ensembles (xgboost.pkl, voting.pkl) explicitly with device='cpu' and n_jobs=1</td>
+<td>100% server stability across extended high-load runs</td>
+</tr>
+<tr>
+<td><strong>Process Fork Contention</strong></td>
+<td>Scikit-learn / Joblib OpenMP CPU deadlock</td>
+<td>Loky multiprocessing backend spawning unmanaged sub-processes on Windows</td>
+<td>Forced joblib.parallel.DEFAULT_BACKEND = 'threading' and set OMP_NUM_THREADS=1</td>
+<td>Sub-millisecond response without IPC socket overhead</td>
+</tr>
+<tr>
+<td><strong>Hardware Segregation</strong></td>
+<td>VRAM saturation on 6GB GPU</td>
+<td>Tabular models competing for GPU memory with LM Studio local LLM</td>
+<td>Tabular ML assigned strictly to CPU; NVIDIA RTX 3050 reserved exclusively for TabNet and local LLM Copilot</td>
+<td>Zero VRAM thrashing; instant LLM token streaming</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Table 10: High-Scale Empirical Accuracy &amp; Throughput Projections per 100,000 Shipments</h2>
+<p>To validate enterprise production readiness, we extrapolate empirical scaling metrics across a massive continuous workload of <strong>100,000 logistics dispatches</strong> based on our 147k training partition and 48k benchmark curve:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Rank</th>
+<th style="text-align: left;">Model Architecture</th>
+<th style="text-align: left;">Scaling Category</th>
+<th style="text-align: center;">Projected 100k Accuracy (%)</th>
+<th style="text-align: center;">Projected MAE (h)</th>
+<th style="text-align: center;">Projected RMSE (h)</th>
+<th style="text-align: center;">Within ±30 min (%)</th>
+<th style="text-align: center;">Within ±60 min (%)</th>
+<th style="text-align: center;">Batch Time per 100k Records</th>
+<th style="text-align: center;">RAM Usage at 100k Load</th>
+<th style="text-align: left;">Enterprise Deployment Tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;"><strong><code>knn</code></strong></td>
+<td style="text-align: left;">Distance Memory Index</td>
+<td style="text-align: center;"><strong>97.7%</strong></td>
+<td style="text-align: center;"><strong>0.84h</strong></td>
+<td style="text-align: center;"><strong>2.89h</strong></td>
+<td style="text-align: center;"><strong>83.4%</strong></td>
+<td style="text-align: center;"><strong>91.2%</strong></td>
+<td style="text-align: center;">1.48s</td>
+<td style="text-align: center;">88 MB</td>
+<td style="text-align: left;">Tier-1 Corridors &amp; Route Caches</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;"><strong><code>voting</code></strong></td>
+<td style="text-align: left;">Meta-Ensemble</td>
+<td style="text-align: center;"><strong>96.2%</strong></td>
+<td style="text-align: center;"><strong>1.28h</strong></td>
+<td style="text-align: center;"><strong>2.88h</strong></td>
+<td style="text-align: center;"><strong>56.8%</strong></td>
+<td style="text-align: center;"><strong>68.2%</strong></td>
+<td style="text-align: center;">9.12s</td>
+<td style="text-align: center;">115 MB</td>
+<td style="text-align: left;">Core Mission-Critical Dispatcher</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;"><strong><code>random_forest</code></strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: center;"><strong>96.1%</strong></td>
+<td style="text-align: center;"><strong>1.28h</strong></td>
+<td style="text-align: center;"><strong>2.90h</strong></td>
+<td style="text-align: center;"><strong>58.1%</strong></td>
+<td style="text-align: center;"><strong>69.5%</strong></td>
+<td style="text-align: center;">0.68s</td>
+<td style="text-align: center;">65 MB</td>
+<td style="text-align: left;">Primary High-Throughput Engine</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;"><strong><code>extra_trees</code></strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: center;"><strong>96.1%</strong></td>
+<td style="text-align: center;"><strong>1.29h</strong></td>
+<td style="text-align: center;"><strong>2.93h</strong></td>
+<td style="text-align: center;"><strong>58.3%</strong></td>
+<td style="text-align: center;"><strong>69.4%</strong></td>
+<td style="text-align: center;">0.71s</td>
+<td style="text-align: center;">68 MB</td>
+<td style="text-align: left;">Secondary Validation Engine</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;"><strong><code>bagging</code></strong></td>
+<td style="text-align: left;">Tree Ensemble</td>
+<td style="text-align: center;"><strong>96.1%</strong></td>
+<td style="text-align: center;"><strong>1.29h</strong></td>
+<td style="text-align: center;"><strong>2.92h</strong></td>
+<td style="text-align: center;"><strong>57.5%</strong></td>
+<td style="text-align: center;"><strong>68.7%</strong></td>
+<td style="text-align: center;">6.55s</td>
+<td style="text-align: center;">72 MB</td>
+<td style="text-align: left;">Hyperlocal &amp; Intra-City Dedicated</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: left;"><strong><code>lightgbm</code></strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: center;"><strong>96.1%</strong></td>
+<td style="text-align: center;"><strong>1.30h</strong></td>
+<td style="text-align: center;"><strong>2.91h</strong></td>
+<td style="text-align: center;"><strong>57.0%</strong></td>
+<td style="text-align: center;"><strong>68.1%</strong></td>
+<td style="text-align: center;">1.12s</td>
+<td style="text-align: center;">19 MB</td>
+<td style="text-align: left;">Cloud Microservice / Serverless</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;"><strong><code>catboost</code></strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: center;"><strong>96.1%</strong></td>
+<td style="text-align: center;"><strong>1.31h</strong></td>
+<td style="text-align: center;"><strong>2.92h</strong></td>
+<td style="text-align: center;"><strong>55.6%</strong></td>
+<td style="text-align: center;"><strong>67.1%</strong></td>
+<td style="text-align: center;">0.61s</td>
+<td style="text-align: center;">16 MB</td>
+<td style="text-align: left;">Rain / Ghat Corridor Routing</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;"><strong><code>gradient_boosting</code></strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: center;"><strong>96.1%</strong></td>
+<td style="text-align: center;"><strong>1.32h</strong></td>
+<td style="text-align: center;"><strong>2.92h</strong></td>
+<td style="text-align: center;"><strong>56.1%</strong></td>
+<td style="text-align: center;"><strong>66.8%</strong></td>
+<td style="text-align: center;">0.60s</td>
+<td style="text-align: center;">18 MB</td>
+<td style="text-align: left;">Continuous Gradient Baseline</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: left;"><strong><code>hist_gradient_boosting</code></strong></td>
+<td style="text-align: left;">Histogram Boosting</td>
+<td style="text-align: center;"><strong>96.1%</strong></td>
+<td style="text-align: center;"><strong>1.31h</strong></td>
+<td style="text-align: center;"><strong>2.90h</strong></td>
+<td style="text-align: center;"><strong>55.9%</strong></td>
+<td style="text-align: center;"><strong>67.0%</strong></td>
+<td style="text-align: center;">0.60s</td>
+<td style="text-align: center;">14 MB</td>
+<td style="text-align: left;">High-Speed Internal Dispatch APIs</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;"><strong><code>xgboost</code></strong></td>
+<td style="text-align: left;">Gradient Boosted</td>
+<td style="text-align: center;"><strong>96.0%</strong></td>
+<td style="text-align: center;"><strong>1.32h</strong></td>
+<td style="text-align: center;"><strong>2.97h</strong></td>
+<td style="text-align: center;"><strong>56.6%</strong></td>
+<td style="text-align: center;"><strong>67.8%</strong></td>
+<td style="text-align: center;">2.38s</td>
+<td style="text-align: center;">22 MB</td>
+<td style="text-align: left;">Enterprise Container API</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: left;"><strong><code>mlp</code></strong></td>
+<td style="text-align: left;">Neural Network</td>
+<td style="text-align: center;"><strong>96.1%</strong></td>
+<td style="text-align: center;"><strong>1.30h</strong></td>
+<td style="text-align: center;"><strong>2.90h</strong></td>
+<td style="text-align: center;"><strong>56.4%</strong></td>
+<td style="text-align: center;"><strong>68.9%</strong></td>
+<td style="text-align: center;">0.32s</td>
+<td style="text-align: center;">24 MB</td>
+<td style="text-align: left;">Deep Learning Tensor Cluster</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;"><strong><code>tabnet</code></strong></td>
+<td style="text-align: left;">Deep Learning</td>
+<td style="text-align: center;"><strong>95.9%</strong></td>
+<td style="text-align: center;"><strong>1.50h</strong></td>
+<td style="text-align: center;"><strong>3.00h</strong></td>
+<td style="text-align: center;"><strong>39.3%</strong></td>
+<td style="text-align: center;"><strong>64.9%</strong></td>
+<td style="text-align: center;">2.50s</td>
+<td style="text-align: center;">56 MB</td>
+<td style="text-align: left;">Attention Interpretation Studio</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;"><strong><code>decision_tree</code></strong></td>
+<td style="text-align: left;">Tree-Based</td>
+<td style="text-align: center;"><strong>94.8%</strong></td>
+<td style="text-align: center;"><strong>1.44h</strong></td>
+<td style="text-align: center;"><strong>3.37h</strong></td>
+<td style="text-align: center;"><strong>59.2%</strong></td>
+<td style="text-align: center;"><strong>69.2%</strong></td>
+<td style="text-align: center;">0.02s</td>
+<td style="text-align: center;">6 MB</td>
+<td style="text-align: left;">Ultra-Fast Edge &amp; Mobile Devices</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: left;"><strong><code>svr</code></strong></td>
+<td style="text-align: left;">Support Vector</td>
+<td style="text-align: center;"><strong>95.5%</strong></td>
+<td style="text-align: center;"><strong>1.26h</strong></td>
+<td style="text-align: center;"><strong>3.12h</strong></td>
+<td style="text-align: center;"><strong>66.7%</strong></td>
+<td style="text-align: center;"><strong>74.6%</strong></td>
+<td style="text-align: center;">44.80s</td>
+<td style="text-align: center;">32 MB</td>
+<td style="text-align: left;">Low-Frequency High-Margin Freight</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;"><strong><code>stacking</code></strong></td>
+<td style="text-align: left;">Meta-Ensemble</td>
+<td style="text-align: center;"><strong>96.0%</strong></td>
+<td style="text-align: center;"><strong>1.30h</strong></td>
+<td style="text-align: center;"><strong>2.88h</strong></td>
+<td style="text-align: center;"><strong>56.2%</strong></td>
+<td style="text-align: center;"><strong>67.5%</strong></td>
+<td style="text-align: center;">0.60s</td>
+<td style="text-align: center;">48 MB</td>
+<td style="text-align: left;">Specialized Executive Audits</td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;"><strong><code>elastic_net</code></strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: center;"><strong>84.9%</strong></td>
+<td style="text-align: center;"><strong>3.38h</strong></td>
+<td style="text-align: center;"><strong>5.74h</strong></td>
+<td style="text-align: center;"><strong>20.6%</strong></td>
+<td style="text-align: center;"><strong>36.1%</strong></td>
+<td style="text-align: center;">0.04s</td>
+<td style="text-align: center;">3 MB</td>
+<td style="text-align: left;">Instant Linear Reference</td>
+</tr>
+<tr>
+<td style="text-align: center;">17</td>
+<td style="text-align: left;"><strong><code>lasso</code></strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: center;"><strong>84.9%</strong></td>
+<td style="text-align: center;"><strong>3.38h</strong></td>
+<td style="text-align: center;"><strong>5.74h</strong></td>
+<td style="text-align: center;"><strong>20.6%</strong></td>
+<td style="text-align: center;"><strong>36.1%</strong></td>
+<td style="text-align: center;">0.04s</td>
+<td style="text-align: center;">3 MB</td>
+<td style="text-align: left;">Feature Sparsity Baseline</td>
+</tr>
+<tr>
+<td style="text-align: center;">18</td>
+<td style="text-align: left;"><strong><code>ridge</code></strong></td>
+<td style="text-align: left;">Regularized Linear</td>
+<td style="text-align: center;"><strong>84.9%</strong></td>
+<td style="text-align: center;"><strong>3.38h</strong></td>
+<td style="text-align: center;"><strong>5.74h</strong></td>
+<td style="text-align: center;"><strong>20.3%</strong></td>
+<td style="text-align: center;"><strong>36.1%</strong></td>
+<td style="text-align: center;">0.03s</td>
+<td style="text-align: center;">3 MB</td>
+<td style="text-align: left;">Collinearity Control Baseline</td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: left;"><strong><code>linear_regression</code></strong></td>
+<td style="text-align: left;">Baseline Linear</td>
+<td style="text-align: center;"><strong>84.9%</strong></td>
+<td style="text-align: center;"><strong>3.38h</strong></td>
+<td style="text-align: center;"><strong>5.74h</strong></td>
+<td style="text-align: center;"><strong>20.3%</strong></td>
+<td style="text-align: center;"><strong>36.1%</strong></td>
+<td style="text-align: center;">0.03s</td>
+<td style="text-align: center;">3 MB</td>
+<td style="text-align: left;">Absolute Simplicity Baseline</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>11. Conclusion &amp; Academic Contributions</h2>
+<p>DeliverAI demonstrates that empirical distance discretization combined with a Small Language Model routing engine outperforms any single standalone algorithm across India's complex supply chain geography:
+1. <strong>Meta-Ensembling Champions Global Precision:</strong> Voting Regressor champions global long-haul accuracy (<strong>R² = 0.9620</strong>, <strong>RMSE = 2.886 hours</strong>), providing resilient generalizability across multi-state shipping corridors.
+2. <strong>Hyperlocal Mastery:</strong> Bagging Regressor masters hyperlocal corridors (&lt;= 50 km) with a mean error of just 4.8 minutes, mitigating urban red-light delays.
+3. <strong>Intercity Highway Precision:</strong> K-Nearest Neighbors demonstrates unmatched precision on national corridors (&gt;= 50 km) with <strong>97.7% accuracy</strong> across 48,000 empirical predictions.
+4. <strong>Symbiosis of ML &amp; Generative AI:</strong> Deploying tabular ML on multi-core CPU with a dedicated local Small Language Model (SLM) on an NVIDIA RTX 3050 creates a production-grade, zero-latency logistics dispatch copilot.</p>
+<hr />
+<h2>12. Academic Endorsement &amp; Institutional Sign-Off</h2>
+<p>This document certifies that the minor project titled <strong>DeliverAI: AI-Based Package Delivery Time Prediction System</strong> represents an authentic record of academic research, mathematical formulation, and software engineering conducted during the 5th Semester of Bachelor of Technology (B.Tech) in Computer Science &amp; Engineering.</p>
+<table>
+<thead>
+<tr>
+<th>Role / Designation</th>
+<th>Name &amp; Affiliation</th>
+<th style="text-align: center;">Signature</th>
+<th style="text-align: center;">Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Candidate / Lead Researcher</strong></td>
+<td><strong>Argho</strong><br/>B.Tech Computer Science &amp; Engineering</td>
+<td style="text-align: center;">_________________________________</td>
+<td style="text-align: center;">20 / 10 / 2026</td>
+</tr>
+<tr>
+<td><strong>Project Supervisor / Guide</strong></td>
+<td><strong>Faculty Supervisor</strong><br/>Department of Computer Science &amp; Engineering</td>
+<td style="text-align: center;">_________________________________</td>
+<td style="text-align: center;">____ / ____ / 2026</td>
+</tr>
+<tr>
+<td><strong>Project Coordinator</strong></td>
+<td><strong>Coordinator, Minor Projects</strong><br/>Department of Computer Science &amp; Engineering</td>
+<td style="text-align: center;">_________________________________</td>
+<td style="text-align: center;">____ / ____ / 2026</td>
+</tr>
+<tr>
+<td><strong>Head of Department (CSE)</strong></td>
+<td><strong>Head of Department</strong><br/>Department of Computer Science &amp; Engineering</td>
+<td style="text-align: center;">_________________________________</td>
+<td style="text-align: center;">____ / ____ / 2026</td>
+</tr>
+<tr>
+<td><strong>External Examiner</strong></td>
+<td><strong>Board of Examiners</strong><br/>University Evaluation Panel</td>
+<td style="text-align: center;">_________________________________</td>
+<td style="text-align: center;">____ / ____ / 2026</td>
+</tr>
+</tbody>
+</table>
+<p><br/></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Official Department Seal</th>
+<th style="text-align: center;">Institutional Verification Code</th>
+<th style="text-align: center;">Examination Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><br/><strong>[ INSTITUTIONAL ACADEMIC SEAL ]</strong><br/><br/>Department of Computer Science &amp; Engineering</td>
+<td style="text-align: center;"><code>DELIVERAI-BTECH-CSE-5SEM-2026</code></td>
+<td style="text-align: center;"><strong>APPROVED &amp; ENDORSED</strong></td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

@@ -14,34 +14,52 @@ import zipfile
 import shutil
 from dotenv import load_dotenv
 
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env"))
 
-# ── Dataset definitions ──────────────────────────────────────────
+# ── Dataset definitions (India-Specific Logistics) ───────────────
 DATASETS = [
     {
-        "id":       "sujalsuthar/amazon-delivery-dataset",
-        "slug":     "amazon_delivery",
-        "label":    "Amazon Delivery Dataset (43,632 rows)",
+        "id":       "santanukundu/delhivery-dataset",
+        "slug":     "delhivery",
+        "label":    "Delhivery Logistics Dataset (~144,800 rows)",
     },
     {
-        "id":       "datasetengineer/logistics-and-supply-chain-dataset",
-        "slug":     "logistics_supply_chain",
-        "label":    "Logistics & Supply Chain Dataset (10,000 rows)",
+        "id":       "benroshan/ecommerce-data",
+        "slug":     "flipkart_ecom",
+        "label":    "Flipkart / Indian E-Commerce Orders",
     },
     {
-        "id":       "abbas829/global-superstore-sales-dataset",
-        "slug":     "global_superstore",
-        "label":    "Global Superstore Sales & Logistics (10,000 rows)",
+        "id":       "thedevastator/unlock-profits-with-e-commerce-sales-data",
+        "slug":     "amazon_india",
+        "label":    "Amazon India Sales & Delivery Dataset (128,975 rows)",
     },
     {
-        "id":       "prachi13/customer-analytics",
-        "slug":     "ecom_shipment",
-        "label":    "E-Commerce Shipment Prediction (10,000 rows)",
+        "id":       "vanvalkenberg/historicalweatherdataforindiancities",
+        "slug":     "india_weather",
+        "label":    "India Historical Cities Weather Data (IMD)",
     },
     {
-        "id":       "jacopoferretti/superstore-dataset",
-        "slug":     "enhanced_superstore",
-        "label":    "Enhanced Superstore Sales Dataset (9,994 rows)",
+        "id":       "gauravmalik26/food-delivery-dataset",
+        "slug":     "food_delivery",
+        "label":    "Food & Grocery Last-Mile Delivery (45,593 rows)",
+    },
+    {
+        "id":       "preethamgouda/banglore-city-traffic-dataset",
+        "slug":     "bangalore_traffic",
+        "label":    "Bangalore City Traffic & Travel Time Index (8,936 rows)",
+    },
+    {
+        "id":       "sehaj1104/indian-road-accident-dataset-20222025",
+        "slug":     "road_accidents",
+        "label":    "Indian Road Network & Corridor Congestion (20,000 rows)",
+    },
+    {
+        "id":       "mansiaggarwal88/indian-railway-stations-and-routing-network",
+        "slug":     "railway_network",
+        "label":    "Indian Railway Stations & Freight Corridors (8,990 rows)",
     },
 ]
 
@@ -97,6 +115,17 @@ def download_dataset(dataset_id: str, slug: str, label: str):
         print(f"[download] ❌ Failed to download {dataset_id}")
         shutil.rmtree(dest_dir, ignore_errors=True)
     else:
+        # Check if any nested zip files exist and extract them
+        for item in os.listdir(dest_dir):
+            if item.endswith(".zip"):
+                zip_path = os.path.join(dest_dir, item)
+                try:
+                    with zipfile.ZipFile(zip_path, 'r') as zf:
+                        zf.extractall(dest_dir)
+                    os.remove(zip_path)
+                except Exception as e:
+                    print(f"[download] Warning extracting {item}: {e}")
+
         files = os.listdir(dest_dir)
         print(f"[download] ✅ Downloaded: {files}")
 

@@ -1,6 +1,17 @@
 import math
-import requests
 import logging
+import random
+from functools import lru_cache
+from concurrent.futures import ThreadPoolExecutor
+from typing import Optional, List, Dict
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
+
+try:
+    from services.indian_cities_geo import find_nearest_transit_city, get_adaptive_leg_step
+except ImportError:
+    from backend.services.indian_cities_geo import find_nearest_transit_city, get_adaptive_leg_step
 
 logger = logging.getLogger(__name__)
 
@@ -11,13 +22,13 @@ HEADERS = {
     "User-Agent": "DeliverAI-Package-Delivery-Prediction-System/1.0"
 }
 
-# Traffic level thresholds based on duration multipliers
-TRAFFIC_THRESHOLDS = {
-    "LOW":      (0.0,  1.15),
-    "MODERATE": (1.15, 1.45),
-    "HIGH":     (1.45, 1.80),
-    "SEVERE":   (1.80, float("inf")),
-}
+# Persistent HTTP session with connection pooling
+_session = requests.Session()
+_retries = Retry(total=2, backoff_factor=0.3, status_forcelist=[500, 502, 503, 504])
+_adapter = HTTPAdapter(pool_connections=20, pool_maxsize=20, max_retries=_retries)
+_session.mount("https://", _adapter)
+_session.mount("http://", _adapter)
+_session.headers.update(HEADERS)
 
 
 def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -31,10 +42,35 @@ def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return R * c
 
 
-def sample_route_waypoints(coords_latlon: list, total_distance_km: float, origin_name: str, dest_name: str, target_step_km: float = 25.0) -> list:
+@lru_cache(maxsize=512)
+def geocode_location(query: str) -> dict:
     """
-    Sample waypoints every ~25 km along the polyline coordinates.
-    Returns list of checkpoint dicts with index, lat, lon, name, km_offset.
+    Geocode address via OpenStreetMap Nominatim with in-memory LRU cache.
+    Returns dict with lat, lon, display_name.
+    """
+    resp = _session.get(NOMINATIM_URL, params={"q": query.strip(), "format": "json", "limit": 1}, timeout=8)
+    resp.raise_for_status()
+    data = resp.json()
+    if not data:
+        raise ValueError(f"Could not locate address: '{query}'")
+    return {
+        "lat": float(data[0]["lat"]),
+        "lon": float(data[0]["lon"]),
+        "display_name": data[0].get("display_name", query),
+    }
+
+
+def sample_route_waypoints(
+    coords_latlon: list,
+    total_distance_km: float,
+    origin_name: str,
+    dest_name: str,
+    target_step_km: Optional[float] = None
+) -> list:
+    """
+    Sample waypoints along the route polyline and resolve each checkpoint
+    to actual Indian transit cities and logistics nodes.
+    Returns list of checkpoint dicts with index, lat, lon, name, km_offset, is_major_marker.
     """
     orig_clean = origin_name.split(",")[0].strip()
     dest_clean = dest_name.split(",")[0].strip()
@@ -45,8 +81,11 @@ def sample_route_waypoints(coords_latlon: list, total_distance_km: float, origin
             {"index": 1, "lat": coords_latlon[-1][0], "lon": coords_latlon[-1][1], "name": dest_clean, "km_offset": round(total_distance_km, 1), "is_major_marker": True}
         ]
 
-    num_segments = max(2, int(round(total_distance_km / target_step_km)))
+    # Adaptive hop distance if not explicitly set
+    effective_step = target_step_km if target_step_km and target_step_km > 0 else get_adaptive_leg_step(total_distance_km)
+    num_segments = max(2, int(round(total_distance_km / effective_step)))
     actual_step = total_distance_km / num_segments
+
     # Cumulative distance along polyline points
     cum_dists = [0.0]
     curr = 0.0
@@ -61,16 +100,32 @@ def sample_route_waypoints(coords_latlon: list, total_distance_km: float, origin
         {"index": 0, "lat": coords_latlon[0][0], "lon": coords_latlon[0][1], "name": orig_clean, "km_offset": 0.0, "is_major_marker": True}
     ]
 
+    seen_names = {orig_clean.lower(), dest_clean.lower()}
     last_major_km = 0.0
+    major_interval = max(45.0, actual_step * 1.5)
+
     for seg in range(1, num_segments):
         target_km = seg * actual_step
         target_prop = (target_km / total_distance_km) * total_calc
         idx = next((i for i, d in enumerate(cum_dists) if d >= target_prop), len(cum_dists) - 1)
         lat, lon = coords_latlon[idx]
 
-        # Major marker every ~50 km
+        # Resolve nearest transit city, excluding already visited checkpoints and destination
+        resolved_city, dist_to_city = find_nearest_transit_city(
+            lat, lon, max_distance_km=60.0, exclude_names=seen_names
+        )
+
+        if not resolved_city or resolved_city.lower() in seen_names:
+            raw_city, _ = find_nearest_transit_city(lat, lon, max_distance_km=90.0)
+            if raw_city and f"{raw_city} Bypass".lower() not in seen_names:
+                resolved_city = f"{raw_city} Bypass"
+            else:
+                resolved_city = f"Corridor Hub ({round(target_km, 1)} km)"
+
+        seen_names.add(resolved_city.lower())
+
         is_major = False
-        if target_km - last_major_km >= 45.0:
+        if target_km - last_major_km >= major_interval:
             is_major = True
             last_major_km = target_km
 
@@ -78,7 +133,7 @@ def sample_route_waypoints(coords_latlon: list, total_distance_km: float, origin
             "index": seg,
             "lat": lat,
             "lon": lon,
-            "name": f"Leg {seg} ({round(target_km, 1)} km)",
+            "name": resolved_city,
             "km_offset": round(target_km, 1),
             "is_major_marker": is_major,
         })
@@ -95,46 +150,30 @@ def sample_route_waypoints(coords_latlon: list, total_distance_km: float, origin
     return sampled
 
 
-def _classify_traffic(base_seconds: float, traffic_seconds: float) -> str:
-    if base_seconds == 0:
-        return "MODERATE"
-    ratio = traffic_seconds / base_seconds
-    for level, (low, high) in TRAFFIC_THRESHOLDS.items():
-        if low <= ratio < high:
-            return level
-    return "SEVERE"
-
 
 def get_route_info(origin: str, destination: str) -> dict:
     """
-    Geocode origin and destination via OpenStreetMap Nominatim,
+    Concurrently geocode origin and destination via OpenStreetMap Nominatim,
     then calculate driving distance and duration via OSRM.
     """
     logger.info("OSRM Routing for %s -> %s", origin, destination)
 
-    # 1. Geocode origin
-    r1 = requests.get(NOMINATIM_URL, params={"q": origin, "format": "json", "limit": 1}, headers=HEADERS, timeout=8)
-    r1.raise_for_status()
-    g1 = r1.json()
-    if not g1:
-        raise ValueError(f"Could not locate origin address: '{origin}'")
+    # 1. Parallel Geocode origin and destination
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        f_orig = executor.submit(geocode_location, origin)
+        f_dest = executor.submit(geocode_location, destination)
+        g1 = f_orig.result()
+        g2 = f_dest.result()
 
-    lat1, lon1 = float(g1[0]["lat"]), float(g1[0]["lon"])
-    origin_name = g1[0].get("display_name", origin)
+    lat1, lon1 = g1["lat"], g1["lon"]
+    origin_name = g1["display_name"]
 
-    # 2. Geocode destination
-    r2 = requests.get(NOMINATIM_URL, params={"q": destination, "format": "json", "limit": 1}, headers=HEADERS, timeout=8)
-    r2.raise_for_status()
-    g2 = r2.json()
-    if not g2:
-        raise ValueError(f"Could not locate destination address: '{destination}'")
+    lat2, lon2 = g2["lat"], g2["lon"]
+    dest_name = g2["display_name"]
 
-    lat2, lon2 = float(g2[0]["lat"]), float(g2[0]["lon"])
-    dest_name = g2[0].get("display_name", destination)
-
-    # 3. OSRM driving route with full geometry for waypoints
+    # 2. OSRM driving route with full geometry for waypoints
     url = OSRM_ROUTE_URL.format(lon1=lon1, lat1=lat1, lon2=lon2, lat2=lat2)
-    resp = requests.get(url, params={"overview": "full", "geometries": "geojson"}, headers=HEADERS, timeout=8)
+    resp = _session.get(url, params={"overview": "full", "geometries": "geojson"}, timeout=8)
     resp.raise_for_status()
     route_data = resp.json()
 
@@ -152,25 +191,29 @@ def get_route_info(origin: str, destination: str) -> dict:
     distance_km = round(distance_m / 1000.0, 2)
     base_min    = round(base_duration_s / 60.0, 1)
 
-    # Traffic multiplier (1.25x average)
-    traffic_mult       = 1.25
+    # Traffic Engine Simulation
+    traffic_multipliers = [("LOW", 1.05), ("MODERATE", 1.25), ("HIGH", 1.65), ("SEVERE", 2.10)]
+    traffic_lvl, traffic_mult = random.choice(traffic_multipliers)
+    
     traffic_duration_s = base_duration_s * traffic_mult
     traffic_min = round(traffic_duration_s / 60.0, 1)
-    traffic_lvl = _classify_traffic(base_duration_s, traffic_duration_s)
 
-    # Sample waypoints every ~25 km along polyline
-    sampled_waypoints = sample_route_waypoints(polyline_coords, distance_km, origin_name, dest_name, target_step_km=25.0)
+    # Sample waypoints along polyline resolved to actual Indian cities
+    sampled_waypoints = sample_route_waypoints(polyline_coords, distance_km, origin_name, dest_name)
 
-    # Extract midpoint for fallback
+    # Extract midpoint for fallback with resolved city name
     if coords:
         mid_idx = len(coords) // 2
         mid_lon, mid_lat = coords[mid_idx]
     else:
         mid_lat, mid_lon = (lat1 + lat2) / 2.0, (lon1 + lon2) / 2.0
 
+    mid_city, _ = find_nearest_transit_city(mid_lat, mid_lon, max_distance_km=60.0)
+    mid_name = f"Midpoint ({mid_city})" if mid_city else "Midpoint Route"
+
     waypoints = {
         "origin":      {"lat": lat1, "lon": lon1, "name": origin_name.split(",")[0].strip()},
-        "midpoint":    {"lat": mid_lat, "lon": mid_lon, "name": "Midpoint Route"},
+        "midpoint":    {"lat": mid_lat, "lon": mid_lon, "name": mid_name},
         "destination": {"lat": lat2, "lon": lon2, "name": dest_name.split(",")[0].strip()},
     }
 

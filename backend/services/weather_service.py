@@ -4,13 +4,23 @@ Returns weather condition, temperature, wind speed, and precipitation.
 Includes robust fallback if API key is missing, unauthorized (activating), or failing.
 """
 
-import requests
 import logging
+from concurrent.futures import ThreadPoolExecutor
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 from config import config
 
 logger = logging.getLogger(__name__)
 
 OWM_URL = "https://api.openweathermap.org/data/2.5/weather"
+
+# Persistent HTTP session with connection pooling
+_weather_session = requests.Session()
+_retries = Retry(total=2, backoff_factor=0.3, status_forcelist=[500, 502, 503, 504])
+_adapter = HTTPAdapter(pool_connections=20, pool_maxsize=20, max_retries=_retries)
+_weather_session.mount("https://", _adapter)
+_weather_session.mount("http://", _adapter)
 
 DEFAULT_WEATHER = {
     "weather_condition":   "CLEAR",
@@ -54,7 +64,6 @@ def get_weather_by_coords(lat: float, lon: float, location_name: str = "") -> di
         return cached
 
     if not config.OPENWEATHER_API_KEY:
-        logger.warning("OPENWEATHER_API_KEY is missing; using default weather.")
         res = DEFAULT_WEATHER.copy()
         res["location_name"] = location_name
         res["lat"] = lat
@@ -69,7 +78,7 @@ def get_weather_by_coords(lat: float, lon: float, location_name: str = "") -> di
     }
 
     try:
-        resp = requests.get(OWM_URL, params=params, timeout=8)
+        resp = _weather_session.get(OWM_URL, params=params, timeout=6)
         if resp.status_code == 401:
             logger.warning("OpenWeather key unauthorized (activating); using fallback weather.")
             res = DEFAULT_WEATHER.copy()
@@ -125,18 +134,25 @@ def get_weather_by_coords(lat: float, lon: float, location_name: str = "") -> di
 
 def get_route_weather(waypoints: dict) -> dict:
     """
-    Fetch multi-point weather along the route: Origin, Midpoint, Destination.
+    Fetch multi-point weather along the route: Origin, Midpoint, Destination in parallel.
     Returns individual checkpoint weather + aggregated route weather.
     """
-    origin_w = get_weather_by_coords(
-        waypoints["origin"]["lat"], waypoints["origin"]["lon"], waypoints["origin"]["name"]
-    )
-    midpoint_w = get_weather_by_coords(
-        waypoints["midpoint"]["lat"], waypoints["midpoint"]["lon"], waypoints["midpoint"]["name"]
-    )
-    dest_w = get_weather_by_coords(
-        waypoints["destination"]["lat"], waypoints["destination"]["lon"], waypoints["destination"]["name"]
-    )
+    items = [
+        ("origin", waypoints["origin"]["lat"], waypoints["origin"]["lon"], waypoints["origin"]["name"]),
+        ("midpoint", waypoints["midpoint"]["lat"], waypoints["midpoint"]["lon"], waypoints["midpoint"]["name"]),
+        ("destination", waypoints["destination"]["lat"], waypoints["destination"]["lon"], waypoints["destination"]["name"]),
+    ]
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {
+            key: executor.submit(get_weather_by_coords, lat, lon, name)
+            for key, lat, lon, name in items
+        }
+        results = {key: fut.result() for key, fut in futures.items()}
+
+    origin_w   = results["origin"]
+    midpoint_w = results["midpoint"]
+    dest_w     = results["destination"]
 
     # Determine most severe condition along the route
     severity_order = ["STORM", "HEAVY_RAIN", "SNOW", "RAIN", "FOG", "CLOUDY", "CLEAR"]
@@ -161,4 +177,5 @@ def get_route_weather(waypoints: dict) -> dict:
             "destination": dest_w,
         }
     }
+
 

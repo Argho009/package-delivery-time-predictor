@@ -1,35 +1,50 @@
 # ─────────────────────────────────────────────────────────────────
-# AI-Based Package Delivery Time Prediction System
-# Requirements
+# DeliverAI: AI-Based Package Delivery Time Prediction System
+# Master Requirements — Inland India Multi-Model & GPU Pipeline
 # ─────────────────────────────────────────────────────────────────
 
-# Web Framework
-flask==3.0.3
-flask-cors==4.0.1
+# ── Web Framework & API ──────────────────────────────────────────
+Flask==3.0.3
+Flask-Cors==4.0.1
+Werkzeug==3.1.8
+Jinja2==3.1.6
+gunicorn==22.0.0
 
-# Database
-flask-sqlalchemy==3.1.1
-pymysql==1.1.1
+# ── Database & ORM ───────────────────────────────────────────────
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy==2.0.51
+PyMySQL==1.1.1
 cryptography==42.0.8
 
-# Environment / Config
+# ── Environment, Telemetry & HTTP ────────────────────────────────
 python-dotenv==1.0.1
+requests==2.32.3
+urllib3==2.7.0
+tqdm==4.70.0
+colorama==0.4.6
 
-# Machine Learning
-scikit-learn==1.5.1
-xgboost==2.1.1
+# ── Data Engineering & Numerical Computing ────────────────────────
+numpy>=1.26.4
 pandas==2.2.2
-numpy==1.26.4
+scipy==1.17.1
+
+# ── Machine Learning (Core & Tree Ensembles) ─────────────────────
+scikit-learn==1.5.1
 joblib==1.4.2
 
-# HTTP / API Calls
-requests==2.32.3
+# ── Gradient Boosting Models (NVIDIA CUDA / CPU Supported) ───────
+xgboost==2.1.1
+lightgbm==4.7.0
+catboost==1.2.10
 
-# Kaggle dataset download
+# ── Tabular Deep Learning Architectures ──────────────────────────
+torch>=2.2.0
+pytorch-tabnet==4.1.0
+
+# ── Data Visualization & Analytics ───────────────────────────────
+matplotlib==3.11.2
+plotly==7.1.0
+
+# ── Datasets Ingestion & Synthetic Generation ────────────────────
 kaggle==1.6.17
-
-# Data Generation (seeding)
-faker==26.0.0
-
-# Production server
-gunicorn==22.0.0
+Faker==26.0.0

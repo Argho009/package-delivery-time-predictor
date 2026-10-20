@@ -12,9 +12,48 @@ What this script does:
 
 import os
 import sys
+
+# ── 1. Windows C-Runtime & OpenMP Stability Environment Variables ───
+# Must be set BEFORE any C/C++ DLLs (Torch, XGBoost, CatBoost, LightGBM, Scipy) load
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["LOKY_MAX_CPU_COUNT"] = "1"
+os.environ["PYTHONIOENCODING"] = "utf-8"
+os.environ["PYTHONWARNINGS"] = "ignore"
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
+# ── Auto-forward to project venv if invoked from system Python ───
+_venv_python = os.path.join(os.path.dirname(os.path.abspath(__file__)), "venv", "Scripts", "python.exe")
+if os.path.exists(_venv_python) and os.path.abspath(sys.executable).lower() != os.path.abspath(_venv_python).lower():
+    import subprocess
+    while True:
+        try:
+            _res = subprocess.run([_venv_python] + sys.argv, env=os.environ)
+            if _res.returncode == 0:
+                sys.exit(0)
+            print(f"[main] Subprocess exited with code {_res.returncode}. Restarting in 2s...")
+            import time
+            time.sleep(2)
+        except KeyboardInterrupt:
+            print("\n[!] Server stopped by user.")
+            sys.exit(0)
+
 import time
+import threading
+import traceback
 import webbrowser
 import logging
+import faulthandler
+
+_crash_log_file = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "crash_dump.log"), "a", encoding="utf-8")
+faulthandler.enable(file=_crash_log_file)
 
 # Ensure backend directory is on sys.path
 ROOT_DIR    = os.path.dirname(os.path.abspath(__file__))
@@ -24,6 +63,16 @@ if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
 os.environ["PYTHONPATH"] = BACKEND_DIR
+
+import warnings
+warnings.filterwarnings("ignore")
+try:
+    import joblib.parallel
+    joblib.parallel.DEFAULT_BACKEND = "threading"
+    if "threading" in joblib.parallel.BACKENDS:
+        joblib.parallel.BACKENDS["loky"] = joblib.parallel.BACKENDS["threading"]
+except Exception:
+    pass
 
 logging.basicConfig(level=logging.INFO, format="[main] %(message)s")
 logger = logging.getLogger(__name__)
@@ -64,7 +113,7 @@ def main():
     from app import create_app
     app = create_app()
 
-    port = 5000
+    port = int(os.environ.get("PORT", 7860 if os.environ.get("SPACE_ID") else 5000))
     url  = f"http://127.0.0.1:{port}"
 
     print(f"\n[+] Server starting at: {url}")
@@ -73,14 +122,33 @@ def main():
     # Automatically open browser after 1.5s delay
     def open_browser():
         time.sleep(1.5)
-        webbrowser.open(url)
+        try:
+            webbrowser.open(url)
+        except Exception as e:
+            logger.warning("Could not auto-open browser: %s", e)
 
-    import threading
-    threading.Thread(target=open_browser, daemon=True).start()
+    threading.Thread(target=open_browser, daemon=True, name="deliverai-browser-opener").start()
 
-    # Start Flask dev server
-    app.run(host="0.0.0.0", port=port, debug=False)
+    # Start Flask dev server with resilient keep-alive loop
+    while True:
+        try:
+            logger.info("Starting Flask application server on port %d...", port)
+            app.run(host="0.0.0.0", port=port, debug=False, threaded=True, use_reloader=False)
+            logger.warning("Flask app.run() returned unexpectedly. Restarting in 1s...")
+            time.sleep(1)
+        except KeyboardInterrupt:
+            print("\n[!] Server stopped by user (Ctrl+C).")
+            break
+        except BaseException as e:
+            logger.error("Flask server encountered critical error: %s (%s)", e, type(e))
+            traceback.print_exc()
+            time.sleep(1)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BaseException as e:
+        logger.error("Fatal exception in main(): %s", e)
+        traceback.print_exc()
+

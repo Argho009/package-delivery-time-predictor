@@ -1,5 +1,5 @@
 """
-database/models.py — SQLAlchemy ORM models
+database/models.py — SQLAlchemy ORM models with query performance indexes
 """
 
 from datetime import datetime
@@ -11,9 +11,9 @@ class DeliveryRecord(db.Model):
     __tablename__ = "delivery_records"
 
     id                   = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tracking_id          = db.Column(db.String(20), unique=True, nullable=False)
-    origin_city          = db.Column(db.String(100), nullable=False)
-    destination_city     = db.Column(db.String(100), nullable=False)
+    tracking_id          = db.Column(db.String(20), unique=True, nullable=False, index=True)
+    origin_city          = db.Column(db.String(100), nullable=False, index=True)
+    destination_city     = db.Column(db.String(100), nullable=False, index=True)
     origin_lat           = db.Column(db.Float)
     origin_lng           = db.Column(db.Float)
     destination_lat      = db.Column(db.Float)
@@ -21,18 +21,18 @@ class DeliveryRecord(db.Model):
     distance_km          = db.Column(db.Float, nullable=False)
     base_duration_min    = db.Column(db.Float, nullable=False)
     traffic_duration_min = db.Column(db.Float, nullable=False)
-    traffic_level        = db.Column(db.Enum("LOW","MODERATE","HIGH","SEVERE"), nullable=False)
-    weather_condition    = db.Column(db.Enum("CLEAR","CLOUDY","RAIN","HEAVY_RAIN","SNOW","FOG","STORM"), nullable=False)
+    traffic_level        = db.Column(db.Enum("LOW","MODERATE","HIGH","SEVERE"), nullable=False, index=True)
+    weather_condition    = db.Column(db.Enum("CLEAR","CLOUDY","RAIN","HEAVY_RAIN","SNOW","FOG","STORM"), nullable=False, index=True)
     temperature_celsius  = db.Column(db.Float)
     wind_speed_kmh       = db.Column(db.Float)
     precipitation_mm     = db.Column(db.Float, default=0.0)
     package_weight_kg    = db.Column(db.Float, nullable=False)
     package_type         = db.Column(db.Enum("SMALL","MEDIUM","LARGE","FRAGILE","PERISHABLE"), nullable=False)
-    priority             = db.Column(db.Enum("STANDARD","EXPRESS","OVERNIGHT"), nullable=False)
+    priority             = db.Column(db.Enum("STANDARD","EXPRESS","OVERNIGHT"), nullable=False, index=True)
     predicted_time_hours = db.Column(db.Float)
     actual_time_hours    = db.Column(db.Float)
     model_used           = db.Column(db.String(30))
-    created_at           = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at           = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     delivered_at         = db.Column(db.DateTime)
 
     def to_dict(self):
@@ -62,7 +62,7 @@ class PredictionLog(db.Model):
     __tablename__ = "prediction_logs"
 
     id                   = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    request_id           = db.Column(db.String(36), nullable=False)
+    request_id           = db.Column(db.String(36), nullable=False, index=True)
     origin               = db.Column(db.String(255), nullable=False)
     destination          = db.Column(db.String(255), nullable=False)
     distance_km          = db.Column(db.Float)
@@ -81,7 +81,7 @@ class PredictionLog(db.Model):
     recommended_model    = db.Column(db.String(30))
     recommended_hours    = db.Column(db.Float)
     api_response_ms      = db.Column(db.Integer)
-    created_at           = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at           = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
     def to_dict(self):
         return {
@@ -117,7 +117,7 @@ class ModelMetric(db.Model):
     r2         = db.Column(db.Float, nullable=False)
     trained_on = db.Column(db.Integer, nullable=False)
     trained_at = db.Column(db.DateTime, default=datetime.utcnow)
-    is_current = db.Column(db.Boolean, default=True)
+    is_current = db.Column(db.Boolean, default=True, index=True)
 
     def to_dict(self):
         return {
@@ -128,3 +128,4 @@ class ModelMetric(db.Model):
             "trained_on": self.trained_on,
             "trained_at": self.trained_at.isoformat() if self.trained_at else None,
         }
+

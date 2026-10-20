@@ -1,156 +1,519 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Predict Delivery Time — DeliverAI</title>
+  <title>DeliverAI — Intelligent Route Dispatch & Prediction Studio</title>
+  <meta name="description" content="AI package delivery time prediction system with 19 ensemble ML models and local Small Language Model (SLM) route decision routing across 25km intervals." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- Navigation Header (Crextio Pill Style) -->
+  <!-- Navigation Header (Glass Command Header) -->
   <nav class="navbar">
     <a href="index.html" class="navbar-brand">
       <div class="brand-icon">📦</div>
-      DeliverAI
+      <span>DeliverAI</span>
     </a>
+
     <ul class="navbar-nav">
-      <li><a href="index.html"   class="nav-link">Dashboard</a></li>
-      <li><a href="predict.html" class="nav-link active">Predict</a></li>
-      <li><a href="history.html" class="nav-link">Analytics</a></li>
+      <li><a href="index.html" class="nav-link">Dashboard</a></li>
+      <li><a href="predict.html" class="nav-link active">Dispatch Studio</a></li>
+      <li><a href="history.html" class="nav-link">Analytics &amp; History</a></li>
+      <li><a href="copilot.html" class="nav-link">AI Copilot <span class="badge-pill-new">LLM</span></a></li>
     </ul>
-    <div class="header-stats">
-      <div class="stat-pill-group">
-        <span class="stat-pill-title">140,832 Records</span>
-        <span class="stat-pill-sub">33h 50m Avg • 0.84 Accuracy</span>
+
+    <div class="nav-actions">
+      <div class="telemetry-pill">
+        <span class="status-dot"></span>
+        <span id="nav-telemetry">19 Models Online • SLM Ready</span>
       </div>
+      <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode">
+        🌓
+      </button>
     </div>
   </nav>
 
+  <!-- Main Cockpit Workspace -->
   <main class="page-wrapper">
     <div class="page-header">
-      <h1 class="page-title">Delivery Time Prediction</h1>
-      <p class="page-subtitle">Get instant AI-powered package delivery estimates based on real OpenStreetMap route data</p>
+      <div>
+        <h1 class="page-title">Route Dispatch &amp; Prediction Studio</h1>
+        <p class="page-subtitle">Multi-model ensemble ML forecasting with Small Language Model (SLM) leg-by-leg routing</p>
+      </div>
     </div>
 
-    <div class="grid-2">
-      <!-- Input Form -->
-      <div class="card">
-        <div class="card-header">📋 Shipment & Route Details</div>
-        <div class="card-body">
+    <!-- Dual-Pane Split Cockpit -->
+    <div class="cockpit-grid">
+      <!-- ── Left Pane: Dispatch Control Console ────────────────── -->
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div class="card-title-clean">
+            <span>🎛️</span>
+            <span>Shipment Dispatch Console</span>
+          </div>
+          <span class="badge badge-low" id="live-route-status">Live OSRM</span>
+        </div>
+
+        <div class="card-body-clean">
+          <!-- View Mode Toggle (Simple vs Studio) -->
+          <div class="view-mode-bar">
+            <span style="font-size:0.74rem; font-weight:700; color:var(--txt-muted); text-transform:uppercase; letter-spacing:0.04em;">Display Mode</span>
+            <div class="view-mode-toggle">
+              <button type="button" class="view-mode-btn active" id="btn-mode-simple">
+                <span>⚡</span> Simple Mode
+              </button>
+              <button type="button" class="view-mode-btn" id="btn-mode-studio">
+                <span>🎛️</span> Studio Mode
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Route Presets -->
+          <div class="form-group mb-2">
+            <span class="form-label">Quick Route Presets</span>
+            <div class="preset-chips-row">
+              <button type="button" class="preset-chip" data-orig="Raipur" data-dest="Delhi">📍 Raipur ➔ Delhi</button>
+              <button type="button" class="preset-chip" data-orig="Mumbai" data-dest="Pune">⚡ Mumbai ➔ Pune</button>
+              <button type="button" class="preset-chip" data-orig="Delhi" data-dest="Mumbai">🏢 Delhi ➔ Mumbai</button>
+              <button type="button" class="preset-chip" data-orig="Bengaluru" data-dest="Hyderabad">💻 BLR ➔ HYD</button>
+              <button type="button" class="preset-chip" data-orig="Kolkata" data-dest="Chennai">🚢 CCU ➔ MAA</button>
+            </div>
+          </div>
+
           <div id="pred-alert" class="d-none mb-3"></div>
+
           <form id="predict-form">
+            <!-- Origin Input -->
             <div class="form-group">
-              <label class="form-label">Origin Location</label>
-              <input type="text" class="form-control" name="origin" placeholder="e.g. Mumbai, Maharashtra" required />
+              <label class="form-label" for="orig-input">Origin City / Hub</label>
+              <div class="input-with-icon">
+                <span class="input-icon">🟢</span>
+                <input type="text" class="form-input" id="orig-input" name="origin" placeholder="e.g. Raipur" value="Raipur" required />
+              </div>
             </div>
+
+            <!-- Route Swap Button -->
+            <button type="button" class="route-swap-btn" id="swap-route-btn" title="Swap Origin and Destination">
+              ⇅
+            </button>
+
+            <!-- Destination Input -->
             <div class="form-group">
-              <label class="form-label">Destination Location</label>
-              <input type="text" class="form-control" name="destination" placeholder="e.g. Delhi, Delhi" required />
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Weight (kg)</label>
-                <input type="number" class="form-control" name="package_weight_kg" placeholder="5.0" min="0.1" max="100" step="0.1" value="5" required />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Package Type</label>
-                <select class="form-select" name="package_type">
-                  <option value="SMALL">Small (&lt;2 kg)</option>
-                  <option value="MEDIUM" selected>Medium (2–10 kg)</option>
-                  <option value="HEAVY">Heavy (10–25 kg)</option>
-                  <option value="OVERSIZED">Oversized (&gt;25 kg)</option>
-                  <option value="PERISHABLE">Perishable</option>
-                  <option value="HAZARDOUS">Hazardous</option>
-                </select>
+              <label class="form-label" for="dest-input">Destination City / Hub</label>
+              <div class="input-with-icon">
+                <span class="input-icon">🏁</span>
+                <input type="text" class="form-input" id="dest-input" name="destination" placeholder="e.g. Delhi" value="Delhi" required />
               </div>
             </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Priority</label>
-                <select class="form-select" name="priority">
-                  <option value="STANDARD" selected>Standard</option>
-                  <option value="EXPRESS">Express</option>
-                  <option value="OVERNIGHT">Overnight</option>
-                </select>
+            <!-- Weight -->
+            <div class="form-group">
+              <div class="flex justify-between items-center mb-1">
+                <label class="form-label" for="weight-input" style="margin-bottom:0;">Package Weight</label>
+                <span id="weight-display" class="font-mono text-muted" style="font-size:0.8rem; font-weight:700;">5.0 kg</span>
               </div>
-              <div class="form-group">
-                <label class="form-label">Shipping Mode</label>
-                <select class="form-select" name="shipping_mode">
-                  <option value="ROAD" selected>🚚 Road Freight</option>
-                  <option value="AIR">✈️ Air Express</option>
-                  <option value="RAIL">🚆 Rail Freight</option>
-                  <option value="SEA">🚢 Sea Cargo</option>
-                </select>
+              <!-- Quick Weight Chips -->
+              <div class="quick-weight-row">
+                <button type="button" class="quick-weight-chip" data-weight="0.5">✉️ Doc (0.5kg)</button>
+                <button type="button" class="quick-weight-chip" data-weight="2.5">📦 Box (2.5kg)</button>
+                <button type="button" class="quick-weight-chip active" data-weight="5.0">🧰 Std (5kg)</button>
+                <button type="button" class="quick-weight-chip" data-weight="25.0">🚚 Bulk (25kg)</button>
+              </div>
+              <input type="range" class="form-input" id="weight-slider" min="0.5" max="50.0" step="0.5" value="5.0" style="padding:0.4rem; cursor:pointer;" />
+              <input type="number" id="weight-input" name="package_weight_kg" value="5.0" min="0.1" max="100.0" step="0.1" class="d-none" />
+            </div>
+
+            <!-- Transport Mode & Direct Availability (Replaces static radios) -->
+            <div class="form-group">
+              <div class="flex justify-between items-center mb-1">
+                <label class="form-label" style="margin-bottom:0;">Transport Mode &amp; Direct Options</label>
+                <span id="modal-scanning-badge" style="font-size:0.7rem; color:var(--txt-muted);">Auto-scanned</span>
+              </div>
+              
+              <div class="multimodal-grid" id="multimodal-selector">
+                <!-- Road Card -->
+                <div class="multimodal-card active" data-mode="ROAD" id="mode-card-road">
+                  <div class="multimodal-header">
+                    <div class="multimodal-icon-title"><span>🚚</span> Road</div>
+                    <span class="multimodal-time-tag" id="card-road-time">~24h</span>
+                  </div>
+                  <span class="multimodal-badge badge-direct-ok" id="card-road-badge">Direct Highway</span>
+                  <div class="multimodal-subtext" id="card-road-subtext">Express door delivery</div>
+                </div>
+
+                <!-- Rail Card -->
+                <div class="multimodal-card" data-mode="RAIL" id="mode-card-rail">
+                  <div class="multimodal-header">
+                    <div class="multimodal-icon-title"><span>🚆</span> Rail</div>
+                    <span class="multimodal-time-tag" id="card-rail-time">~31h</span>
+                  </div>
+                  <span class="multimodal-badge badge-direct-info" id="card-rail-badge">Direct Rail Corridor</span>
+                  <div class="multimodal-subtext" id="card-rail-subtext">Eco-friendly freight line</div>
+                </div>
+
+                <!-- Air Card -->
+                <div class="multimodal-card" data-mode="AIR" id="mode-card-air">
+                  <div class="multimodal-header">
+                    <div class="multimodal-icon-title"><span>✈️</span> Flight</div>
+                    <span class="multimodal-time-tag" id="card-air-time">~4.5h</span>
+                  </div>
+                  <span class="multimodal-badge badge-direct-info" id="card-air-badge">Direct Air Flights</span>
+                  <div class="multimodal-subtext" id="card-air-subtext">Fastest long-haul transit</div>
+                </div>
+              </div>
+              <input type="hidden" name="shipping_mode" id="selected-shipping-mode" value="ROAD" />
+            </div>
+
+            <!-- Advanced Cargo Classification & Priority (Collapsible for simple users) -->
+            <div class="advanced-cargo-box" id="advanced-cargo-box">
+              <div class="advanced-cargo-toggle" id="advanced-cargo-toggle">
+                <span>⚙️ More Cargo Options (Type &amp; Priority)</span>
+                <span id="advanced-cargo-arrow">▾</span>
+              </div>
+              <div class="advanced-cargo-content d-none" id="advanced-cargo-content">
+                <!-- Package Type Grid -->
+                <div class="form-group mb-2">
+                  <label class="form-label" style="font-size:0.75rem;">Package Cargo Classification</label>
+                  <div class="pill-grid">
+                    <label class="pill-option">
+                      <input type="radio" name="package_type" value="SMALL" />
+                      <div class="pill-label"><span>✉️</span>Small</div>
+                    </label>
+                    <label class="pill-option">
+                      <input type="radio" name="package_type" value="MEDIUM" checked />
+                      <div class="pill-label"><span>📦</span>Medium</div>
+                    </label>
+                    <label class="pill-option">
+                      <input type="radio" name="package_type" value="LARGE" />
+                      <div class="pill-label"><span>🧰</span>Large</div>
+                    </label>
+                    <label class="pill-option">
+                      <input type="radio" name="package_type" value="FRAGILE" />
+                      <div class="pill-label"><span>🍷</span>Fragile</div>
+                    </label>
+                    <label class="pill-option">
+                      <input type="radio" name="package_type" value="PERISHABLE" />
+                      <div class="pill-label"><span>🥑</span>Fresh</div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Priority -->
+                <div class="form-group" style="margin-bottom:0;">
+                  <label class="form-label" style="font-size:0.75rem;">Delivery Priority Tier</label>
+                  <div class="pill-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <label class="pill-option">
+                      <input type="radio" name="priority" value="STANDARD" checked />
+                      <div class="pill-label"><span>📦</span>Standard</div>
+                    </label>
+                    <label class="pill-option">
+                      <input type="radio" name="priority" value="EXPRESS" />
+                      <div class="pill-label"><span>⚡</span>Express</div>
+                    </label>
+                    <label class="pill-option">
+                      <input type="radio" name="priority" value="OVERNIGHT" />
+                      <div class="pill-label"><span>🌙</span>Overnight</div>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-full btn-lg" id="predict-btn">
-              🔮 Calculate Delivery Estimate
+            <button type="submit" class="btn-primary-action mt-3" id="predict-btn">
+              <span>⚡</span>
+              <span>Calculate Delivery Prediction</span>
             </button>
           </form>
         </div>
       </div>
 
-      <!-- Result View -->
-      <div id="result-container" class="card">
-        <div class="card-header">📊 AI Prediction Results & Route Map</div>
-        <div class="card-body flex flex-col justify-center items-center text-center" style="min-height:350px;">
-          <div id="placeholder-view">
-            <div style="font-size:3rem; margin-bottom:1rem;">🗺️</div>
-            <div class="text-muted" style="font-size:1rem; font-weight:500;">Fill in the shipment details and click predict to generate live estimates & route map</div>
+      <!-- ── Right Pane: Unified Intelligence Studio ────────────── -->
+      <div class="studio-pane">
+        <!-- Initial Empty Placeholder State -->
+        <div id="placeholder-view" class="studio-empty-state">
+          <div class="studio-empty-icon">🛰️</div>
+          <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.5rem; letter-spacing:-0.02em;">Ready for Route Dispatch</h2>
+          <p class="text-muted" style="max-width:440px; font-size:0.9rem; line-height:1.6; margin-bottom:1.5rem;">
+            Select an origin, destination, and package specifications. DeliverAI will query 19 ensemble ML models and execute Small Language Model (SLM) routing for every 25km leg.
+          </p>
+          <div class="flex gap-2 justify-center" style="flex-wrap:wrap;">
+            <span class="badge badge-low">⚡ Sub-second inference</span>
+            <span class="badge badge-moderate">🤖 Local SLM routing</span>
+            <span class="badge badge-high">🌱 ESG Carbon telemetry</span>
+          </div>
+        </div>
+
+        <!-- Active Prediction Studio Results -->
+        <div id="output-view" class="d-none">
+          <!-- Hero Estimation Card -->
+          <div class="hero-estimate-card">
+            <div class="flex justify-between items-start" style="flex-wrap:wrap; gap:1rem;">
+              <div>
+                <div class="text-muted" style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">AI Predicted Delivery Duration</div>
+                <div class="hero-time-value" id="res-time">—</div>
+                <div class="hero-confidence mt-1" id="res-conf">—</div>
+              </div>
+
+              <!-- Quick Action Toolbar -->
+              <div class="flex gap-2 items-center" style="flex-wrap:wrap;">
+                <span class="hero-model-badge" id="res-model">Recommended: Voting</span>
+                <button type="button" class="whatif-btn active" id="simulate-transit-btn">
+                  🚚 Simulate Transit
+                </button>
+                <button type="button" class="whatif-btn" id="view-waybill-btn">
+                  📄 Dispatch Waybill
+                </button>
+              </div>
+            </div>
+
+            <!-- Route Corridor & Weather Metric Badges -->
+            <div class="grid-2 mt-3" style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1rem;">
+              <div class="flex items-center gap-2">
+                <span style="font-size:1.4rem;">🛣️</span>
+                <div>
+                  <div class="text-muted" style="font-size:0.74rem; font-weight:700; text-transform:uppercase;">Corridor Distance</div>
+                  <div style="font-weight:700; font-size:1.05rem;" id="res-dist">— km</div>
+                  <div style="font-size:0.78rem; color:var(--txt-secondary);" id="res-traffic">Traffic: —</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span style="font-size:1.4rem;">🌦️</span>
+                <div>
+                  <div class="text-muted" style="font-size:0.74rem; font-weight:700; text-transform:uppercase;">Corridor Weather</div>
+                  <div style="font-weight:700; font-size:1.05rem;" id="res-weather">—</div>
+                  <div style="font-size:0.78rem; color:var(--txt-secondary);" id="res-temp">—</div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div id="output-view" class="d-none w-full" style="width:100%;">
-            <div class="result-card mb-3 text-center">
-              <div class="result-time" id="res-time">—</div>
-              <div class="result-label" id="res-model">Recommended Estimate</div>
-              <div class="result-confidence" id="res-conf"></div>
-            </div>
-
-            <!-- Route & Weather Details -->
-            <div class="grid-2 mb-3">
-              <div style="background:rgba(255,255,255,0.6); padding:0.85rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4); text-align:left;">
-                <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">Route Metrics</div>
-                <div style="font-weight:700; font-size:1.1rem; color:var(--clr-primary-dark);" id="res-dist">— km</div>
-                <div style="font-size:0.82rem; color:var(--txt-secondary);" id="res-traffic">Traffic: —</div>
-              </div>
-              <div style="background:rgba(255,255,255,0.6); padding:0.85rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4); text-align:left;">
-                <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">Overall Route Weather</div>
-                <div style="font-weight:700; font-size:1.0rem; color:var(--clr-primary-dark);" id="res-weather">—</div>
-                <div style="font-size:0.78rem; color:var(--txt-secondary); margin-top:0.25rem;" id="res-temp">—</div>
+          <!-- ── Simple Mode Results (Default For Casual Users) ── -->
+          <div id="simple-results-view" class="simple-results-container mb-3">
+            <!-- Expected Arrival Banner -->
+            <div class="glass-card" style="padding:1rem 1.25rem;">
+              <div class="flex justify-between items-center" style="flex-wrap:wrap; gap:0.5rem;">
+                <div>
+                  <div class="text-muted" style="font-size:0.74rem; font-weight:700; text-transform:uppercase;">Estimated Scheduled Arrival</div>
+                  <div class="eta-expected-arrival" id="simple-eta-arrival">
+                    <span>🗓️</span> <span id="simple-arrival-text">Expected by Tomorrow 3:30 PM</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1" id="simple-co2-badge-container">
+                  <span class="badge badge-low" id="simple-carbon-pill">🌿 Low Carbon</span>
+                </div>
               </div>
             </div>
 
-            <!-- Side-by-side Weather Checkpoints -->
-            <div id="weather-checkpoints" class="mb-3"></div>
-
-            <!-- Interactive Route Map -->
-            <div style="text-align:left; margin-bottom:1rem;">
-              <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.35rem;">🗺️ Driving Route & Weather Map</div>
-              <div id="route-map" style="height:280px; width:100%; border-radius:1rem; border:1px solid rgba(0,0,0,0.15); box-shadow:0 4px 12px rgba(0,0,0,0.08); z-index:1;"></div>
-            </div>
-
-            <!-- 25 km Segmented Route Breakdown & Sum -->
-            <div id="segment-container" class="mb-3" style="text-align:left; background:rgba(255,255,255,0.6); padding:1rem; border-radius:1rem; border:1px solid rgba(255,255,255,0.4);">
+            <!-- 3-Way Direct Transport Comparison Cards -->
+            <div class="glass-card" style="padding:1.1rem 1.25rem;">
               <div class="flex justify-between items-center mb-2">
-                <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase;">🛣️ Route Breakdown (Processed Every 25 km)</div>
-                <div style="font-size:0.85rem; font-weight:700; color:var(--clr-primary-dark);" id="seg-total-sum">Total Sum: —</div>
+                <strong style="font-size:0.92rem; color:var(--txt-main);">Direct Route Multi-Modal Comparison (Road vs Rail vs Air)</strong>
+                <span class="text-muted" style="font-size:0.75rem;">Click any option to re-estimate</span>
               </div>
-              <div id="segment-table" style="max-height:220px; overflow-y:auto;"></div>
+              <div class="simple-mode-comparison-grid" id="simple-comparison-grid">
+                <!-- Dynamically populated comparison cards -->
+              </div>
             </div>
 
-            <!-- All Model Estimates + Ensemble -->
-            <div style="background:rgba(255,255,255,0.4); padding:0.85rem; border-radius:1rem; text-align:left;">
-              <div class="text-muted" style="font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem;">Model Predictions &amp; Ensemble</div>
-              <div class="form-row" style="font-size:0.85rem;">
-                <div>🌲 Random Forest: <strong id="m-rf">—</strong></div>
-                <div>⚡ XGBoost: <strong id="m-xgb">—</strong></div>
-                <div>📈 Linear Reg: <strong id="m-lr">—</strong></div>
+            <!-- Plain English Delivery Summary Card -->
+            <div class="glass-card" style="padding:1.1rem 1.25rem;">
+              <div class="flex items-center gap-2 mb-2">
+                <span style="font-size:1.3rem;">💡</span>
+                <strong style="font-size:0.92rem; color:var(--txt-main);">Plain-English AI Delivery Summary</strong>
               </div>
-              <div id="ensemble-badge"></div>
+              <div id="simple-summary-text" style="font-size:0.86rem; line-height:1.6; color:var(--txt-secondary);">
+                Analyzing corridor conditions…
+              </div>
+            </div>
+
+            <!-- Switch to Studio Mode Hint Button -->
+            <div class="text-center mt-1">
+              <button type="button" class="btn-secondary-action" id="btn-switch-to-studio" style="font-size:0.8rem; padding:0.6rem 1.2rem;">
+                <span>🔬</span>
+                <span>Want to see SLM Meta-Routing, 25km intervals &amp; SHAP factors? Switch to AI Studio Mode ➔</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Executive Studio Multi-Tab Cockpit (Advanced / Studio Users) -->
+          <div class="glass-card d-none" id="studio-cockpit-view">
+            <div class="studio-tabs-bar" style="padding:0.5rem 1.25rem 0;">
+              <button type="button" class="tab-btn active" data-tab="tab-slm">
+                <span>🤖</span>
+                <span>SLM Meta-Router &amp; 25km Legs</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab="tab-map">
+                <span>🗺️</span>
+                <span>Route Corridor Map &amp; Telemetry</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab="tab-xai">
+                <span>🧠</span>
+                <span>SHAP Factors &amp; "What-If"</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab="tab-eco">
+                <span>🌱</span>
+                <span>Green Logistics &amp; ESG</span>
+              </button>
+            </div>
+
+            <div class="card-body-clean" style="padding-top:0.75rem;">
+              <!-- ── Tab 1: SLM Meta-Router & 25km Leg Breakdown ────── -->
+              <div class="tab-pane active" id="tab-slm">
+                <!-- SLM Decision Card -->
+                <div class="slm-decision-card" id="slm-router-container">
+                  <div class="slm-header-row">
+                    <div class="flex items-center gap-2">
+                      <span style="font-size:1.3rem;">🧠</span>
+                      <div>
+                        <strong style="font-size:0.95rem; color:var(--txt-main);">Small Language Model (SLM) Route Decision</strong>
+                        <div class="text-muted" style="font-size:0.74rem;">Evaluates corridor geography, weather friction, and segment distances</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="slm-badge-source" id="slm-source-badge">LM Studio SLM</span>
+                      <span id="slm-chosen-model-tag" class="badge badge-low" style="font-size:0.78rem;">CATBOOST</span>
+                    </div>
+                  </div>
+
+                  <div class="slm-reasoning-box" id="slm-reasoning-text">
+                    Analyzing road friction and leg parameters…
+                  </div>
+
+                  <div class="slm-meta-tags">
+                    <div>📍 Corridor: <strong id="slm-input-route">—</strong></div>
+                    <div>🌦️ Weather: <strong id="slm-input-weather">—</strong></div>
+                    <div>🛣️ Intervals: <strong id="slm-input-legs">—</strong></div>
+                  </div>
+                </div>
+
+
+                <!-- Intercity Corridor Leg Breakdown Table -->
+                <div class="leg-breakdown-container">
+                  <div class="leg-breakdown-header">
+                    <span>🛣️ Intercity Corridor Leg Breakdown (City Hops)</span>
+                    <span id="seg-total-sum" class="font-mono text-muted" style="font-size:0.78rem;">Total Sum: —</span>
+                  </div>
+                  <div class="leg-list-scroll" id="segment-table">
+                    <!-- Populated dynamically by predict.js -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Tab 2: Interactive Map & Waypoints ─────────────── -->
+              <div class="tab-pane" id="tab-map">
+                <div id="route-map" class="mb-3"></div>
+
+                <div class="flex justify-between items-center mb-2">
+                  <span style="font-size:0.85rem; font-weight:700; color:var(--txt-main);">🌦️ Route Weather Checkpoints</span>
+                  <span class="text-muted font-mono" style="font-size:0.74rem;">Multi-point telemetry</span>
+                </div>
+                <div id="weather-checkpoints" class="weather-checkpoints-row"></div>
+
+                <!-- Model speed comparisons -->
+                <div class="grid-3 mt-3" style="font-size:0.8rem; background:var(--bg-surface-elev); padding:0.85rem; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+                  <div>🌲 Random Forest: <strong id="m-rf" class="font-mono">—</strong></div>
+                  <div>⚡ XGBoost: <strong id="m-xgb" class="font-mono">—</strong></div>
+                  <div>📈 Linear Reg: <strong id="m-lr" class="font-mono">—</strong></div>
+                </div>
+                <div id="ensemble-badge" class="mt-2"></div>
+              </div>
+
+              <!-- ── Tab 3: SHAP Factors & What-If Simulator ─────────── -->
+              <div class="tab-pane" id="tab-xai">
+                <div class="grid-2">
+                  <!-- Live What-If Scenario Simulator -->
+                  <div class="whatif-panel" id="whatif-container">
+                    <div style="font-size:0.92rem; font-weight:700; margin-bottom:0.75rem;">🎛️ Live Scenario Simulator</div>
+
+                    <!-- Traffic adjustment -->
+                    <div class="whatif-group">
+                      <span class="form-label">Simulate Traffic Condition</span>
+                      <div class="whatif-btn-row" id="whatif-traffic-btns">
+                        <button type="button" class="whatif-btn" data-field="traffic_level" data-value="LOW">🟢 Low</button>
+                        <button type="button" class="whatif-btn" data-field="traffic_level" data-value="MODERATE">🟡 Moderate</button>
+                        <button type="button" class="whatif-btn" data-field="traffic_level" data-value="HIGH">🔴 High</button>
+                        <button type="button" class="whatif-btn" data-field="traffic_level" data-value="SEVERE">🚨 Severe</button>
+                      </div>
+                    </div>
+
+                    <!-- Priority adjustment -->
+                    <div class="whatif-group">
+                      <span class="form-label">Simulate Priority Tier</span>
+                      <div class="whatif-btn-row" id="whatif-prio-btns">
+                        <button type="button" class="whatif-btn" data-field="priority" data-value="STANDARD">📦 Standard</button>
+                        <button type="button" class="whatif-btn" data-field="priority" data-value="EXPRESS">⚡ Express</button>
+                        <button type="button" class="whatif-btn" data-field="priority" data-value="OVERNIGHT">🌙 Overnight</button>
+                      </div>
+                    </div>
+
+                    <!-- Transit mode adjustment -->
+                    <div class="whatif-group">
+                      <span class="form-label">Simulate Transit Mode</span>
+                      <div class="whatif-btn-row" id="whatif-mode-btns">
+                        <button type="button" class="whatif-btn" data-field="shipping_mode" data-value="ROAD">🚚 Road</button>
+                        <button type="button" class="whatif-btn" data-field="shipping_mode" data-value="AIR">✈️ Air</button>
+                        <button type="button" class="whatif-btn" data-field="shipping_mode" data-value="RAIL">🚆 Rail</button>
+                        <button type="button" class="whatif-btn" data-field="shipping_mode" data-value="SEA">🚢 Sea</button>
+                      </div>
+                    </div>
+
+                    <div class="whatif-delta-banner d-none" id="whatif-delta-box">
+                      <span id="whatif-delta-text">Simulation applied</span>
+                      <button type="button" id="whatif-reset-btn" style="background:none; border:none; color:var(--clr-primary); font-weight:700; cursor:pointer; font-size:0.75rem;">Reset</button>
+                    </div>
+                  </div>
+
+                  <!-- Explainable AI (SHAP) Factor Attribution -->
+                  <div class="whatif-panel" id="xai-container">
+                    <div class="flex justify-between items-center mb-2">
+                      <div style="font-size:0.92rem; font-weight:700;">🧠 SHAP Feature Attribution</div>
+                      <span class="text-muted font-mono" id="xai-base-time" style="font-size:0.75rem;">Base: —</span>
+                    </div>
+                    <div id="xai-summary" class="text-muted mb-2" style="font-size:0.82rem; line-height:1.4;">
+                      Calculating factor impacts…
+                    </div>
+                    <div id="xai-factors-list">
+                      <!-- Rendered dynamically by predict.js -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Tab 4: Green Logistics & Carbon Footprint ──────── -->
+              <div class="tab-pane" id="tab-eco">
+                <div class="whatif-panel" id="eco-container">
+                  <div class="flex justify-between items-center">
+                    <div style="font-size:1.05rem; font-weight:700; color:var(--clr-emerald);">
+                      🌱 Green Logistics &amp; Carbon Footprint
+                    </div>
+                    <div class="eco-rating-badge" id="eco-rating-badge">B</div>
+                  </div>
+
+                  <div class="eco-kpi-grid">
+                    <div class="eco-kpi-card">
+                      <div class="text-muted" style="font-size:0.72rem; font-weight:700;">ESTIMATED CO₂</div>
+                      <div style="font-size:1.5rem; font-weight:800; color:var(--txt-main);" id="eco-co2">— kg</div>
+                    </div>
+                    <div class="eco-kpi-card">
+                      <div class="text-muted" style="font-size:0.72rem; font-weight:700;">OFFSET TREES</div>
+                      <div style="font-size:1.5rem; font-weight:800; color:var(--txt-main);" id="eco-trees">—</div>
+                    </div>
+                    <div class="eco-kpi-card">
+                      <div class="text-muted" style="font-size:0.72rem; font-weight:700;">EFFICIENCY RATING</div>
+                      <div style="font-size:1.5rem; font-weight:800; color:var(--clr-emerald);">OPTIMAL</div>
+                    </div>
+                  </div>
+
+                  <div id="eco-tip" class="text-muted" style="font-size:0.82rem; font-style:italic;">
+                    Calculating sustainability metrics…
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -158,8 +521,63 @@
     </div>
   </main>
 
+  <!-- Dispatch Waybill Modal -->
+  <div id="waybill-modal" class="modal-backdrop d-none">
+    <div class="waybill-card">
+      <div class="waybill-header">
+        <div>
+          <strong style="font-size:1.1rem;">📦 DeliverAI Official Waybill</strong>
+          <div style="font-size:0.75rem; opacity:0.85;">Intelligent Logistics Dispatch Manifest</div>
+        </div>
+        <button type="button" id="close-waybill-btn" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer; line-height:1;">&times;</button>
+      </div>
+
+      <div class="waybill-body">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <div class="text-muted" style="font-size:0.7rem; font-weight:700; text-transform:uppercase;">Tracking ID</div>
+            <div style="font-family:var(--font-mono); font-weight:700; font-size:1.05rem;" id="wb-tracking-id">DEL-8924018</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="text-muted" style="font-size:0.7rem; font-weight:700; text-transform:uppercase;">Priority</div>
+            <span class="badge badge-low" id="wb-priority">EXPRESS</span>
+          </div>
+        </div>
+
+        <div class="waybill-barcode"></div>
+
+        <div class="grid-2 mb-3" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:0.85rem; border-radius:var(--radius-sm);">
+          <div>
+            <div class="text-muted" style="font-size:0.7rem; font-weight:700;">FROM (ORIGIN)</div>
+            <div style="font-weight:700;" id="wb-origin">—</div>
+          </div>
+          <div>
+            <div class="text-muted" style="font-size:0.7rem; font-weight:700;">TO (DESTINATION)</div>
+            <div style="font-weight:700;" id="wb-dest">—</div>
+          </div>
+        </div>
+
+        <div class="grid-3 mb-3" style="font-size:0.82rem;">
+          <div><span class="text-muted">Distance:</span> <strong id="wb-dist">—</strong></div>
+          <div><span class="text-muted">Weight:</span> <strong id="wb-weight">—</strong></div>
+          <div><span class="text-muted">Transit Mode:</span> <strong id="wb-mode">—</strong></div>
+        </div>
+
+        <div style="border-top:1px dashed #CBD5E1; padding-top:0.75rem; text-align:center;">
+          <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; font-weight:700;">Estimated Delivery Time</div>
+          <div style="font-size:1.4rem; font-weight:800; color:#4F46E5;" id="wb-time">—</div>
+        </div>
+
+        <button type="button" class="btn-primary-action mt-3" onclick="window.print()" style="padding:0.75rem;">
+          🖨️ Print Dispatch Manifest
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/copilot.js"></script>
   <script src="js/predict.js"></script>
 </body>
 </html>

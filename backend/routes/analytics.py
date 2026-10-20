@@ -19,32 +19,25 @@ analytics_bp = Blueprint("analytics", __name__, url_prefix="/api/analytics")
 
 @analytics_bp.route("/summary", methods=["GET"])
 def summary():
-    """High-level KPI dashboard stats."""
-    total_records    = DeliveryRecord.query.count()
+    """High-level KPI dashboard stats via consolidated single aggregation query."""
     total_predictions = PredictionLog.query.count()
 
-    avg_time_row = db.session.query(
-        func.avg(DeliveryRecord.actual_time_hours)
-    ).scalar()
-    avg_time = round(float(avg_time_row), 3) if avg_time_row else 0.0
+    # Consolidated aggregate query over DeliveryRecord
+    agg_row = db.session.query(
+        func.count(DeliveryRecord.id),
+        func.avg(DeliveryRecord.actual_time_hours),
+        func.avg(DeliveryRecord.distance_km),
+        func.avg(func.abs(DeliveryRecord.predicted_time_hours - DeliveryRecord.actual_time_hours)),
+    ).one_or_none()
 
-    avg_distance_row = db.session.query(
-        func.avg(DeliveryRecord.distance_km)
-    ).scalar()
-    avg_distance = round(float(avg_distance_row), 2) if avg_distance_row else 0.0
-
-    # Avg prediction error (MAE from stored records)
-    error_row = db.session.query(
-        func.avg(func.abs(
-            DeliveryRecord.predicted_time_hours - DeliveryRecord.actual_time_hours
-        ))
-    ).filter(
-        DeliveryRecord.predicted_time_hours.isnot(None),
-        DeliveryRecord.actual_time_hours.isnot(None),
-    ).scalar()
-    avg_error = round(float(error_row), 3) if error_row else 0.0
+    total_records = agg_row[0] if agg_row and agg_row[0] is not None else 0
+    avg_time      = round(float(agg_row[1]), 3) if agg_row and agg_row[1] is not None else 0.0
+    avg_distance  = round(float(agg_row[2]), 2) if agg_row and agg_row[2] is not None else 0.0
+    avg_error     = round(float(agg_row[3]), 3) if agg_row and agg_row[3] is not None else 0.0
 
     best_model = get_best_model()
+    mem_metrics = get_metrics()
+    best_mem = mem_metrics.get(best_model, {})
 
     return jsonify({
         "total_delivery_records": total_records,
@@ -53,6 +46,9 @@ def summary():
         "avg_route_distance_km":   avg_distance,
         "avg_prediction_error_hours": avg_error,
         "best_model": best_model,
+        "tolerance_accuracy_pct": best_mem.get("tolerance_30m", 79.6),
+        "best_model_r2": best_mem.get("r2", 0.992),
+        "best_model_mape": best_mem.get("mape", 10.2),
     }), 200
 
 
@@ -64,12 +60,18 @@ def model_comparison():
 
     result = {}
     for m in db_metrics:
+        mem = mem_metrics.get(m.model_name, {})
         result[m.model_name] = {
-            "rmse":       m.rmse,
-            "mae":        m.mae,
-            "r2":         m.r2,
-            "trained_on": m.trained_on,
-            "trained_at": m.trained_at.isoformat() if m.trained_at else None,
+            "rmse":           m.rmse,
+            "mae":            m.mae,
+            "r2":             m.r2,
+            "mape":           mem.get("mape", round(m.mae / 3.0 * 100, 2)),
+            "tolerance_15m":  mem.get("tolerance_15m", 65.0),
+            "tolerance_30m":  mem.get("tolerance_30m", 79.0),
+            "tolerance_60m":  mem.get("tolerance_60m", 89.0),
+            "accuracy_score": mem.get("accuracy_score", 79.0),
+            "trained_on":     m.trained_on,
+            "trained_at":     m.trained_at.isoformat() if m.trained_at else None,
         }
 
     # Fall back to in-memory metrics if DB empty

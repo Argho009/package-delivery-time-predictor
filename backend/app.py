@@ -12,6 +12,7 @@ from database.db import db
 from routes.predict import predict_bp
 from routes.history import history_bp
 from routes.analytics import analytics_bp
+from routes.copilot import copilot_bp
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,11 +24,21 @@ def create_app() -> Flask:
     app = Flask(__name__, static_folder=None)
 
     # Load config
-    app.config["SECRET_KEY"]                  = config.SECRET_KEY
-    app.config["SQLALCHEMY_DATABASE_URI"]     = config.SQLALCHEMY_DATABASE_URI
+    app.config["SECRET_KEY"]                     = config.SECRET_KEY
+    app.config["SQLALCHEMY_DATABASE_URI"]        = config.SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SQLALCHEMY_POOL_RECYCLE"]     = config.SQLALCHEMY_POOL_RECYCLE
-    app.config["SQLALCHEMY_POOL_TIMEOUT"]     = config.SQLALCHEMY_POOL_TIMEOUT
+
+    if config.DB_TYPE.lower() == "sqlite":
+        from sqlalchemy.pool import NullPool
+        app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+            "poolclass": NullPool,
+            "connect_args": {"check_same_thread": False},
+        }
+    else:
+        app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+            "pool_recycle": config.SQLALCHEMY_POOL_RECYCLE,
+            "pool_timeout": config.SQLALCHEMY_POOL_TIMEOUT,
+        }
 
     # Extensions
     CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -37,6 +48,7 @@ def create_app() -> Flask:
     app.register_blueprint(predict_bp)
     app.register_blueprint(history_bp)
     app.register_blueprint(analytics_bp)
+    app.register_blueprint(copilot_bp)
 
     # Serve frontend static files
     frontend_dir = os.path.abspath(
