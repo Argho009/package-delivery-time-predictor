@@ -2529,13 +2529,13 @@ body {
 }
 
 /* ==========================================================================
-   DeliverAI — Minor Project Starting Screen Overlay (Every Refresh)
+   DeliverAI — Minor Project Description Starting Screen Overlay
    ========================================================================== */
 .minor-splash-overlay {
   position: fixed;
   inset: 0;
   z-index: 999999;
-  background: rgba(240, 244, 248, 0.85);
+  background: rgba(240, 244, 248, 0.88);
   background-image: 
     radial-gradient(1200px 700px at 20% -60px, rgba(56, 189, 248, 0.28), transparent 70%),
     radial-gradient(1000px 600px at 85% 85%, rgba(168, 85, 247, 0.22), transparent 60%),
@@ -2546,7 +2546,9 @@ body {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  cursor: pointer;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .minor-splash-overlay.hidden,
@@ -2557,25 +2559,35 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   pointer-events: none;
 }
 
+.minor-splash-overlay.force-show {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: scale(1) !important;
+}
+
 .minor-splash-card {
   width: 100%;
   max-width: 960px;
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.95);
   border-radius: 1.75rem;
-  padding: 2.5rem 2rem;
+  padding: 2.25rem 2rem;
   text-align: center;
   box-shadow: 0 25px 60px -10px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(255, 255, 255, 1) inset, 0 10px 40px rgba(56, 189, 248, 0.12);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  animation: splashScaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: splashScaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  cursor: default;
 }
 
 @keyframes splashScaleIn {
-  from { opacity: 0; transform: scale(0.95) translateY(12px); }
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
@@ -2584,7 +2596,7 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.65rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.1rem;
 }
 
 .splash-inst-pill {
@@ -2593,7 +2605,7 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   color: var(--clr-cyan);
   background: rgba(2, 132, 199, 0.1);
   border: 1px solid rgba(2, 132, 199, 0.25);
-  padding: 0.4rem 1rem;
+  padding: 0.35rem 0.95rem;
   border-radius: 9999px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -2605,7 +2617,7 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   color: var(--clr-violet);
   background: rgba(124, 58, 237, 0.1);
   border: 1px solid rgba(124, 58, 237, 0.25);
-  padding: 0.4rem 1rem;
+  padding: 0.35rem 0.95rem;
   border-radius: 9999px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -2616,7 +2628,7 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   font-weight: 900;
   letter-spacing: -0.04em;
   color: var(--txt-main);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
   background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-violet) 50%, var(--clr-cyan) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -2625,8 +2637,8 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
 .splash-subtitle {
   font-size: 1.05rem;
   color: var(--txt-secondary);
-  max-width: 680px;
-  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-bottom: 1.4rem;
   line-height: 1.5;
 }
 
@@ -2636,7 +2648,7 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--clr-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 0.9rem;
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -2655,14 +2667,14 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   width: 100%;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .splash-member-card {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(203, 213, 225, 0.7);
   border-radius: 1rem;
-  padding: 1.25rem 1rem;
+  padding: 1.15rem 0.95rem;
   text-align: left;
   position: relative;
   overflow: hidden;
@@ -2697,11 +2709,11 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   letter-spacing: 0.08em;
   color: var(--card-color);
   display: block;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .splash-name {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #0F172A;
   margin-bottom: 0.25rem;
@@ -2709,7 +2721,7 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
 }
 
 .splash-tag {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: #334155;
   line-height: 1.4;
   font-weight: 500;
@@ -2723,11 +2735,11 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
   gap: 1.25rem;
   font-size: 0.8rem;
   color: var(--txt-secondary);
-  padding: 0.75rem 1.25rem;
+  padding: 0.65rem 1.25rem;
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(203, 213, 225, 0.7);
   border-radius: 0.75rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .splash-mentor-row strong {
@@ -2754,6 +2766,109 @@ html.splash-already-seen #minor-project-overlay:not(.force-show) {
 .splash-launch-btn:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 14px 38px var(--clr-primary-glow);
+}
+
+.splash-press-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 1.25rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-light);
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--txt-secondary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.splash-press-hint:hover {
+  transform: translateY(-1px);
+  border-color: var(--clr-primary);
+  color: var(--txt-main);
+}
+
+.splash-press-hint kbd {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: #0F172A;
+  color: #FFFFFF;
+  border-radius: 0.35rem;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.05em;
+}
+
+.splash-press-hint .pulse-ring {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--clr-primary);
+  display: inline-block;
+  box-shadow: 0 0 0 rgba(33, 150, 243, 0.5);
+  animation: pulseHint 1.8s infinite;
+}
+
+@keyframes pulseHint {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(33, 150, 243, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(33, 150, 243, 0); }
+}
+
+/* ── Dark Theme Overrides for Splash ── */
+[data-theme="dark"] .minor-splash-overlay {
+  background: rgba(8, 12, 20, 0.88);
+  background-image: 
+    radial-gradient(1200px 700px at 20% -60px, rgba(33, 150, 243, 0.22), transparent 70%),
+    radial-gradient(1000px 600px at 85% 85%, rgba(124, 58, 237, 0.22), transparent 60%),
+    radial-gradient(900px 600px at 50% 95%, rgba(16, 185, 129, 0.16), transparent 60%);
+}
+
+[data-theme="dark"] .minor-splash-card {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+[data-theme="dark"] .splash-member-card {
+  background: rgba(24, 32, 53, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .splash-name {
+  color: #F8FAFC;
+}
+
+[data-theme="dark"] .splash-tag {
+  color: #94A3B8;
+}
+
+[data-theme="dark"] .splash-mentor-row {
+  background: rgba(15, 23, 42, 0.75);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #94A3B8;
+}
+
+[data-theme="dark"] .splash-mentor-row strong {
+  color: #F8FAFC;
+}
+
+[data-theme="dark"] .splash-press-hint {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #CBD5E1;
+}
+
+[data-theme="dark"] .splash-press-hint kbd {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #38BDF8;
 }
 
 @media (max-width: 900px) {

@@ -589,13 +589,13 @@
 
     <!-- Launch Actions -->
     <div class="cta-row">
-      <a href="predict.html" class="btn-primary">
+      <a href="dashboard.html" class="btn-primary" id="start-main-btn">
         <span>🚀</span>
-        <span>Launch Dispatch Studio &amp; SLM Predictor</span>
+        <span>Launch Logistics Cockpit <kbd style="margin-left:0.4rem; background:rgba(255,255,255,0.25); color:#fff; padding:0.15rem 0.45rem; border-radius:4px; font-size:0.72rem; font-family:var(--font-mono);">ENTER ↵</kbd></span>
       </a>
-      <a href="dashboard.html" class="btn-secondary">
-        <span>📊</span>
-        <span>Open Command Cockpit</span>
+      <a href="predict.html" class="btn-secondary">
+        <span>⚡</span>
+        <span>Dispatch Studio</span>
       </a>
       <a href="history.html" class="btn-secondary">
         <span>📑</span>
@@ -605,6 +605,14 @@
         <span>🤖</span>
         <span>AI Copilot</span>
       </a>
+    </div>
+
+    <!-- Press Anywhere Hint -->
+    <div style="margin-top:1.5rem; display:flex; justify-content:center;">
+      <div style="display:inline-flex; align-items:center; gap:0.6rem; padding:0.5rem 1.25rem; background:var(--bg-card); border:1px solid var(--border-light); border-radius:9999px; font-size:0.82rem; font-weight:700; color:var(--txt-secondary); box-shadow:0 4px 15px rgba(0,0,0,0.05); cursor:pointer;" onclick="window.location.href='dashboard.html'">
+        <span style="width:8px; height:8px; border-radius:50%; background:var(--clr-primary); display:inline-block; box-shadow:0 0 8px var(--clr-primary);"></span>
+        <span>🖱️ Click anywhere or press <kbd style="background:#0F172A; color:#FFFFFF; padding:0.15rem 0.5rem; border-radius:4px; font-size:0.75rem; font-family:var(--font-mono); font-weight:800;">ENTER ↵</kbd> to start the main app</span>
+      </div>
     </div>
   </div>
 
@@ -631,6 +639,19 @@
         });
       });
     })();
+
+    // Press anywhere or press Enter to start the main app
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.code === "Space") {
+        window.location.href = "dashboard.html";
+      }
+    });
+
+    document.body.addEventListener("click", (e) => {
+      if (!e.target.closest(".top-toolbar") && !e.target.closest("a") && !e.target.closest("button")) {
+        window.location.href = "dashboard.html";
+      }
+    });
   </script>
 </body>
 </html>

@@ -17,11 +17,92 @@
         document.documentElement.setAttribute("data-theme", t);
         const p = localStorage.getItem("deliverai-palette") || "blue";
         document.documentElement.setAttribute("data-palette", p);
+        if (sessionStorage.getItem("deliverai-intro-seen") === "true") {
+          document.documentElement.classList.add("splash-already-seen");
+        }
       } catch(e) {}
     })();
   </script>
 </head>
 <body>
+
+  <!-- ── 0. Initial Launch Minor Project Description Splash Overlay ── -->
+  <div class="minor-splash-overlay" id="minor-project-overlay" title="Click anywhere or press Enter to launch">
+    <div class="minor-splash-card" id="minor-splash-card">
+      
+      <!-- Top Badges -->
+      <div class="splash-badge-row">
+        <span class="splash-inst-pill">🏛️ SSIPMT Raipur • Dept. of AI &amp; Machine Learning</span>
+        <span class="splash-minor-pill">🎓 B.Tech 5th Sem Minor Project 2026</span>
+      </div>
+
+      <!-- Project Title & Subtitle -->
+      <h1 class="splash-title">DeliverAI</h1>
+      <p class="splash-subtitle">
+        Intelligent Package Delivery Time Predictor &amp; On-Device Small Language Model (SLM) Route Meta-Router across India's National Freight Corridors
+      </p>
+
+      <!-- Key Engineering Highlights Badges -->
+      <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem; margin-bottom:1.25rem;">
+        <span class="badge-pill" style="font-size:0.75rem; padding:0.3rem 0.75rem; background:rgba(33,150,243,0.12); color:var(--clr-primary); border:1px solid rgba(33,150,243,0.25); border-radius:9999px; font-weight:700;">⚡ 19 ML/DL Regressors</span>
+        <span class="badge-pill" style="font-size:0.75rem; padding:0.3rem 0.75rem; background:rgba(16,185,129,0.12); color:var(--clr-emerald); border:1px solid rgba(16,185,129,0.25); border-radius:9999px; font-weight:700;">🗺️ OSRM Real-Time Highway Routing</span>
+        <span class="badge-pill" style="font-size:0.75rem; padding:0.3rem 0.75rem; background:rgba(124,58,237,0.12); color:var(--clr-violet); border:1px solid rgba(124,58,237,0.25); border-radius:9999px; font-weight:700;">🧠 Laya SLM Edge Waypoint Router</span>
+        <span class="badge-pill" style="font-size:0.75rem; padding:0.3rem 0.75rem; background:rgba(234,88,12,0.12); color:var(--clr-orange); border:1px solid rgba(234,88,12,0.25); border-radius:9999px; font-weight:700;">📦 184,000 Verified Telemetry Records</span>
+      </div>
+
+      <!-- Team Section Label -->
+      <div class="splash-team-label">Project Team Members</div>
+
+      <!-- 4 Bento Cards for Team -->
+      <div class="splash-team-grid">
+        <div class="splash-member-card leader">
+          <span class="splash-role">👑 Leader</span>
+          <div class="splash-name">Satyam Verma</div>
+          <div class="splash-tag">Project Strategy, System Integration &amp; Team Coordination</div>
+        </div>
+
+        <div class="splash-member-card research">
+          <span class="splash-role">🔬 Research Person</span>
+          <div class="splash-name">Tanu Sahu</div>
+          <div class="splash-tag">Literature Review, Benchmark Comparative Analysis &amp; Telematics</div>
+        </div>
+
+        <div class="splash-member-card frontend">
+          <span class="splash-role">🎨 Frontend</span>
+          <div class="splash-name">Yash Sahu</div>
+          <div class="splash-tag">Glassmorphic UI/UX, Dynamic Maps &amp; Real-time Web Cockpit</div>
+        </div>
+
+        <div class="splash-member-card model">
+          <span class="splash-role">🧠 Dataset &amp; Model</span>
+          <div class="splash-name">Arghodeep Chowdhury</div>
+          <div class="splash-tag">184k Data Telemetry, 19 ML/DL Regressors &amp; Laya SLM Fine-Tuning</div>
+        </div>
+      </div>
+
+      <!-- Mentorship -->
+      <div class="splash-mentor-row">
+        <span>Project In-Charge: <strong>Ms. Rashmi Banchhor</strong></span>
+        <span>•</span>
+        <span>Head of Department: <strong>Dr. Anjali Chandra</strong></span>
+      </div>
+
+      <!-- Launch Action & Press Prompt -->
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0.85rem;">
+        <button type="button" class="splash-launch-btn" id="splash-launch-btn">
+          <span>🚀</span>
+          <span>Launch Logistics Command Cockpit</span>
+          <kbd style="margin-left:0.5rem; background:rgba(255,255,255,0.25); color:#fff; padding:0.18rem 0.55rem; border-radius:4px; font-size:0.75rem; font-family:var(--font-mono); font-weight:800;">ENTER ↵</kbd>
+        </button>
+
+        <div class="splash-press-hint">
+          <span class="pulse-ring"></span>
+          <span>🖱️ Click anywhere on the screen or press <kbd>ENTER</kbd> to start the main app</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- ── Floating Glass Command Navigation Header ──────────────── -->
   <nav class="navbar">
@@ -38,7 +119,7 @@
       <li><a href="predict.html" class="nav-link"><span>⚡</span> Dispatch Studio</a></li>
       <li><a href="history.html" class="nav-link"><span>📊</span> Analytics &amp; Records</a></li>
       <li><a href="copilot.html" class="nav-link"><span>🤖</span> AI Copilot <span class="badge-pill-new">LLM</span></a></li>
-      <li><a href="start.html" class="nav-link"><span>🎓</span> Minor Project</a></li>
+      <li><a href="start.html" class="nav-link" id="nav-minor-project-btn"><span>🎓</span> Minor Project</a></li>
     </ul>
 
     <div class="nav-actions">
@@ -489,5 +570,71 @@
   <script src="js/main.js"></script>
   <script src="js/charts.js"></script>
   <script src="js/dashboard.js"></script>
+  <script>
+    // ── Minor Project Description Intro Screen Handlers ──
+    function dismissIntro() {
+      const overlay = document.getElementById("minor-project-overlay");
+      if (!overlay || overlay.classList.contains("hidden")) return;
+      sessionStorage.setItem("deliverai-intro-seen", "true");
+      document.documentElement.classList.add("splash-already-seen");
+      overlay.classList.remove("force-show");
+      overlay.style.transition = "opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1)";
+      overlay.style.opacity = "0";
+      overlay.style.transform = "scale(1.025)";
+      overlay.style.pointerEvents = "none";
+      setTimeout(() => {
+        overlay.classList.add("hidden");
+      }, 320);
+    }
+
+    function showIntro() {
+      const overlay = document.getElementById("minor-project-overlay");
+      if (!overlay) return;
+      overlay.classList.remove("hidden");
+      overlay.classList.add("force-show");
+      overlay.style.transition = "opacity 0.35s ease, transform 0.35s ease";
+      overlay.style.opacity = "1";
+      overlay.style.transform = "scale(1)";
+      overlay.style.pointerEvents = "auto";
+    }
+
+    // Press anywhere on screen to dismiss
+    const splashOverlay = document.getElementById("minor-project-overlay");
+    if (splashOverlay) {
+      splashOverlay.addEventListener("click", () => {
+        dismissIntro();
+      });
+    }
+
+    const splashLaunchBtn = document.getElementById("splash-launch-btn");
+    if (splashLaunchBtn) {
+      splashLaunchBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dismissIntro();
+      });
+    }
+
+    // Keyboard trigger: Enter or Space
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.code === "Space") {
+        const overlay = document.getElementById("minor-project-overlay");
+        if (overlay && (!overlay.classList.contains("hidden") || overlay.classList.contains("force-show"))) {
+          if (!document.documentElement.classList.contains("splash-already-seen") || overlay.classList.contains("force-show")) {
+            e.preventDefault();
+            dismissIntro();
+          }
+        }
+      }
+    });
+
+    // Re-open from navbar Minor Project button
+    const minorNavBtn = document.getElementById("nav-minor-project-btn");
+    if (minorNavBtn) {
+      minorNavBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        showIntro();
+      });
+    }
+  </script>
 </body>
 </html>
