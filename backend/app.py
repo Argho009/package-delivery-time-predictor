@@ -57,9 +57,11 @@ def create_app() -> Flask:
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")
     def serve_frontend(path):
+        if not path or path in ("index.html", "dashboard.html"):
+            return send_from_directory(frontend_dir, "dashboard.html")
         if path and os.path.exists(os.path.join(frontend_dir, path)):
             return send_from_directory(frontend_dir, path)
-        return send_from_directory(frontend_dir, "index.html")
+        return send_from_directory(frontend_dir, "dashboard.html")
 
     # Health check
     @app.route("/api/health")
@@ -69,6 +71,21 @@ def create_app() -> Flask:
         return jsonify({
             "status":          "ok",
             "models_loaded":   models_available(),
+        })
+
+    # Memory & GPU VRAM Purge Endpoint
+    @app.route("/api/system/cleanup", methods=["GET", "POST"])
+    def system_cleanup():
+        from flask import jsonify
+        from utils.memory_cleanup import clear_vram_and_ram, get_memory_stats
+        before = get_memory_stats()
+        clear_vram_and_ram(verbose=True)
+        after = get_memory_stats()
+        return jsonify({
+            "status": "success",
+            "message": "GPU VRAM and System RAM cleared successfully",
+            "before": before,
+            "after": after,
         })
 
     return app

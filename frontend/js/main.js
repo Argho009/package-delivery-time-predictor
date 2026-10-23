@@ -1,6 +1,158 @@
-// js/main.js — Shared utilities & Executive Dashboard Controller
+// js/main.js — Shared utilities, Universal Theme Manager & Global Helpers
 
 const API_BASE = "/api";
+
+/* ── Universal Theme Manager (Immediate Initialization & Bulletproof Sync) ── */
+(function initTheme() {
+  function getStoredTheme() {
+    return localStorage.getItem("deliverai-theme") || "light";
+  }
+
+  function syncIcon(theme) {
+    const isDark = theme === "dark";
+    const buttons = document.querySelectorAll("#theme-toggle-btn, .theme-toggle-btn");
+    buttons.forEach(btn => {
+      btn.innerHTML = isDark ? "☀️" : "🌙";
+      btn.title = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
+      btn.setAttribute("aria-label", isDark ? "Switch to Light Mode" : "Switch to Dark Mode");
+    });
+  }
+
+  function applyTheme(theme, notify = false) {
+    const targetTheme = theme === "dark" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", targetTheme);
+    localStorage.setItem("deliverai-theme", targetTheme);
+    syncIcon(targetTheme);
+
+    window.dispatchEvent(new CustomEvent("deliverai-theme-change", { detail: { theme: targetTheme } }));
+
+    if (notify && typeof showToast === "function") {
+      showToast(`Switched to ${targetTheme.toUpperCase()} mode`, "info");
+    }
+  }
+
+  // Set theme immediately on script execution to minimize any flash
+  applyTheme(getStoredTheme(), false);
+
+  function bindThemeToggle() {
+    const currentTheme = getStoredTheme();
+    applyTheme(currentTheme, false);
+
+    const buttons = document.querySelectorAll("#theme-toggle-btn, .theme-toggle-btn");
+    buttons.forEach(btn => {
+      // Use direct onclick property to eliminate accidental double listener triggers
+      btn.onclick = function (e) {
+        if (e) e.preventDefault();
+        const active = document.documentElement.getAttribute("data-theme") || "light";
+        const next = active === "dark" ? "light" : "dark";
+        applyTheme(next, true);
+      };
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindThemeToggle);
+  } else {
+    bindThemeToggle();
+  }
+
+  // Multi-tab synchronization
+  window.addEventListener("storage", (e) => {
+    if (e.key === "deliverai-theme" && e.newValue) {
+      applyTheme(e.newValue, false);
+    }
+  });
+
+  // Global exposure for debugging or programmatic switching
+  window.setDeliverAITheme = applyTheme;
+  window.toggleDeliverAITheme = () => {
+    const active = document.documentElement.getAttribute("data-theme") || "light";
+    applyTheme(active === "dark" ? "light" : "dark", true);
+  };
+})();
+
+/* ── Live Color Palette Switcher Manager ───────────────────────── */
+(function initPalette() {
+  const savedPalette = localStorage.getItem("deliverai-palette") || "blue";
+  document.documentElement.setAttribute("data-palette", savedPalette);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const navActions = document.querySelector(".nav-actions");
+    if (navActions && !document.getElementById("palette-picker-container")) {
+      const picker = document.createElement("div");
+      picker.id = "palette-picker-container";
+      picker.className = "palette-picker-wrap";
+      picker.innerHTML = `
+        <div class="palette-btn-group" title="Select UI Accent Color Palette">
+          <button type="button" class="palette-dot dot-blue ${savedPalette === 'blue' ? 'active' : ''}" data-val="blue" title="Electric Blue (Crextio Default)"></button>
+          <button type="button" class="palette-dot dot-indigo ${savedPalette === 'indigo' ? 'active' : ''}" data-val="indigo" title="Royal Indigo"></button>
+          <button type="button" class="palette-dot dot-cyan ${savedPalette === 'cyan' ? 'active' : ''}" data-val="cyan" title="Sky Cyan"></button>
+          <button type="button" class="palette-dot dot-emerald ${savedPalette === 'emerald' ? 'active' : ''}" data-val="emerald" title="Emerald Eco"></button>
+          <button type="button" class="palette-dot dot-sunset ${savedPalette === 'sunset' ? 'active' : ''}" data-val="sunset" title="Sunset Coral"></button>
+        </div>
+      `;
+      navActions.insertBefore(picker, navActions.firstChild);
+
+      picker.querySelectorAll(".palette-dot").forEach(dot => {
+        dot.addEventListener("click", () => {
+          const pal = dot.getAttribute("data-val");
+          document.documentElement.setAttribute("data-palette", pal);
+          localStorage.setItem("deliverai-palette", pal);
+          picker.querySelectorAll(".palette-dot").forEach(d => d.classList.remove("active"));
+          dot.classList.add("active");
+          showToast(`Palette: ${pal.toUpperCase()}`, "success");
+        });
+      });
+    }
+  });
+})();
+
+/* ── Global Glass Toast Notification System ───────────────────── */
+function showToast(message, type = "info") {
+  let toastContainer = document.getElementById("deliverai-toast-container");
+  if (!toastContainer) {
+    toastContainer = document.createElement("div");
+    toastContainer.id = "deliverai-toast-container";
+    toastContainer.style.cssText = `
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    `;
+    document.body.appendChild(toastContainer);
+  }
+
+  const icons = { success: "✅", error: "⚠️", info: "ℹ️", warning: "⚡" };
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-surface-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    color: var(--txt-main);
+    font-size: 0.86rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    pointer-events: auto;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  `;
+  toast.innerHTML = `<span>${icons[type] || "ℹ️"}</span><span>${message}</span>`;
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(20px)";
+    setTimeout(() => toast.remove(), 350);
+  }, 3200);
+}
 
 /* ── Fetch wrapper ─────────────────────────────────────────────── */
 async function apiFetch(endpoint, options = {}) {

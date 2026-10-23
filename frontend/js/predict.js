@@ -9,6 +9,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!form || !submitBtn) return;
 
+  let mapInstance = null;
+  let currentPredictionData = null;
+  let baselineRecHours = null;
+  let transitMarker = null;
+  let transitAnimId = null;
+
   // ── Submit handler ──────────────────────────────────────────
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -288,27 +294,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ── Theme Toggle ─────────────────────────────────────────────
-  const themeBtn = document.getElementById("theme-toggle-btn");
-  if (themeBtn) {
-    const savedTheme = localStorage.getItem("deliverai-theme") || "dark";
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    themeBtn.textContent = savedTheme === "light" ? "🌙" : "☀️";
+  // Theme toggle is handled universally by js/main.js
 
-    themeBtn.addEventListener("click", () => {
-      const current = document.documentElement.getAttribute("data-theme") || "dark";
-      const next = current === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("deliverai-theme", next);
-      themeBtn.textContent = next === "light" ? "🌙" : "☀️";
-    });
+
+  // ── Auto-fill from URL params (e.g. predict.html?orig=Delhi&dest=Mumbai) ──
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramOrig = urlParams.get("orig");
+  const paramDest = urlParams.get("dest");
+  if (paramOrig) {
+    const oInput = document.getElementById("orig-input");
+    if (oInput) oInput.value = paramOrig;
   }
-
-  let mapInstance = null;
-  let currentPredictionData = null;
-  let baselineRecHours = null;
-  let transitMarker = null;
-  let transitAnimId = null;
+  if (paramDest) {
+    const dInput = document.getElementById("dest-input");
+    if (dInput) dInput.value = paramDest;
+  }
+  if (paramOrig && paramDest) {
+    setTimeout(() => {
+      if (submitBtn) submitBtn.click();
+    }, 400);
+  }
 
   // ── Render prediction result ────────────────────────────────
   function renderResult(data) {
@@ -873,7 +878,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sourceBadge) {
       const src = slm.source || "DeliverAI SLM Router";
       sourceBadge.textContent = src;
-      if (src.toLowerCase().includes("lm studio")) {
+      if (src.toLowerCase().includes("laya")) {
+        sourceBadge.style.background = "rgba(147, 51, 234, 0.18)";
+        sourceBadge.style.color = "#a855f7";
+        sourceBadge.style.border = "1px solid rgba(168, 85, 247, 0.45)";
+      } else if (src.toLowerCase().includes("lm studio")) {
         sourceBadge.style.background = "rgba(16, 185, 129, 0.15)";
         sourceBadge.style.color = "#059669";
         sourceBadge.style.border = "1px solid rgba(16, 185, 129, 0.35)";
@@ -885,7 +894,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (chosenTag) {
-      chosenTag.textContent = modelName(slm.chosen_model || "voting");
+      const mName = modelName(slm.chosen_model || "voting");
+      if (slm.confidence_pct) {
+        chosenTag.textContent = `${mName} (${slm.confidence_pct}% Conf)`;
+      } else {
+        chosenTag.textContent = mName;
+      }
     }
 
     if (reasonText) {

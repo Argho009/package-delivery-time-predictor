@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,27 +8,41 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+    (function() {
+      try {
+        const t = localStorage.getItem("deliverai-theme") || "light";
+        document.documentElement.setAttribute("data-theme", t);
+        const p = localStorage.getItem("deliverai-palette") || "blue";
+        document.documentElement.setAttribute("data-palette", p);
+      } catch(e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <!-- Navigation Header (Glass Command Header) -->
   <nav class="navbar">
-    <a href="index.html" class="navbar-brand">
+    <a href="dashboard.html" class="navbar-brand">
       <div class="brand-icon">📦</div>
-      <span>DeliverAI</span>
+      <div style="display:flex; flex-direction:column; line-height:1.1;">
+        <span style="font-weight:800; font-size:1.15rem; letter-spacing:-0.03em;">DeliverAI</span>
+        <span style="font-size:0.65rem; color:var(--clr-primary); font-family:var(--font-mono); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Enterprise v2.4</span>
+      </div>
     </a>
 
     <ul class="navbar-nav">
-      <li><a href="index.html" class="nav-link">Dashboard</a></li>
-      <li><a href="predict.html" class="nav-link">Dispatch Studio</a></li>
-      <li><a href="history.html" class="nav-link">Analytics &amp; History</a></li>
-      <li><a href="copilot.html" class="nav-link active">AI Copilot <span class="badge-pill-new">LLM</span></a></li>
+      <li><a href="dashboard.html" class="nav-link"><span>🏠</span> Dashboard</a></li>
+      <li><a href="predict.html" class="nav-link"><span>⚡</span> Dispatch Studio</a></li>
+      <li><a href="history.html" class="nav-link"><span>📊</span> Analytics &amp; Records</a></li>
+      <li><a href="copilot.html" class="nav-link active"><span>🤖</span> AI Copilot <span class="badge-pill-new">LLM</span></a></li>
+      <li><a href="start.html" class="nav-link"><span>🎓</span> Minor Project</a></li>
     </ul>
 
     <div class="nav-actions">
       <div class="telemetry-pill">
         <span class="status-dot"></span>
-        <span id="nav-records">1,40,832 Shipments • 19 ML Models</span>
+        <span id="nav-records">GPU RTX 3050 • Built-In AI</span>
       </div>
       <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode">
         🌓
@@ -163,25 +177,9 @@
     </div>
   </main>
 
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js"></script>
   <script src="js/copilot.js" defer></script>
   <script>
-    // Theme toggle init
-    const themeBtn = document.getElementById("theme-toggle-btn");
-    if (themeBtn) {
-      const savedTheme = localStorage.getItem("deliverai-theme") || "dark";
-      document.documentElement.setAttribute("data-theme", savedTheme);
-      themeBtn.textContent = savedTheme === "light" ? "🌙" : "☀️";
-
-      themeBtn.addEventListener("click", () => {
-        const current = document.documentElement.getAttribute("data-theme") || "dark";
-        const next = current === "dark" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", next);
-        localStorage.setItem("deliverai-theme", next);
-        themeBtn.textContent = next === "light" ? "🌙" : "☀️";
-      });
-    }
-
     // Clear chat button
     document.addEventListener("DOMContentLoaded", () => {
       const clearBtn = document.getElementById("clear-chat-btn");

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeliverAI — Executive Logistics Command Cockpit</title>
+  <meta name="description" content="AI package delivery time prediction platform featuring 19 ensemble ML models, SLM route optimization, and real-time inland India logistics telemetry." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+  <script>
+    (function() {
+      try {
+        const t = localStorage.getItem("deliverai-theme") || "light";
+        document.documentElement.setAttribute("data-theme", t);
+        const p = localStorage.getItem("deliverai-palette") || "blue";
+        document.documentElement.setAttribute("data-palette", p);
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- ── Floating Glass Command Navigation Header ──────────────── -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="navbar-brand">
+      <div class="brand-icon">📦</div>
+      <div style="display:flex; flex-direction:column; line-height:1.1;">
+        <span style="font-weight:800; font-size:1.15rem; letter-spacing:-0.03em;">DeliverAI</span>
+        <span style="font-size:0.65rem; color:var(--clr-primary); font-family:var(--font-mono); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Enterprise v2.4</span>
+      </div>
+    </a>
+
+    <ul class="navbar-nav">
+      <li><a href="dashboard.html" class="nav-link active"><span>🏠</span> Dashboard</a></li>
+      <li><a href="predict.html" class="nav-link"><span>⚡</span> Dispatch Studio</a></li>
+      <li><a href="history.html" class="nav-link"><span>📊</span> Analytics &amp; Records</a></li>
+      <li><a href="copilot.html" class="nav-link"><span>🤖</span> AI Copilot <span class="badge-pill-new">LLM</span></a></li>
+      <li><a href="start.html" class="nav-link"><span>🎓</span> Minor Project</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="telemetry-pill">
+        <span class="status-dot"></span>
+        <span id="nav-telemetry">19 Models Online • OSRM Active</span>
+      </div>
+      <a href="predict.html" class="btn-hero-primary" style="padding:0.45rem 1rem; font-size:0.8rem; text-decoration:none;">
+        <span>🚀</span> New Dispatch
+      </a>
+      <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode">
+        🌓
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Main Cockpit Workspace ─────────────────────────────────── -->
+  <main class="page-wrapper">
+
+    <!-- ── 1. Hero Command Banner ─────────────────────────────── -->
+    <section class="dashboard-hero-card">
+      <div class="hero-top-row">
+        <div class="hero-status-pill">
+          <span class="status-dot"></span>
+          <span>National Freight Network • 6 Corridors Nominal</span>
+        </div>
+        <div class="hero-time-badge" id="hero-live-clock">
+          Loading live telemetry…
+        </div>
+      </div>
+
+      <h1 class="dashboard-hero-title" id="dashboard-hero-title">
+        Logistics Command Cockpit 👋
+      </h1>
+      <p class="dashboard-hero-sub">
+        Real-time multi-model ML package delivery forecasting, neural Small Language Model (SLM) waypoint routing, and telemetry across India's interstate freight corridors.
+      </p>
+
+      <div class="hero-actions-row">
+        <a href="predict.html" class="btn-hero-primary">
+          <span>⚡</span>
+          <span>Open Dispatch Studio</span>
+        </a>
+        <a href="copilot.html" class="btn-hero-secondary">
+          <span>🤖</span>
+          <span>Consult AI Logistics Copilot</span>
+        </a>
+        <a href="history.html" class="btn-hero-secondary">
+          <span>📑</span>
+          <span>19-Model Benchmark Matrix</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ── 2. Top Bento KPI Grid ──────────────────────────────── -->
+    <section class="kpi-bento-grid">
+      <!-- Card 1: Total Shipments -->
+      <div class="kpi-bento-card card-orange">
+        <div>
+          <div class="kpi-card-header">
+            <div class="kpi-icon-pill orange">📦</div>
+            <span class="kpi-trend-pill up">↑ +14.2% MoM</span>
+          </div>
+          <div class="kpi-label">Total Freight Dispatches</div>
+          <div class="kpi-value-row">
+            <div class="kpi-val" id="kpi-total-shipments">99,500</div>
+            <svg class="kpi-sparkline-svg" viewBox="0 0 80 32">
+              <path d="M 0 24 Q 20 28, 40 14 T 80 6" fill="none" stroke="var(--clr-primary)" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-subtext">Verified Indian logistics records (Delhivery, Amazon, IRCTC)</div>
+      </div>
+
+      <!-- Card 2: Top Ensemble Accuracy -->
+      <div class="kpi-bento-card card-cyan">
+        <div>
+          <div class="kpi-card-header">
+            <div class="kpi-icon-pill cyan">🏆</div>
+            <span class="kpi-trend-pill info">Voting Ensemble</span>
+          </div>
+          <div class="kpi-label">Top Ensemble Accuracy (R²)</div>
+          <div class="kpi-value-row">
+            <div class="kpi-val" id="kpi-best-accuracy">96.2%</div>
+            <svg class="kpi-sparkline-svg" viewBox="0 0 80 32">
+              <path d="M 0 26 Q 20 8, 40 18 T 80 4" fill="none" stroke="var(--clr-cyan)" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-subtext">Mean Absolute Error: 1.28h • RMSE: 2.88h</div>
+      </div>
+
+      <!-- Card 3: Active Corridors Mileage -->
+      <div class="kpi-bento-card card-emerald">
+        <div>
+          <div class="kpi-card-header">
+            <div class="kpi-icon-pill emerald">🛣️</div>
+            <span class="kpi-trend-pill up">🟢 100% Flow</span>
+          </div>
+          <div class="kpi-label">Active Freight Corridors</div>
+          <div class="kpi-value-row">
+            <div>
+              <span class="kpi-val" id="kpi-corridor-km">8,145.2</span>
+              <span style="font-size:1.1rem; color:var(--txt-muted); font-weight:700;">km</span>
+            </div>
+            <svg class="kpi-sparkline-svg" viewBox="0 0 80 32">
+              <path d="M 0 22 Q 20 18, 40 12 T 80 5" fill="none" stroke="var(--clr-emerald)" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-subtext">NH-48, NH-44, Western &amp; Eastern Dedicated Freight Corridors</div>
+      </div>
+
+      <!-- Card 4: Mean Transit Duration -->
+      <div class="kpi-bento-card card-violet">
+        <div>
+          <div class="kpi-card-header">
+            <div class="kpi-icon-pill violet">⏱️</div>
+            <span class="kpi-trend-pill info">±0.52h Tolerance</span>
+          </div>
+          <div class="kpi-label">Mean Inland Transit Time</div>
+          <div class="kpi-value-row">
+            <div class="kpi-val" id="kpi-avg-hours">13h 7m</div>
+            <svg class="kpi-sparkline-svg" viewBox="0 0 80 32">
+              <path d="M 0 10 Q 20 22, 40 12 T 80 24" fill="none" stroke="var(--clr-violet)" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-subtext">Average transit duration across inland logistics networks</div>
+      </div>
+    </section>
+
+    <!-- ── 3. Split Command Cockpit Grid ──────────────────────── -->
+    <div class="dashboard-cockpit-grid">
+
+      <!-- ── Left Column: Operations & Predictive Intelligence ─── -->
+      <div class="dashboard-column">
+
+        <!-- Widget 1: Interactive Quick Route Estimator -->
+        <div class="glass-card">
+          <div class="card-header-clean">
+            <div class="card-title-clean">
+              <span>⚡</span>
+              <span>Quick Corridor Dispatch &amp; ETA Estimator</span>
+            </div>
+            <span class="badge badge-low" style="background:var(--clr-orange-tint); color:var(--clr-primary);">
+              Instant Inference
+            </span>
+          </div>
+
+          <div class="card-body-clean">
+            <!-- 1-Click Preset Corridor Chips -->
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--txt-muted); margin-bottom:0.5rem;">
+              Select Major National Corridor
+            </div>
+            <div class="quick-corridor-grid">
+              <button type="button" class="quick-corridor-btn active" data-orig="Delhi" data-dest="Mumbai">
+                <strong>🚚 Delhi ➔ Mumbai</strong>
+                <span>NH-48 • 1,420 km • Heavy Freight</span>
+              </button>
+              <button type="button" class="quick-corridor-btn" data-orig="Bengaluru" data-dest="Chennai">
+                <strong>⚡ Bengaluru ➔ Chennai</strong>
+                <span>NH-75 / GQ • 348 km • Express</span>
+              </button>
+              <button type="button" class="quick-corridor-btn" data-orig="Kolkata" data-dest="Delhi">
+                <strong>📦 Kolkata ➔ Delhi</strong>
+                <span>NH-19 / GQ • 1,460 km • Standard</span>
+              </button>
+              <button type="button" class="quick-corridor-btn" data-orig="Pune" data-dest="Hyderabad">
+                <strong>🚛 Pune ➔ Hyderabad</strong>
+                <span>NH-65 • 560 km • Commercial</span>
+              </button>
+            </div>
+
+            <!-- Origin & Destination Inputs -->
+            <div class="quick-predict-inputs">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="quick-origin">Origin Hub</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">🟢</span>
+                  <input type="text" id="quick-origin" class="form-input" value="Delhi" placeholder="e.g. Delhi, Raipur" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="quick-dest">Destination Hub</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">🏁</span>
+                  <input type="text" id="quick-dest" class="form-input" value="Mumbai" placeholder="e.g. Mumbai, Pune" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Package Specs Row -->
+            <div class="quick-predict-inputs" style="margin-top:0.75rem;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="quick-weight">Cargo Weight (kg)</label>
+                <input type="number" id="quick-weight" class="form-input" value="12.5" step="0.5" min="0.1" max="1000" style="padding-left:1rem;" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="quick-priority">Priority SLA</label>
+                <select id="quick-priority" class="form-select" style="padding-left:1rem;">
+                  <option value="STANDARD">📦 Standard Freight</option>
+                  <option value="EXPRESS" selected>🚀 Express Courier</option>
+                  <option value="OVERNIGHT">⚡ Overnight Priority</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="button" class="btn-hero-primary" id="btn-quick-predict" style="width:100%; justify-content:center; margin-top:1.1rem; padding:0.85rem;">
+              <span>⚡</span>
+              <span>Calculate Delivery ETA</span>
+            </button>
+
+            <!-- Dynamic Result Card -->
+            <div id="quick-predict-result" class="quick-predict-result-box d-none"></div>
+          </div>
+        </div>
+
+        <!-- Widget 2: AI Ensemble Model Leaderboard -->
+        <div class="glass-card">
+          <div class="card-header-clean">
+            <div class="card-title-clean">
+              <span>🏆</span>
+              <span>Top 6 ML Ensemble Models Leaderboard</span>
+            </div>
+            <a href="history.html" style="font-size:0.78rem; font-weight:700; color:var(--clr-cyan); text-decoration:none;">
+              View All 19 Models ➔
+            </a>
+          </div>
+
+          <div class="card-body-clean">
+            <div class="model-leaderboard-list" id="dashboard-model-leaderboard">
+              <div style="padding:1.5rem; text-align:center; color:var(--txt-muted);">
+                Loading ML model performance matrices…
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget 3: Traffic Congestion Delay Analysis -->
+        <div class="glass-card">
+          <div class="card-header-clean">
+            <div class="card-title-clean">
+              <span>🚦</span>
+              <span>Highway Traffic Congestion Delay Analysis</span>
+            </div>
+            <span class="badge badge-low" style="background:rgba(56,189,248,0.12); color:var(--clr-cyan);">
+              99,500 Empirical Records
+            </span>
+          </div>
+
+          <div class="card-body-clean">
+            <div style="height:230px; position:relative;">
+              <canvas id="dashboardTrafficChart"></canvas>
+            </div>
+            <div style="font-size:0.75rem; color:var(--txt-muted); text-align:center; margin-top:0.75rem;">
+              Mean inland transit duration grouped by real-world congestion telemetry (Low, Moderate, High, Severe)
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- ── Right Column: Gateways, Live Feed & Telemetry ─────── -->
+      <div class="dashboard-column">
+
+        <!-- Widget 4: National Freight Hubs Telemetry -->
+        <div class="glass-card">
+          <div class="card-header-clean">
+            <div class="card-title-clean">
+              <span>📍</span>
+              <span>Core Logistics Hubs Status</span>
+            </div>
+            <span class="badge badge-low" style="background:rgba(16,185,129,0.12); color:var(--clr-emerald);">
+              Live Gateways
+            </span>
+          </div>
+
+          <div class="card-body-clean">
+            <div class="freight-hubs-grid">
+              
+              <!-- Hub 1: Delhi NCR -->
+              <div class="freight-hub-mini">
+                <div class="hub-head">
+                  <span class="hub-name">📍 Delhi-NCR</span>
+                  <span class="badge badge-low" style="font-size:0.6rem; padding:1px 5px;">HUB</span>
+                </div>
+                <div class="hub-corridor">Western DFC Terminal</div>
+                <div class="hub-tags">
+                  <span style="font-size:0.72rem;">☀️ Clear</span>
+                  <span style="font-size:0.72rem; color:var(--clr-amber);">🟡 Moderate</span>
+                </div>
+              </div>
+
+              <!-- Hub 2: Mumbai JNPT -->
+              <div class="freight-hub-mini">
+                <div class="hub-head">
+                  <span class="hub-name">🚢 Mumbai JNPT</span>
+                  <span class="badge badge-low" style="font-size:0.6rem; padding:1px 5px;">PORT</span>
+                </div>
+                <div class="hub-corridor">Nhava Sheva Freight</div>
+                <div class="hub-tags">
+                  <span style="font-size:0.72rem;">☀️ Clear</span>
+                  <span style="font-size:0.72rem; color:var(--clr-rose);">🔴 Heavy Traffic</span>
+                </div>
+              </div>
+
+              <!-- Hub 3: Bengaluru Tech Corridor -->
+              <div class="freight-hub-mini">
+                <div class="hub-head">
+                  <span class="hub-name">💻 Bengaluru</span>
+                  <span class="badge badge-low" style="font-size:0.6rem; padding:1px 5px;">DEPOT</span>
+                </div>
+                <div class="hub-corridor">Whitefield Container Yard</div>
+                <div class="hub-tags">
+                  <span style="font-size:0.72rem;">☀️ Clear</span>
+                  <span style="font-size:0.72rem; color:var(--clr-amber);">🟡 Moderate</span>
+                </div>
+              </div>
+
+              <!-- Hub 4: Kolkata Dankuni -->
+              <div class="freight-hub-mini">
+                <div class="hub-head">
+                  <span class="hub-name">🏭 Kolkata Dankuni</span>
+                  <span class="badge badge-low" style="font-size:0.6rem; padding:1px 5px;">RAIL</span>
+                </div>
+                <div class="hub-corridor">Eastern DFC Terminal</div>
+                <div class="hub-tags">
+                  <span style="font-size:0.72rem;">☀️ Clear</span>
+                  <span style="font-size:0.72rem; color:var(--clr-emerald);">🟢 Nominal</span>
+                </div>
+              </div>
+
+              <!-- Hub 5: Chennai Harbour -->
+              <div class="freight-hub-mini">
+                <div class="hub-head">
+                  <span class="hub-name">⚓ Chennai Harbour</span>
+                  <span class="badge badge-low" style="font-size:0.6rem; padding:1px 5px;">PORT</span>
+                </div>
+                <div class="hub-corridor">Royapuram Container ICD</div>
+                <div class="hub-tags">
+                  <span style="font-size:0.72rem;">☀️ Clear</span>
+                  <span style="font-size:0.72rem; color:var(--clr-emerald);">🟢 Nominal</span>
+                </div>
+              </div>
+
+              <!-- Hub 6: Hyderabad ORR -->
+              <div class="freight-hub-mini">
+                <div class="hub-head">
+                  <span class="hub-name">🔄 Hyderabad ORR</span>
+                  <span class="badge badge-low" style="font-size:0.6rem; padding:1px 5px;">INTER</span>
+                </div>
+                <div class="hub-corridor">Telangana Cargo Hub</div>
+                <div class="hub-tags">
+                  <span style="font-size:0.72rem;">☀️ Clear</span>
+                  <span style="font-size:0.72rem; color:var(--clr-emerald);">🟢 Nominal</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget 5: Recent Dispatch Stream -->
+        <div class="glass-card">
+          <div class="card-header-clean">
+            <div class="card-title-clean">
+              <span>📡</span>
+              <span>Recent Dispatch Stream</span>
+            </div>
+            <a href="history.html" style="font-size:0.78rem; font-weight:700; color:var(--clr-cyan); text-decoration:none;">
+              All Records ➔
+            </a>
+          </div>
+
+          <div class="card-body-clean">
+            <div class="recent-dispatches-list" id="dashboard-recent-feed">
+              <div style="padding:1.5rem; text-align:center; color:var(--txt-muted);">
+                Streaming latest dispatches…
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget 6: System Architecture & Neural Telemetry -->
+        <div class="glass-card">
+          <div class="card-header-clean">
+            <div class="card-title-clean">
+              <span>🖥️</span>
+              <span>System Architecture &amp; Telemetry</span>
+            </div>
+            <span class="badge badge-low" style="background:rgba(168,85,247,0.12); color:var(--clr-violet);">
+              Online
+            </span>
+          </div>
+
+          <div class="card-body-clean">
+            <div class="telemetry-specs-grid">
+              
+              <div class="spec-tile">
+                <span class="spec-label">GPU Acceleration</span>
+                <span class="spec-val" id="telemetry-gpu-val">
+                  ⚡ NVIDIA RTX 3050
+                </span>
+              </div>
+
+              <div class="spec-tile">
+                <span class="spec-label">ML Ensemble</span>
+                <span class="spec-val" id="telemetry-models-val">
+                  <span class="status-dot"></span> 19 / 19 Loaded
+                </span>
+              </div>
+
+              <div class="spec-tile">
+                <span class="spec-label">Routing Engine</span>
+                <span class="spec-val" id="telemetry-osrm-val">
+                  <span class="status-dot"></span> Active (OSRM)
+                </span>
+              </div>
+
+              <div class="spec-tile">
+                <span class="spec-label">Telemetry DB</span>
+                <span class="spec-val" id="telemetry-db-val">
+                  <span class="status-dot"></span> Connected
+                </span>
+              </div>
+
+            </div>
+
+            <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.74rem; color:var(--txt-muted);">DeliverAI Enterprise v2.4 • 5th Sem Minor Project</span>
+              <a href="predict.html" style="font-size:0.75rem; color:var(--clr-primary); font-weight:700; text-decoration:none;">
+                Launch Studio ➔
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ── Scripts ──────────────────────────────────────────────── -->
+  <script src="js/main.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -8,11 +8,11 @@ app_port: 7860
 pinned: false
 ---
 
-# AI-Based Package Delivery Time Prediction System
+# DeliverAI : Intelligent Logistics & Delivery Duration Predictor
 
-> **DeliverAI** | Python · Flask · 19 ML & Deep Learning Models (Voting, Stacking, Random Forest, Extra Trees, CatBoost, LightGBM, Bagging, HistGradientBoosting, Gradient Boosting, XGBoost, MLP, TabNet, Decision Tree, SVR, KNN, Elastic Net, Ridge, Linear, Lasso) · OSRM & OpenStreetMap · OpenWeather API · SQLite / MySQL
+> **DeliverAI** | Python 3.10+ · PyTorch 2.5.1 + CUDA 12.1 · Fine-Tuned ModernBERT-421M SLM (`convaiinnovations/laya-typed-decisions`) · Dual-Tier Meta-Router · 19 Tabular ML/DL Regressors (Voting, Stacking, Random Forest, CatBoost, LightGBM, HistGradientBoosting, Bagging, TabNet, etc.) · OSRM Route Geometry · OpenWeather Telemetry · Flask REST Microservices
 
-A full-stack AI system that predicts inland India package delivery times using 184,000+ real logistics records (Delhivery, Amazon India, Food Delivery Trips, Bangalore City Traffic, Indian Road Corridors & Accidents, Indian Railway Stations, Flipkart), live traffic simulation, weather delay factors, and 19 Machine Learning & Deep Learning regression models.
+DeliverAI is a full-stack, enterprise-grade logistics operating engine designed for the non-linear realities of Indian transport networks. Trained on **184,000+ real-world courier telemetry records** (Delhivery, Amazon India, Bangalore traffic, Indian Railways freight), DeliverAI couples **19 specialized ML/DL regression architectures** with an **On-Device Fine-Tuned Small Language Model (SLM)** that evaluates weather friction, road class, and cargo physics to dispatch each delivery to the optimal algorithmic specialist in **~45 milliseconds**.
 
 
 ---
@@ -274,12 +274,19 @@ Instant sub-second simulation endpoint to evaluate hypothetical traffic, priorit
 
 ## 🌟 Advanced Features Implemented
 
-1. **Explainable AI (Tree SHAP Attribution)**: Exact mathematical attribution of delivery duration across distance, traffic congestion, transport mode, priority, and parcel specs.
-2. **Tolerance Accuracy Metrics**: Logistics industry-standard operational windows (Within $\pm 15\text{m}$, $\pm 30\text{m}$, $\pm 60\text{m}$) & Mean Absolute Percentage Error (MAPE $\approx 10\%$).
-3. **Live "What-If" Scenario Simulator**: Interactive UI controls to simulate how switching from Road to Air or standard to overnight priority impacts ETA without re-geocoding.
-4. **Green Logistics Carbon Footprint**: GLEC/DEFRA freight emissions calculator with $CO_2$ kg estimate, eco grade, and tree offset recommendation.
-5. **Interactive Transit Route Simulation**: Animated delivery vehicle traversing OpenStreetMap route polyline with live progress tracking.
-6. **Logistics Dispatch Waybill**: Printable shipment manifest with tracking identifier, barcode, and verified delivery window.
+1. **On-Device Fine-Tuned SLM Meta-Router (ModernBERT-421M)**: Fine-tuned `convaiinnovations/laya-typed-decisions` on 1,540 balanced decision contracts derived from 184k+ real Indian deliveries. Jumped from **19.48% (zero-shot) &rarr; 99.35% accuracy** (+79.87% gain, loss 0.0176, ECE 0.0077), running locally in **~45ms on NVIDIA RTX 3050 CUDA GPU**.
+2. **Dual-Tier Dynamic Meta-Router & 4-Tier Self-Healing Hierarchy**:
+   - **Tier 1:** Fine-Tuned Laya SLM (CUDA GPU, ~45ms)
+   - **Tier 1.5:** Empirical Meta-Classifier (`meta_router.pkl`, CPU, <0.4ms, 100% fidelity)
+   - **Tier 2:** Local LM Studio endpoint (`http://127.0.0.1:1234/v1`)
+   - **Tier 3:** Deterministic Physical Corridor Heuristic Matrix (0ms, 100% fail-safe)
+3. **Live Multi-Model Comparison Studio**: Executes all 12 models simultaneously on any given route, charting algorithm divergence between ensembles, gradient boosters, and linear baselines.
+4. **Explainable AI (Tree SHAP Attribution)**: Exact mathematical attribution of delivery duration across distance, traffic congestion, transport mode, priority, and parcel specs.
+5. **Tolerance Accuracy Metrics**: Logistics industry-standard operational windows (Within $\pm 15\text{m}$, $\pm 30\text{m}$, $\pm 60\text{m}$) & Mean Absolute Percentage Error (MAPE $\approx 10\%$).
+6. **Live "What-If" Scenario Simulator**: Interactive UI controls to simulate how switching from Road to Air or standard to overnight priority impacts ETA without re-geocoding.
+7. **Green Logistics Carbon Footprint**: GLEC/DEFRA freight emissions calculator with $CO_2$ kg estimate, eco grade, and tree offset recommendation.
+8. **Interactive Transit Route Simulation**: Animated delivery vehicle traversing OpenStreetMap route polyline with live progress tracking.
+9. **Logistics Dispatch Waybill**: Printable shipment manifest with tracking identifier, barcode, and verified delivery window.
 
 ---
 

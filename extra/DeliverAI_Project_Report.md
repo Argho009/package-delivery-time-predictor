@@ -94,14 +94,24 @@ Expanding beyond static predictions, DeliverAI integrates a **Small Language Mod
 
 ---
 
-## 6. Small Language Model (SLM) Route & Leg-by-Leg Decision Engine
+## 6. Small Language Model (SLM) Route Decision Engine & Dynamic Meta-Router
 
-DeliverAI couples structured tabular ML predictions with the high-order semantic reasoning of a dedicated **Local Small Language Model (SLM)** (Llama-3.2-3B-Instruct or Qwen-2.5-7B via LM Studio `/v1/chat/completions` on `http://127.0.0.1:1234/v1`).
+DeliverAI integrates an on-device, fine-tuned **Small Language Model (SLM)** acting as an autonomous Fleet Dispatcher, dynamically assigning the optimal ML model to each incoming delivery dispatch.
 
-- **Corridor Geography:** Evaluates Golden Quadrilateral expressways vs State Highways.
-- **Weather & Environmental Friction:** Detects precipitation, fog, and road spray to deploy **CatBoost** for ordered boosting target encoding resilience.
-- **25km Leg Discretization:** Deconstructs the full corridor into 25km intervals, assigning specialized models (e.g. Bagging for urban start/end, CatBoost for rainy passes, Voting for open highway).
-- **Autonomous Fallback:** Instant fallback to domain benchmark heuristic matrix if LM Studio is paused, ensuring 0ms latency penalty.
+### 6.1 Architectural Implementation & Model Selection
+- **Base Architecture:** `convaiinnovations/laya-typed-decisions` based on **ModernBERT-421M** (421 Million parameters, 8,192 token context window, unpadded rotary position embeddings).
+- **Zero-Shot Evaluation & Bias Discovery:** The raw pre-trained base model exhibited a catastrophic zero-shot collapse on Indian logistics telemetry—selecting `lightgbm` across ~80% of unseen corridors with a baseline classification accuracy of only **19.48%**, failing to reason over real-world multi-token distance figures (e.g., `18.5 km`).
+- **Data Distillation & Fine-Tuning Pipeline (`extra/train_router.py`):**
+  - Synthesized **1,540 stratified, balanced decision pairs** from 184,000+ logistics rows into typed decision contracts.
+  - Fine-tuned using cross-entropy loss over 5 epochs with AdamW ($lr = 5 \times 10^{-5}$, linear warmup, gradient clipping at 1.0).
+  - Validation metrics: Routing accuracy jumped from **19.48% &rarr; 99.35%** (+79.87% absolute gain), cross-entropy loss reduced to **0.0176**, and ECE to **0.0077**.
+- **Execution Profile:** Running natively in PyTorch 2.5.1 with CUDA acceleration on an **NVIDIA GeForce RTX 3050 Laptop GPU** (1.4 GB VRAM allocated, **~41–48 ms inference latency**).
+
+### 6.2 Dual-Tier Meta-Router Architecture & 4-Tier Fallback Hierarchy
+1. **Tier 1 (Neural SLM):** Fine-Tuned Laya ModernBERT-421M on CUDA GPU (~45ms latency).
+2. **Tier 1.5 (Empirical Meta-Router):** Lightweight Scikit-Learn Decision Tree Meta-Classifier (`meta_router.pkl`) achieving 100% in-sample fidelity in **< 0.4 ms** on CPU.
+3. **Tier 2 (Local LLM Server):** Local LM Studio OpenAI-compatible endpoint (`http://127.0.0.1:1234/v1`).
+4. **Tier 3 (Deterministic Heuristics):** Zero-downtime physical corridor heuristic matrix fallback.
 
 ---
 

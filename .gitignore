@@ -57,6 +57,9 @@ past_predictions_and_history.csv
 !backend/models/saved/*.pkl
 !backend/models/saved/*.json
 !backend/models/saved/.gitkeep
+*.gguf
+extra/models/
+extra/llama.cpp/
 
 
 # IDEs, Editors & OS Files

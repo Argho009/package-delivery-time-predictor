@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,20 +10,34 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <script>
+    (function() {
+      try {
+        const t = localStorage.getItem("deliverai-theme") || "light";
+        document.documentElement.setAttribute("data-theme", t);
+        const p = localStorage.getItem("deliverai-palette") || "blue";
+        document.documentElement.setAttribute("data-palette", p);
+      } catch(e) {}
+    })();
+  </script>
 </head>
 <body>
   <!-- Navigation Header (Glass Command Header) -->
   <nav class="navbar">
-    <a href="index.html" class="navbar-brand">
+    <a href="dashboard.html" class="navbar-brand">
       <div class="brand-icon">📦</div>
-      <span>DeliverAI</span>
+      <div style="display:flex; flex-direction:column; line-height:1.1;">
+        <span style="font-weight:800; font-size:1.15rem; letter-spacing:-0.03em;">DeliverAI</span>
+        <span style="font-size:0.65rem; color:var(--clr-primary); font-family:var(--font-mono); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Enterprise v2.4</span>
+      </div>
     </a>
 
     <ul class="navbar-nav">
-      <li><a href="index.html" class="nav-link">Dashboard</a></li>
-      <li><a href="predict.html" class="nav-link active">Dispatch Studio</a></li>
-      <li><a href="history.html" class="nav-link">Analytics &amp; History</a></li>
-      <li><a href="copilot.html" class="nav-link">AI Copilot <span class="badge-pill-new">LLM</span></a></li>
+      <li><a href="dashboard.html" class="nav-link"><span>🏠</span> Dashboard</a></li>
+      <li><a href="predict.html" class="nav-link active"><span>⚡</span> Dispatch Studio</a></li>
+      <li><a href="history.html" class="nav-link"><span>📊</span> Analytics &amp; Records</a></li>
+      <li><a href="copilot.html" class="nav-link"><span>🤖</span> AI Copilot <span class="badge-pill-new">LLM</span></a></li>
+      <li><a href="start.html" class="nav-link"><span>🎓</span> Minor Project</a></li>
     </ul>
 
     <div class="nav-actions">

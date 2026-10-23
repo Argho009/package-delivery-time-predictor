@@ -22,6 +22,7 @@ os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["LOKY_MAX_CPU_COUNT"] = "1"
 os.environ["PYTHONIOENCODING"] = "utf-8"
 os.environ["PYTHONWARNINGS"] = "ignore"
+os.environ["USE_TF"] = "0"
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -33,17 +34,30 @@ except Exception:
 _venv_python = os.path.join(os.path.dirname(os.path.abspath(__file__)), "venv", "Scripts", "python.exe")
 if os.path.exists(_venv_python) and os.path.abspath(sys.executable).lower() != os.path.abspath(_venv_python).lower():
     import subprocess
-    while True:
-        try:
-            _res = subprocess.run([_venv_python] + sys.argv, env=os.environ)
-            if _res.returncode == 0:
-                sys.exit(0)
-            print(f"[main] Subprocess exited with code {_res.returncode}. Restarting in 2s...")
-            import time
-            time.sleep(2)
-        except KeyboardInterrupt:
-            print("\n[!] Server stopped by user.")
-            sys.exit(0)
+    proc = None
+    try:
+        proc = subprocess.Popen([_venv_python] + sys.argv, env=os.environ)
+        code = proc.wait()
+        sys.exit(code if code is not None else 0)
+    except KeyboardInterrupt:
+        print("\n[!] Ctrl+C received. Terminating DeliverAI processes...")
+        if proc and proc.poll() is None:
+            try:
+                proc.terminate()
+                proc.wait(timeout=3)
+            except Exception:
+                try:
+                    proc.kill()
+                except Exception:
+                    pass
+        sys.exit(0)
+    except BaseException as _e:
+        if proc and proc.poll() is None:
+            try:
+                proc.kill()
+            except Exception:
+                pass
+        sys.exit(1)
 
 import time
 import threading
@@ -107,6 +121,10 @@ def main():
     print("  DeliverAI — AI Package Delivery Time Prediction System")
     print("=" * 65)
 
+    # ── Register Global Memory & GPU VRAM Cleanup Handlers ──
+    from utils.memory_cleanup import register_exit_cleanup_handlers, clear_vram_and_ram
+    register_exit_cleanup_handlers()
+
     check_and_prepare_environment()
 
     # Import Flask app factory
@@ -117,7 +135,7 @@ def main():
     url  = f"http://127.0.0.1:{port}"
 
     print(f"\n[+] Server starting at: {url}")
-    print("    Press CTRL+C to stop the server\n")
+    print("    Press CTRL+C to stop the server and purge VRAM/RAM\n")
 
     # Automatically open browser after 1.5s delay
     def open_browser():
@@ -129,26 +147,34 @@ def main():
 
     threading.Thread(target=open_browser, daemon=True, name="deliverai-browser-opener").start()
 
-    # Start Flask dev server with resilient keep-alive loop
-    while True:
-        try:
-            logger.info("Starting Flask application server on port %d...", port)
-            app.run(host="0.0.0.0", port=port, debug=False, threaded=True, use_reloader=False)
-            logger.warning("Flask app.run() returned unexpectedly. Restarting in 1s...")
-            time.sleep(1)
-        except KeyboardInterrupt:
-            print("\n[!] Server stopped by user (Ctrl+C).")
-            break
-        except BaseException as e:
-            logger.error("Flask server encountered critical error: %s (%s)", e, type(e))
-            traceback.print_exc()
-            time.sleep(1)
+    # Start Flask dev server
+    try:
+        logger.info("Starting Flask application server on port %d...", port)
+        app.run(host="0.0.0.0", port=port, debug=False, threaded=True, use_reloader=False)
+    except KeyboardInterrupt:
+        print("\n[!] Server stopped by user (Ctrl+C). Initiating resource purge...")
+    except BaseException as e:
+        logger.error("Flask server encountered critical error: %s (%s)", e, type(e))
+        traceback.print_exc()
+    finally:
+        clear_vram_and_ram(verbose=True)
+        sys.exit(0)
 
 
 if __name__ == "__main__":
     try:
         main()
+    except KeyboardInterrupt:
+        from utils.memory_cleanup import clear_vram_and_ram
+        clear_vram_and_ram(verbose=True)
+        sys.exit(0)
     except BaseException as e:
         logger.error("Fatal exception in main(): %s", e)
         traceback.print_exc()
+        try:
+            from utils.memory_cleanup import clear_vram_and_ram
+            clear_vram_and_ram(verbose=True)
+        except Exception:
+            pass
+        sys.exit(1)
 
