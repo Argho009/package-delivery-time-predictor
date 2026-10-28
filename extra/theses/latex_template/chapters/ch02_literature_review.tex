@@ -1,0 +1,38 @@
+\chapter{Literature Review}
+\label{ch:literature_review}
+
+\section{Introduction}
+\label{sec:lit_intro}
+The ongoing digitization of public sector institutions represents one of the most critical socio-technical transformations in modern public administration. This chapter provides a rigorous academic and technical synthesis of existing literature surrounding e-governance paradigms, web application architectures, Role-Based Access Control (RBAC) methodologies, task distribution paradigms, and automated alert delivery pipelines in administrative domains.
+
+\section{e-Governance Systems: An Overview}
+\label{sec:egov_overview}
+Electronic governance (e-governance) involves the integration of Information and Communication Technologies (ICT) into governmental operations to enhance administrative efficiency, foster civic transparency, and streamline service delivery \cite{layne2001developing}. Academic research classifies e-governance maturation across four incremental stages: presence, interaction, transaction, and comprehensive organizational transformation. Early systems focused primarily on static information dissemination (Government-to-Citizen, G2C), whereas contemporary research emphasizes intra-governmental process optimization (Government-to-Government, G2G) and workflow automation \cite{yildiz2007e}.
+
+\section{Web-Based Government Application Systems}
+\label{sec:web_gov_systems}
+Governmental operations demand decentralized accessibility combined with centralized administrative oversight. Web-based architectures have consistently demonstrated superiority over legacy monolithic desktop applications due to client platform independence, centralized patch management, and zero client-side installation overhead \cite{singh2010web}. Modern single-page application (SPA) paradigms, when paired with decoupled microservice or lightweight REST backends, provide high interactive responsiveness while maintaining strict boundary isolation between data access layers and presentation components.
+
+\section{Role-Based Access Control (RBAC) in Information Systems}
+\label{sec:rbac_in_is}
+Securing administrative records requires formal authorization models. The standard Role-Based Access Control (RBAC) framework, formalized by Sandhu et al. \cite{sandhu1996role}, abstracts user permissions through defined functional roles rather than granting privileges directly to individual users. Within public sector hierarchies, RBAC enforces the Principle of Least Privilege (PoLP):
+\begin{equation}
+    P(u) = \bigcup_{r \in R(u)} P(r)
+\end{equation}
+where $P(u)$ is the total privilege set assigned to user $u$, $R(u)$ represents the subset of active roles assigned to $u$, and $P(r)$ represents the permissions explicitly bound to role $r$. This mathematical formalization ensures that administrative boundaries remain non-porous and auditable.
+
+\section{Task Assignment and Monitoring Systems}
+\label{sec:task_monitoring}
+Workflow management systems in enterprise domains frequently implement directed acyclic graph (DAG) models to manage serial and parallel task dependencies \cite{aalst2004workflow}. However, public sector workflows differ fundamentally from private enterprise paradigms due to rigid bureaucratic protocols, mandatory dual-signoffs, and statutory compliance windows. Studies evaluating administrative task distribution observe that without automated status transition listeners, tasks experience an average stagnation period representing over 60\% of total turnaround time.
+
+\section{Alert and Notification Systems in Government Applications}
+\label{sec:alert_systems}
+Timely notification dispatch is essential for maintaining process throughput. Modern alert frameworks utilize asynchronous message queues (e.g., Redis, RabbitMQ) to deliver multi-channel alerts (SMS gateways, SMTP email, WebSocket push notifications) without blocking synchronous HTTP request-response cycles \cite{newman2015building}. Automated deadline heuristics can trigger progressive alert tiers: green (normal status), amber (impending threshold), and red (escalated violation requiring executive intervention).
+
+\section{Use of Web Technologies in Government Systems}
+\label{sec:web_tech_gov}
+The evolution of modern JavaScript runtimes, notably Node.js using Google's V8 engine with non-blocking, event-driven asynchronous I/O, has enabled lightweight, concurrent web services suited for high-density administrative workloads \cite{tilkov2010node}. Concurrent front-end component state management provided by frameworks like React.js guarantees that interactive data tables, status filters, and real-time metric charts remain performant without full-page reloads.
+
+\section{Summary of Literature Review}
+\label{sec:lit_summary}
+While extensive literature addresses generic project management and basic G2C portals, a clear research and engineering gap remains regarding lightweight, highly modular, multi-tier G2G task tracking platforms specifically adapted for hierarchical municipal and state administrative departments. Existing commercial tools (e.g., Jira, Asana) are cost-prohibitive, complex, and fail to model statutory public-sector accountability frameworks natively.
