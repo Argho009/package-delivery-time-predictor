@@ -66,8 +66,7 @@ import webbrowser
 import logging
 import faulthandler
 
-_crash_log_file = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "crash_dump.log"), "a", encoding="utf-8")
-faulthandler.enable(file=_crash_log_file)
+faulthandler.enable(file=sys.stderr)
 
 # Ensure backend directory is on sys.path
 ROOT_DIR    = os.path.dirname(os.path.abspath(__file__))

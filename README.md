@@ -1,19 +1,16 @@
----
-title: DeliverAI Package Delivery Time Predictor
-emoji: 🚚
-colorFrom: indigo
-colorTo: blue
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # DeliverAI : Intelligent Logistics & Delivery Duration Predictor
 
 > **DeliverAI** | Python 3.10+ · PyTorch 2.5.1 + CUDA 12.1 · Fine-Tuned ModernBERT-421M SLM (`convaiinnovations/laya-typed-decisions`) · Dual-Tier Meta-Router · 19 Tabular ML/DL Regressors (Voting, Stacking, Random Forest, CatBoost, LightGBM, HistGradientBoosting, Bagging, TabNet, etc.) · OSRM Route Geometry · OpenWeather Telemetry · Flask REST Microservices
 
 DeliverAI is a full-stack, enterprise-grade logistics operating engine designed for the non-linear realities of Indian transport networks. Trained on **184,000+ real-world courier telemetry records** (Delhivery, Amazon India, Bangalore traffic, Indian Railways freight), DeliverAI couples **19 specialized ML/DL regression architectures** with an **On-Device Fine-Tuned Small Language Model (SLM)** that evaluates weather friction, road class, and cargo physics to dispatch each delivery to the optimal algorithmic specialist in **~45 milliseconds**.
 
+---
+
+## 🎓 Academic Deliverables & Project Documentation
+
+* **📄 [50-Page Formal Project Thesis (PDF)](extra/theses/thesis_report_50_pages.pdf)** — Unified 50-page dissertation prepared for **Shri Shankaracharya Institute of Professional Management & Technology (SSIPMT), Raipur** (CSVTU) covering system design, complete 19-model benchmark tournaments, distance discretization, ModernBERT SLM fine-tuning, and carbon auditing.
+* **📊 [3rd Project Review Presentation (PPTX)](DeliverAI_Project_Review_3_SSIPMT.pptx)** — Official PowerPoint evaluation slide deck presented for the 5th semester minor project review.
+* **📝 [Thesis Source Code (Typst)](extra/theses/thesis_report_50_pages.typ)** — Complete reproducible Typst source for the 50-page thesis.
 
 ---
 
@@ -214,7 +211,7 @@ python test_distance_ranges.py --step 50 --samples 1000
 | 9 | **`lightgbm`** | Gradient Boosted | 3.927h | 89.3% | 6.077h | 12.0% | 258 | 0.5% |
 | 10 | **`stacking`** | Meta-Ensemble | 3.940h | 89.0% | 6.032h | 11.5% | 194 | 0.4% |
 
-> 📖 **Full Benchmark Documentation:** Detailed tier breakdown and all 48 bracket statistics are available in [`distance_model_benchmark.md`](distance_model_benchmark.md) / [`MODEL_BENCHMARK_50KM.md`](MODEL_BENCHMARK_50KM.md), with raw numerical data in [`range_performance_50km.csv`](range_performance_50km.csv).
+> 📖 **Full Benchmark Documentation:** All 48 bracket statistics, empirical 25km/50km tier tables, Tree SHAP attributions, and green logistics telemetry are fully documented in Chapter 4 & 5 of the **[50-Page Project Thesis Report](extra/theses/thesis_report_50_pages.pdf)**.
 
 ---
 
@@ -300,13 +297,7 @@ If you don't have a Kaggle account, use the synthetic seeder:
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Download all 8 Indian logistics & traffic datasets
-python download.py
-
-# 3. Clean, merge 184k+ records & train all 19 ML & Deep Learning models
-python train.py
-
-# 4. Launch the Web Command Center & Live Dashboard
+# 2. Launch the Web Command Center & Live Dashboard
 python main.py
 ```
 
@@ -315,45 +306,44 @@ python main.py
 ## 📁 Project Structure
 
 ```
-5/
-├── requirements.txt
-├── schema.sql
-├── .env.example
-├── README.md
+DeliverAI/
+├── main.py                             # Server launcher (FastAPI / Flask gateway)
+├── requirements.txt                    # Project dependencies
+├── schema.sql                          # Database schema
+├── .env.example                        # Environment variable configuration template
+├── README.md                           # Main project documentation
+├── DeliverAI_Project_Review_3_SSIPMT.pptx # 3rd Review presentation slide deck
+│
+├── extra/
+│   └── theses/
+│       ├── thesis_report_50_pages.pdf  # Unified 50-page academic dissertation PDF
+│       ├── thesis_report_50_pages.typ  # Typst thesis source code
+│       └── README.md                   # Thesis documentation
+│
 ├── backend/
-│   ├── app.py
-│   ├── config.py
+│   ├── app.py                          # Application entry & route registration
+│   ├── config.py                       # Configuration loader
+│   ├── delivery.db                     # SQLite database
 │   ├── data/
-│   │   ├── raw/                  (gitignored, created by download)
-│   │   ├── processed/            (gitignored, created by process)
-│   │   ├── download_datasets.py
-│   │   ├── process_datasets.py
-│   │   └── load_to_db.py
+│   │   ├── raw/                        # Raw logistics datasets
+│   │   ├── processed/                  # Normalized datasets
+│   │   ├── download_datasets.py        # Kaggle downloader
+│   │   └── process_datasets.py         # Merging & preprocessing
 │   ├── models/
-│   │   ├── saved/                (gitignored, created by train)
-│   │   ├── train.py
-│   │   └── predict.py
-│   ├── services/
-│   │   ├── maps_service.py
-│   │   └── weather_service.py
-│   ├── routes/
-│   │   ├── predict.py
-│   │   ├── history.py
-│   │   └── analytics.py
-│   ├── database/
-│   │   ├── db.py
-│   │   ├── models.py
-│   │   └── seed.py
-│   └── utils/
-│       └── feature_engineering.py
+│   │   ├── saved/                      # 19 champion trained models (.pkl) & metrics.json
+│   │   ├── train.py                    # Multi-model training pipeline
+│   │   └── predict.py                  # Singleton inference manager
+│   ├── routes/                         # REST API endpoints (predict, history, analytics)
+│   ├── services/                       # Geospatial (OSRM) & Weather APIs
+│   ├── database/                       # SQLAlchemy models & SQLite setup
+│   └── utils/                          # Feature engineering & encoders
+│
 └── frontend/
-    ├── index.html
-    ├── predict.html
-    ├── history.html
-    ├── css/style.css
-    └── js/
-        ├── main.js
-        ├── predict.js
-        ├── history.js
-        └── charts.js
+    ├── index.html                      # Main portal
+    ├── predict.html                    # Delivery time predictor
+    ├── dashboard.html                  # Live fleet telemetry dashboard
+    ├── copilot.html                    # AI dispatch copilot interface
+    ├── history.html                    # Prediction history & logs
+    ├── css/                            # Custom vanilla stylesheets
+    └── js/                             # Client-side routing, charts & map rendering
 ```
